@@ -9,6 +9,8 @@ const logger = require('./utils/logger');
 
 const app = express();
 
+app.set('trust proxy', 1); // Trust first proxy (like Render or Netlify)
+
 // ✅ Use morgan for HTTP request logging in dev
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
