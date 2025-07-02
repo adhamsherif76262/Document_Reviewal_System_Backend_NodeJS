@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: true,
       match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     },
     password: {
@@ -79,6 +78,14 @@ userSchema.virtual('verificationStatus').get(function () {
   if (this.isVerified) return `Verified via ${this.preferredVerificationMethod}`;
   return `Pending ${this.preferredVerificationMethod} verification`;
 });
+
+// 2. Add indexes
+
+// 📌 Ensure fast user lookup by email and prevent duplicates
+userSchema.index({ email: 1 }, { unique: true });
+
+// 📌 If you allow SMS verification, ensure phone number is unique (if provided)
+userSchema.index({ phone: 1 }, { unique: true, sparse: true });
 
 const User = mongoose.model('User', userSchema);
 

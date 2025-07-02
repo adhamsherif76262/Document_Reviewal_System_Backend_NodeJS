@@ -29,4 +29,13 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+// Denormalized indexes
+
+// 📌 Retrieve all reviews for a document (document history)
+reviewSchema.index({ 'document._id': 1 });
+// 📌 Filter admin activity (which reviews this admin handled)
+reviewSchema.index({ 'reviewedBy._id': 1 });
+// 📌 For filtering + sorting: Show latest “rejected” reviews, etc.
+reviewSchema.index({ status: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Review', reviewSchema);

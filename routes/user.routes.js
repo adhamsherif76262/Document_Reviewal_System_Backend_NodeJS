@@ -14,26 +14,41 @@ const {
   getMyDocuments,
 } = require('../controllers/user.controller');
 
+const {
+  validateUserRegister,
+  validateVerifyEmail,
+  validateResendVerification,
+  validateUserLogin,
+  validateForgotPassword,
+  validateResetPassword,
+} = require('../middlewares/validation');
+
+const {
+  defaultLimiter,
+  authLimiter
+} = require('../utils/rateLimiter');
+
+
 // @route   POST /api/users/register
-router.post('/register', registerUser);
+router.post('/register',authLimiter,validateUserRegister, registerUser);
 
 //@route POST /api/users/verify-email
-router.post('/verify-email', verifyAccount);
+router.post('/verify-email',authLimiter,validateVerifyEmail, verifyAccount);
 
 //@route POST /api/users/verify-email
-router.post('/resend-verification', resendVerificationOTP);
+router.post('/resend-verification',authLimiter,validateResendVerification, resendVerificationOTP);
 
 // @route   POST /api/users/login
-router.post('/login', loginUser);
+router.post('/login',authLimiter,validateUserLogin, loginUser);
 
 // Protected
 router.post('/logout', protect, logoutUser); 
 
 // @route   POST /api/users/forgot-password
-router.post('/forgot-password', forgotPassword);
+router.post('/forgot-password',authLimiter,validateForgotPassword, forgotPassword);
 
 // @route   POST /api/users/reset-password
-router.post('/reset-password', resetPassword);
+router.post('/reset-password',authLimiter,validateResetPassword, resetPassword);
 
 // @route   GET /api/users/my-submissions
 router.get('/my-submissions', protect, getMyDocuments);

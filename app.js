@@ -4,8 +4,27 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const documentRoutes = require('./routes/document.routes');
+const { defaultLimiter } = require('./utils/rateLimiter');
+const logger = require('./utils/logger');
 
 const app = express();
+
+// ✅ Use morgan for HTTP request logging in dev
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// ✅ In production, pipe Morgan logs to Winston
+if (process.env.NODE_ENV === 'production') {
+  const morganMiddleware = morgan('combined', {
+    stream: {
+      write: (message) => logger.info(message.trim())
+    }
+  });
+  app.use(morganMiddleware);
+}
+
+app.use(defaultLimiter); // applies to everything
 
 // Middleware: Enable CORS for cross-origin requests (Netlify → Render)
 app.use(cors());

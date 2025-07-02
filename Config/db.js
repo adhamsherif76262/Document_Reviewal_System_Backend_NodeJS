@@ -1,6 +1,7 @@
 // config/db.js
 
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 const connectDB = async () => {
   try {
@@ -11,10 +12,12 @@ const connectDB = async () => {
     });
 
     // If successful, log the connection host
-    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    // console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    logger.info(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     // If connection fails, log the error and stop the app
-    console.error('❌ MongoDB connection failed:', error.message);
+    // console.error('❌ MongoDB connection failed:', error.message);
+    logger.error('❌ MongoDB connection failed:',error.message);
     process.exit(1); // Exit with failure
   }
 };

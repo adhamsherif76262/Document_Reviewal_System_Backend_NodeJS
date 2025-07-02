@@ -41,4 +41,16 @@ const documentSchema = new mongoose.Schema(
   }
 );
 
+
+// Denormalized indexes
+
+// 📌 Query documents by user (e.g. user’s history)
+documentSchema.index({ 'user._id': 1 });
+// 📌 Common admin filtering: "Show all pending documents"
+documentSchema.index({ status: 1 });
+// 📌 Needed for sorting by most recent (especially in dashboard)
+documentSchema.index({ createdAt: -1 });
+// 📌 Efficient filtering per user + status (e.g. “Adham’s approved documents”)
+documentSchema.index({ 'user._id': 1, status: 1 });
+
 module.exports = mongoose.model('Document', documentSchema);

@@ -57,6 +57,7 @@ const seedAdmin = async () => {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     const adminName = process.env.ADMIN_NAME;
+    const adminPhone = process.env.ADMIN_PHONE;
 
     if (!adminEmail || !adminPassword || !adminName) {
       throw new Error('Missing admin environment variables');
@@ -79,6 +80,8 @@ const seedAdmin = async () => {
       email: adminEmail,
       password: adminPassword,
       role: 'admin',
+      isVerified : true,
+      phone : adminPhone,
     });
 
     await admin.save();

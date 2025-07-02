@@ -1,5 +1,6 @@
 const Log = require('../models/log');
 const User = require('../models/user');
+const logger = require('../utils/logger');
 
 exports.getLogs = async (req, res) => {
   try {
@@ -23,8 +24,7 @@ exports.getLogs = async (req, res) => {
         console.log("valid Action Passed")
     }
     else{
-        console.log("Invalid Action Passed")
-
+        logger.error("Invalid Action Passed")
     }
 
     // 🗓️ Filter by date range
@@ -55,22 +55,6 @@ exports.getLogs = async (req, res) => {
 }
 
 
-
-    // // 🔍 User filter (for regular users)
-    // if (userName || userEmail) {
-    //   const userQuery = {};
-    //   if (userName) userQuery.name = { $regex: userName, $options: 'i' };
-    //   if (userEmail) userQuery.email = { $regex: userEmail, $options: 'i' };
-
-    //   const matchingUsers = await User.find({
-    //     ...userQuery,
-    //     role: 'user',
-    //   }).select('_id');
-
-    //   filter.user = { $in: matchingUsers.map((u) => u._id) };
-    // }
-
-
     // 🔍 User filter (for denormalized user object)
     if (userName) {
       filter['user.name'] = { $regex: userName, $options: 'i' };
@@ -98,7 +82,7 @@ exports.getLogs = async (req, res) => {
       logs,
     });
   } catch (error) {
-    console.error('Log Fetch Error:', error.message);
+    logger.error('Log Fetch Error:', error.message);
     res.status(500).json({ message: 'Failed to fetch logs' });
   }
 };

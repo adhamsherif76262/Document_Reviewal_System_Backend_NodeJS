@@ -1,5 +1,6 @@
 const Review = require('../models/review');
 const User = require('../models/user');
+const logger = require('../utils/logger');
 
 exports.getAdminReviews = async (req, res) => {
   try {
@@ -63,7 +64,7 @@ exports.getAdminReviews = async (req, res) => {
       reviews,
     });
   } catch (error) {
-    console.error('Error fetching admin reviews:', error.message);
+    logger.error('Error fetching admin reviews:', error.message);
     res.status(500).json({ message: 'Server error while fetching reviews' });
   }
 };

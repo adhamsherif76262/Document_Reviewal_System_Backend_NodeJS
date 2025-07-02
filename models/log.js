@@ -50,4 +50,20 @@ logSchema.virtual('actor').get(function () {
   return null;
 });
 
+
+// Denormalized indexes
+
+// 📌 Needed to filter logs by admin (admin/user)
+logSchema.index({ 'admin._id': 1 });
+// 📌 Needed to filter logs by user (admin/user)
+logSchema.index({ 'user._id': 1 });
+// 📌 Logs filtered by action type
+logSchema.index({ action: 1 });
+// 📌 Sort logs by newest first
+logSchema.index({ createdAt: -1 });
+// 📌 Needed to filter logs by admin within a date range efficiently
+logSchema.index({ 'admin._id': 1, createdAt: -1 });
+// 📌 Needed to filter logs by user within a date range efficiently
+logSchema.index({ 'user._id': 1, createdAt: -1 });
+
 module.exports = mongoose.model('Log', logSchema);

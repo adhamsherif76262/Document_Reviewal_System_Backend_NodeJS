@@ -4,6 +4,12 @@ const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const Log = require('../models/log'); // make sure this is at the top
+const Review = require('../models/review');
+const logger = require('../utils/logger');
+const verificationEmailTemplate = require('../utils/emailTemplates/vertification')
+const resendverificationEmailTemplate = require('../utils/emailTemplates/resendverification')
+const forgotpasswordEmailTemplate = require('../utils/emailTemplates/forgotpassword')
+const resetpasswordEmailTemplate = require('../utils/emailTemplates/resetpassword')
 
 // 🔐 Generate a signed JWT token
 const generateToken = (userId) => {
@@ -12,99 +18,6 @@ const generateToken = (userId) => {
   });
 };
 
-
-// // ✅ @desc    Register a new user
-// // ✅ @route   POST /api/users/register
-// // ✅ @access  Public
-// exports.registerUser = async (req, res) => {
-//   try {
-//     const { name, email, password } = req.body;
-
-//     // Check if user already exists
-//     const userExists = await User.findOne({ email });
-//     if (userExists) {
-//       return res.status(400).json({ message: 'User already exists' });
-//     }
-
-//     // Generate verification OTP
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-//     // Create user (not verified yet)
-//     const user = await User.create({
-//       name,
-//       email,
-//       password,
-//       isVerified: false,
-//       emailVerificationOTP: otp,
-//       emailVerificationExpire: Date.now() + 15 * 60 * 1000, // 15 minutes
-//     });
-
-//     // 📧 Send OTP email
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     const subject = '🔐 Verify Your Email – Document Review System';
-
-//     const htmlBody = `
-//       <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-//         <h2 style="color: #4A90E2; text-align: center;">🔐 Email Verification Required</h2>
-
-//         <p>Dear <strong>${user.name}</strong>,</p>
-
-//         <p>Thank you for registering on the <strong>Document Review System</strong>.</p>
-//         <p>To complete your registration, please enter the following One-Time Password (OTP) to verify your email address:</p>
-
-//         <div style="background-color: #fff; padding: 20px; text-align: center; border: 2px dashed #4A90E2; border-radius: 6px; margin: 20px 0;">
-//           <p style="font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #4A90E2;">${otp}</p>
-//           <p style="font-size: 13px; color: #999;">This code expires in 15 minutes.</p>
-//         </div>
-
-//         <p>If you did not initiate this request, please ignore this email.</p>
-
-//         <p style="margin-top: 30px;">Warm regards,<br/><strong>The Document Review System Team</strong><br/><a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a></p>
-
-//         <p style="font-size: 0.8em; color: #999; margin-top: 20px;">Need help? Contact <a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-//       </div>
-//     `;
-
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: user.email,
-//       subject,
-//       html: htmlBody,
-//     });
-
-//     // 📝 Log the registration
-//     const logEntry = {
-//       action: 'register',
-//       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Was Registered`,
-//     };
-
-//     if (user.role === 'admin') logEntry.admin = user;
-//     else logEntry.user = user;
-
-//     await Log.create(logEntry);
-
-//     // 🎯 Respond (user not verified yet)
-//     res.status(201).json({
-//       _id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       role: user.role,
-//       isVerified: false,
-//       token: generateToken(user._id),
-//       message: 'User registered. Please verify your email using the OTP sent.',
-//     });
-//   } catch (error) {
-//     console.error('Register Error:', error.message);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
 
 
 const admin = require('firebase-admin');
@@ -145,6 +58,11 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    const userPhoneExists = await User.findOne({ phone });
+    if (userPhoneExists) {
+      return res.status(400).json({ message: 'User Phone Number Already exists' });
+    }
+
     // 2️⃣ Generate OTP (for email or fallback SMS)
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -164,24 +82,9 @@ exports.registerUser = async (req, res) => {
 
     // 4️⃣ Handle Email Verification
     if (preferredVerificationMethod === 'email') {
-      const subject = '🔐 Verify Your Email – Document Review System';
 
-      const htmlBody = `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <h2 style="color: #4A90E2; text-align: center;">🔐 Email Verification Required</h2>
-          <p>Dear <strong>${user.name}</strong>,</p>
-          <p>Thank you for registering on the <strong>Document Review System</strong>.</p>
-          <p>To complete your registration, please enter the following One-Time Password (OTP) to verify your email address:</p>
-          <div style="background-color: #fff; padding: 20px; text-align: center; border: 2px dashed #4A90E2; border-radius: 6px; margin: 20px 0;">
-            <p style="font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #4A90E2;">${otp}</p>
-            <p style="font-size: 13px; color: #999;">This code expires in 15 minutes.</p>
-          </div>
-          <p>If you did not initiate this request, please ignore this email.</p>
-          <p style="margin-top: 30px;">Warm regards,<br/><strong>The Document Review System Team</strong><br/><a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a></p>
-          <p style="font-size: 0.8em; color: #999; margin-top: 20px;">Need help? Contact <a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-        </div>
-      `;
-
+      const { subject, htmlBody } = verificationEmailTemplate(user , otp);
+      
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: user.email,
@@ -225,69 +128,10 @@ exports.registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Register Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-
-// // ✅ @desc    Verify account with OTP (email or phone)
-// // ✅ @route   POST /api/users/verify
-// // ✅ @access  Public
-// exports.verifyAccount = async (req, res) => {
-//   const { email, otp } = req.body;
-
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(404).json({ message: 'User not found' });
-//     if (user.isVerified) return res.status(400).json({ message: 'Account already verified' });
-
-//     const now = Date.now();
-
-//     // 1️⃣ Email-based verification
-//     if (user.preferredVerificationMethod === 'email') {
-//       if (
-//         !user.emailVerificationOTP ||
-//         user.emailVerificationOTP !== otp ||
-//         user.emailVerificationExpire < now
-//       ) {
-//         return res.status(400).json({ message: 'Invalid or expired OTP for email verification' });
-//       }
-
-//       user.isVerified = true;
-//       user.emailVerificationOTP = undefined;
-//       user.emailVerificationExpire = undefined;
-//     }
-
-//     // 2️⃣ Phone-based verification
-//     else if (user.preferredVerificationMethod === 'phone') {
-//       if (
-//         !user.phoneVerificationOTP ||
-//         user.phoneVerificationOTP !== otp ||
-//         user.phoneVerificationExpire < now
-//       ) {
-//         return res.status(400).json({ message: 'Invalid or expired OTP for phone verification' });
-//       }
-
-//       user.isVerified = true;
-//       user.phoneVerificationOTP = undefined;
-//       user.phoneVerificationExpire = undefined;
-//     }
-
-//     await user.save();
-
-//     // ✅ Log the verification
-//     await Log.create({
-//       action: 'verifyEmail',
-//       [user.role === 'admin' ? 'admin' : 'user']: user,
-//       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Verified Their Account`,
-//     });
-
-//     res.json({ message: 'Account verified successfully. You can now log in.' });
-//   } catch (error) {
-//     console.error('Account Verification Error:', error.message);
-//     res.status(500).json({ message: 'Server error during verification' });
-//   }
-// };
 
 
 // ✅ @desc    Verify account with OTP (email or phone)
@@ -330,6 +174,7 @@ exports.verifyAccount = async (req, res) => {
       try {
         decoded = await admin.auth().verifyIdToken(firebaseIdToken);
       } catch (err) {
+        logger.error(err.message);
         return res.status(400).json({ message: 'Invalid or expired Firebase token' });
       }
 
@@ -356,117 +201,10 @@ exports.verifyAccount = async (req, res) => {
     res.json({ message: 'Account verified successfully. You can now log in.' });
   } catch (error) {
     console.error('Account Verification Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error during verification' });
   }
 };
-
-
-
-// // ✅ @desc    Resend verification OTP (email or phone)
-// // ✅ @route   POST /api/users/resend-verification
-// // ✅ @access  Public
-// exports.resendVerificationOTP = async (req, res) => {
-//   const { email } = req.body;
-
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(404).json({ message: 'User not found' });
-//     if (user.isVerified) return res.status(400).json({ message: 'Account already verified' });
-
-//     const now = Date.now();
-
-//     // ⏱️ Cooldown enforcement
-//     const lastResend = user.lastOTPResend || 0;
-//     const cooldown = 2 * 60 * 1000;
-//     const timeRemaining = cooldown - (now - lastResend);
-
-//     if (timeRemaining > 0) {
-//       const waitSeconds = Math.ceil(timeRemaining / 1000);
-//       return res.status(429).json({
-//         message: `Please wait ${waitSeconds} seconds before requesting another OTP.`,
-//         remainingSeconds: waitSeconds,
-//       });
-//     }
-
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//     const expiresAt = now + 15 * 60 * 1000;
-
-//     // 🔁 Update OTP fields
-//     if (user.preferredVerificationMethod === 'email') {
-//       user.emailVerificationOTP = otp;
-//       user.emailVerificationExpire = expiresAt;
-//     } else {
-//       user.phoneVerificationOTP = otp;
-//       user.phoneVerificationExpire = expiresAt;
-//     }
-
-//     user.lastOTPResend = now;
-//     await user.save();
-
-//     // ✉️ Send Email
-//     if (user.preferredVerificationMethod === 'email') {
-//       const transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//           user: process.env.EMAIL_USER,
-//           pass: process.env.EMAIL_PASS,
-//         },
-//       });
-
-//       const subject = '🔁 Resend: Your Email Verification OTP';
-//       const htmlBody = `
-//         <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-//           <h2 style="color: #4A90E2; text-align: center;">🔐 Verify Your Email</h2>
-//           <p>Dear <strong>${user.name}</strong>,</p>
-//           <p>You recently requested a new OTP to verify your email address.</p>
-//           <p style="font-size: 1.2em;">🔑 <strong>Your OTP:</strong> <span style="color: #e74c3c;">${otp}</span></p>
-//           <p>This code will expire in 15 minutes.</p>
-//           <hr style="margin: 20px 0;" />
-//           <p style="margin-top: 30px;">
-//             Warm regards,<br/>
-//             <strong>The Document Review System Team</strong><br/>
-//             <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-//           </p>
-//           <p style="font-size: 0.9em; color: #888;">
-//             Need help? Contact <a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a>
-//           </p>
-//         </div>
-//       `;
-
-//       await transporter.sendMail({
-//         from: process.env.EMAIL_USER,
-//         to: email,
-//         subject,
-//         html: htmlBody,
-//       });
-//     }
-
-//     // 📲 Send SMS
-//     else {
-//       if (!user.phone) {
-//         return res.status(400).json({ message: 'Phone number is missing' });
-//       }
-
-//       await twilioClient.messages.create({
-//         body: `🔐 Your new verification code is: ${otp}`,
-//         to: user.phone,
-//         from: process.env.TWILIO_PHONE,
-//       });
-//     }
-
-//     // 📝 Log the resend
-//     await Log.create({
-//       action: 'register',
-//       [user.role === 'admin' ? 'admin' : 'user']: user,
-//       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Requested a new OTP`,
-//     });
-
-//     res.json({ message: 'New OTP sent successfully' });
-//   } catch (error) {
-//     console.error('Resend OTP Error:', error.message);
-//     res.status(500).json({ message: 'Server error during resend' });
-//   }
-// };
 
 
 // ✅ @desc    Resend verification OTP (email or phone)
@@ -520,25 +258,7 @@ exports.resendVerificationOTP = async (req, res) => {
         },
       });
 
-      const subject = '🔁 Resend: Your Email Verification OTP';
-      const htmlBody = `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <h2 style="color: #4A90E2; text-align: center;">🔐 Verify Your Email</h2>
-          <p>Dear <strong>${user.name}</strong>,</p>
-          <p>You recently requested a new OTP to verify your email address.</p>
-          <p style="font-size: 1.2em;">🔑 <strong>Your OTP:</strong> <span style="color: #e74c3c;">${otp}</span></p>
-          <p>This code will expire in 15 minutes.</p>
-          <hr style="margin: 20px 0;" />
-          <p style="margin-top: 30px;">
-            Warm regards,<br/>
-            <strong>The Document Review System Team</strong><br/>
-            <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-          </p>
-          <p style="font-size: 0.9em; color: #888;">
-            Need help? Contact <a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a>
-          </p>
-        </div>
-      `;
+      const { subject, htmlBody } = resendverificationEmailTemplate(user , otp);
 
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
@@ -570,6 +290,7 @@ exports.resendVerificationOTP = async (req, res) => {
     res.json({ message: 'New OTP sent successfully (email or SMS)' });
   } catch (error) {
     console.error('Resend OTP Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error during resend' });
   }
 };
@@ -591,12 +312,13 @@ exports.loginUser = async (req, res) => {
 
     if (!user) {
       console.log('❌ User not found in DB');
+      logger.error("User not found in DB");
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     console.log('✅ User found:', user.email);
     
-    if (!user.isVerified) {
+    if (!user.isVerified && user.role === "user") {
       return res.status(403).json({ message: 'Please verify your email before logging in.' });
     }
     
@@ -607,6 +329,7 @@ exports.loginUser = async (req, res) => {
 
     if (!isMatch) {
       console.log('❌ Password mismatch');
+      logger.error("Password mismatch");
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -635,10 +358,11 @@ exports.loginUser = async (req, res) => {
       token: generateToken(user._id),
       preferredVerificationMethod: user.preferredVerificationMethod,
       verificationStatus: user.verificationStatus,
-      isVerified: user.isVerified,
+      isVerified: true,
     });
   } catch (error) {
     console.error('Login Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -650,13 +374,6 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = async (req, res) => {
   try {
     const Log = require('../models/log');
-
-    // await Log.create({
-    //   action: 'logout',
-    //   admin: req.user.role === 'admin' ? req.user._id : undefined,
-    //   user: req.user.role === 'user' ? req.user._id : undefined,
-    //   message: `${req.user.name} (${req.user.role}) logged out`,
-    // });
 
     // ✅ Log the logout
 
@@ -683,124 +400,10 @@ exports.logoutUser = async (req, res) => {
     res.json({ message: 'Logout successful' });
   } catch (err) {
     console.error('Logout Logging Error:', err.message);
+    logger.error(err.message);
     res.status(500).json({ message: 'Logout failed' });
   }
 };
-
-
-// // ✅ @desc    Send OTP to email for password reset
-// // ✅ @route   POST /api/users/forgot-password
-// // ✅ @access  Public
-// exports.forgotPassword = async (req, res) => {
-//   const { email } = req.body;
-
-//   try {
-//     // 1. Find user
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(404).json({ message: 'User not found' });
-
-//     // 2. Generate OTP (6-digit)
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-//     // 3. Set OTP and expiration (15 min)
-//     user.resetPasswordOTP = otp;
-//     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-
-//     await user.save();
-
-//     // // 4. Create reusable email transporter
-//     // const transporter = nodemailer.createTransport({
-//     //   service: 'gmail',
-//     //   auth: {
-//     //     user: process.env.EMAIL_USER,
-//     //     pass: process.env.EMAIL_PASS,
-//     //   },
-//     // });
-
-//     // // 5. Email options
-//     // const mailOptions = {
-//     //   from: process.env.EMAIL_USER,
-//     //   to: email,
-//     //   subject: 'Your Password Reset OTP',
-//     //   text: `Your OTP code is ${otp}. It expires in 15 minutes.`,
-//     // };
-
-
-//         // 4. Create email transporter
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     // 5. Styled HTML email
-//     const subject = '🔐 Password Reset Request – OTP Inside';
-
-//     const htmlBody = `
-//       <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-//         <h2 style="color: #4A90E2; text-align: center;">🔐 Password Reset Request</h2>
-
-//         <p>Dear <strong>${user.name}</strong>,</p>
-
-//         <p>We received a request to reset the password for your account associated with <strong>${email}</strong>.</p>
-
-//         <p>Please use the following One-Time Password (OTP) to reset your password:</p>
-
-//         <div style="background-color: #fff; padding: 20px; text-align: center; border: 2px dashed #4A90E2; border-radius: 6px; margin: 20px 0;">
-//           <p style="font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #4A90E2;">${otp}</p>
-//           <p style="font-size: 13px; color: #999;">This code will expire in 15 minutes.</p>
-//         </div>
-
-//         <p>If you did not request a password reset, please ignore this email. Your account remains secure.</p>
-
-//         <p>Need help? Contact our support team:</p>
-//         <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-
-//         <p style="margin-top: 30px;">
-//           Warm regards,<br/>
-//           <strong>The Document Review System Team</strong><br/>
-//           <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-//         </p>
-
-//         <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>
-//       </div>
-//     `;
-
-//     // 6. Send the email
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: email,
-//       subject,
-//       html: htmlBody,
-//     });
-
-//     // // 6. Send email
-//     // await transporter.sendMail(mailOptions);
-
-//     // ✅ Log the Forgot Password Attempt
-//     if (user.role === 'admin') {
-//       await Log.create({
-//         action: 'forgotPassword',
-//         admin: user,
-//         message: `Admin ${user.name} With Email ${user.email} Is Attempting A Forgot Password`,
-//       });
-//     } else {
-//       await Log.create({
-//         action: 'forgotPassword',
-//         user: user,
-//         message: `User ${user.name} With Email ${user.email} Is Attempting A Forgot Password`,
-//       });
-//     }
-//     console.log(otp)
-//     res.json({ message: 'OTP sent to email' });
-//   } catch (error) {
-//     console.error('Forgot Password Error:', error.message);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
-
 
 
 // ✅ @desc    Send OTP to email or phone for password reset
@@ -831,38 +434,8 @@ exports.forgotPassword = async (req, res) => {
       },
     });
 
-    // 5️⃣ Compose styled HTML email (for email verification users)
-    const subject = '🔐 Password Reset Request – OTP Inside';
 
-    const htmlBody = `
-      <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-        <h2 style="color: #4A90E2; text-align: center;">🔐 Password Reset Request</h2>
-
-        <p>Dear <strong>${user.name}</strong>,</p>
-
-        <p>We received a request to reset the password for your account associated with <strong>${email}</strong>.</p>
-
-        <p>Please use the following One-Time Password (OTP) to reset your password:</p>
-
-        <div style="background-color: #fff; padding: 20px; text-align: center; border: 2px dashed #4A90E2; border-radius: 6px; margin: 20px 0;">
-          <p style="font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #4A90E2;">${otp}</p>
-          <p style="font-size: 13px; color: #999;">This code will expire in 15 minutes.</p>
-        </div>
-
-        <p>If you did not request a password reset, please ignore this email. Your account remains secure.</p>
-
-        <p>Need help? Contact our support team:</p>
-        <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-
-        <p style="margin-top: 30px;">
-          Warm regards,<br/>
-          <strong>The Document Review System Team</strong><br/>
-          <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-        </p>
-
-        <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>
-      </div>
-    `;
+    const { subject, htmlBody } = forgotpasswordEmailTemplate(user,otp);
 
     // 6️⃣ Decide which method to send OTP (email or phone)
     if (user.preferredVerificationMethod === 'email') {
@@ -892,116 +465,14 @@ exports.forgotPassword = async (req, res) => {
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Is Attempting A Forgot Password`,
     });
 
-    console.log(otp); // helpful for testing
+    // console.log(otp); // helpful for testing
     res.json({ message: 'OTP sent via email or phone' });
   } catch (error) {
     console.error('Forgot Password Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-// // ✅ @desc    Reset password with OTP
-// // ✅ @route   POST /api/users/reset-password
-// // ✅ @access  Public
-// exports.resetPassword = async (req, res) => {
-//   const { email, otp, newPassword } = req.body;
-
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       console.log('❌ User not found in DB');
-//       return res.status(401).json({ message: 'Invalid email or password' });
-//     }
-
-//     const isMatch = await user.matchPassword(newPassword);
-//     if (isMatch) {
-//       console.log('❌ The New Password is matching the old one');
-//       return res.status(401).json({ message: 'The New Password is matching the old one' });
-//     }
-
-//     // Check OTP validity
-//     if (
-//       !user.resetPasswordOTP ||
-//       user.resetPasswordOTP !== otp ||
-//       user.resetPasswordExpire < Date.now()
-//     ) {
-//       return res.status(400).json({ message: 'Invalid or expired OTP' });
-//     }
-
-//     // Update password and clear OTP
-//     user.password = newPassword;
-//     user.resetPasswordOTP = undefined;
-//     user.resetPasswordExpire = undefined;
-//     await user.save();
-
-//     // ✅ Log the Reset Password Attempt
-//     if (user.role === 'admin') {
-//       await Log.create({
-//         action: 'resetPassword',
-//         admin: user,
-//         message: `Admin ${user.name} With Email ${user.email} Is Attempting To Reset His/Her Password`,
-//       });
-//     } else {
-//       await Log.create({
-//         action: 'resetPassword',
-//         user: user,
-//         message: `User ${user.name} With Email ${user.email} Is Attempting To Reset His/Her Password`,
-//       });
-//     }
-
-//     // 📧 Email confirmation
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     const subject = '✅ Password Reset Confirmation';
-
-//     const htmlBody = `
-//       <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-//         <h2 style="color: #28a745; text-align: center;">✅ Password Successfully Reset</h2>
-
-//         <p>Dear <strong>${user.name}</strong>,</p>
-
-//         <p>We're writing to confirm that the password for your account <strong>${email}</strong> has been successfully reset.</p>
-
-//         <p>If you made this change, no further action is needed. You can now log in with your new password.</p>
-
-//         <p style="color: #e74c3c;"><strong>If you did NOT request this change</strong>, please contact us immediately to secure your account.</p>
-
-//         <hr style="margin: 20px 0;" />
-
-//         <p>Need help? Contact our support team:</p>
-//         <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-
-//         <p style="margin-top: 30px;">
-//           Warm regards,<br/>
-//           <strong>The Document Review System Team</strong><br/>
-//           <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-//         </p>
-
-//         <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>
-//       </div>
-//     `;
-
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: user.email,
-//       subject,
-//       html: htmlBody,
-//     });
-
-//     res.json({ message: 'Password reset successful. You can now log in.' });
-//   } catch (error) {
-//     console.error('Reset Password Error:', error.message);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
-
-
 
 // ✅ @desc    Reset password with OTP
 // ✅ @route   POST /api/users/reset-password
@@ -1014,6 +485,7 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       console.log('❌ User not found in DB');
+      logger.error(' User not found in DB');
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -1021,6 +493,7 @@ exports.resetPassword = async (req, res) => {
     const isMatch = await user.matchPassword(newPassword);
     if (isMatch) {
       console.log('❌ The New Password is matching the old one');
+      logger.error(' The New Password is matching the old one');
       return res.status(401).json({ message: 'The New Password is matching the old one' });
     }
 
@@ -1063,34 +536,7 @@ exports.resetPassword = async (req, res) => {
       },
     });
 
-    const subject = '✅ Password Reset Confirmation';
-
-    const htmlBody = `
-      <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-        <h2 style="color: #28a745; text-align: center;">✅ Password Successfully Reset</h2>
-
-        <p>Dear <strong>${user.name}</strong>,</p>
-
-        <p>We're writing to confirm that the password for your account <strong>${email}</strong> has been successfully reset.</p>
-
-        <p>If you made this change, no further action is needed. You can now log in with your new password.</p>
-
-        <p style="color: #e74c3c;"><strong>If you did NOT request this change</strong>, please contact us immediately to secure your account.</p>
-
-        <hr style="margin: 20px 0;" />
-
-        <p>Need help? Contact our support team:</p>
-        <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
-
-        <p style="margin-top: 30px;">
-          Warm regards,<br/>
-          <strong>The Document Review System Team</strong><br/>
-          <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
-        </p>
-
-        <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>
-      </div>
-    `;
+    const { subject, htmlBody } = resetpasswordEmailTemplate(user);
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -1102,6 +548,7 @@ exports.resetPassword = async (req, res) => {
     res.json({ message: 'Password reset successful. You can now log in.' });
   } catch (error) {
     console.error('Reset Password Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -1167,6 +614,7 @@ exports.getMyDocuments = async (req, res) => {
     });
   } catch (error) {
     console.error('Get My Documents Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error retrieving documents' });
   }
 };
@@ -1179,7 +627,6 @@ const Document = require('../models/document');
 // ✅ @desc    Get stats for all regular users
 // ✅ @route   GET /api/users/stats
 // ✅ @access  Admin only
-
 exports.getAllUserStats = async (req, res) => {
   try {
     const { page = 1, limit = 10, name, email, createdAfter, createdBefore } = req.query;
@@ -1255,14 +702,10 @@ exports.getAllUserStats = async (req, res) => {
     });
   } catch (error) {
     console.error('User Stats Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error fetching user stats' });
   }
 };
-
-
-
-const Review = require('../models/review');
-
 
 
 exports.getAdminStats = async (req, res) => {
@@ -1346,6 +789,7 @@ exports.getAdminStats = async (req, res) => {
     });
   } catch (error) {
     console.error('Admin Stats Error:', error.message);
+    logger.error(error.message);
     res.status(500).json({ message: 'Server error fetching admin stats' });
   }
 };
