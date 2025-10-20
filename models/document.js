@@ -1,6 +1,6 @@
 // models/document.js
 const mongoose = require('mongoose');
-const nanoid = require('nanoid');
+const {nanoid} = require('nanoid');
 // import { nanoid } from 'nanoid'; // optional if you go with random IDs
 
 const FieldSchema = new mongoose.Schema({
@@ -67,6 +67,7 @@ const documentSchema = new mongoose.Schema({
   docNumber: {
     type: String,
     unique: true,
+    index: true, // index to speed up searches
     default: () => `DOC-${nanoid(8)}`, // or use incremental method if preferred
   },
 
@@ -113,19 +114,26 @@ const documentSchema = new mongoose.Schema({
     ],
 
     // 🕓 Optional audit trail for review & transfers
+    // activityLog: use denormalized 'by' snapshot for immutability
     activityLog: [
       {
         action: String, // 'submitted', 'assigned', 'reviewed', 'returned'
-        by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        by: { type: Object, default: null }, // denormalized snapshot of actor
         at: { type: Date, default: Date.now },
         note: String,
       },
-    ],
+    ]
 },
 {
   timestamps: true, // Adds createdAt and updatedAt fields
 }
 );
+
+// Useful indexes
+documentSchema.index({ 'user._id': 1 }); // get all docs for a user fast
+documentSchema.index({ 'custody.currentHolder._id': 1 }); // find docs currently held by admin
+documentSchema.index({ docNumber: 1 }, { unique: true }); // ensure uniqueness (redeclared for emphasis)
+
 module.exports = mongoose.model('Document', documentSchema);
 
 // const documentSchema = new mongoose.Schema(
