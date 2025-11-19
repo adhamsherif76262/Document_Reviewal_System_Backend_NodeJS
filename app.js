@@ -39,6 +39,12 @@ app.use(express.json());
 // Middleware: Log HTTP requests in dev format
 app.use(morgan('dev'));
 
+app.use((req, res, next) => {
+  req.setTimeout(200000); // 180 seconds
+  res.setTimeout(200000);
+  next();
+});
+
 // Route Test: Health check or API landing
 app.get('/', (req, res) => {
   res.send('✅ Document Review API is up and running...');
