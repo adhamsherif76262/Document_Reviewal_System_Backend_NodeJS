@@ -1,5 +1,10 @@
 // controllers/user.controller.js
-const crypto = require('crypto');
+// const crypto = require('crypto');
+const { customAlphabet } = require('nanoid');
+
+const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
+const InviteCode = require('../models/InviteCode');
+
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
@@ -10,6 +15,7 @@ const verificationEmailTemplate = require('../utils/emailTemplates/vertification
 const resendverificationEmailTemplate = require('../utils/emailTemplates/resendverification')
 const forgotpasswordEmailTemplate = require('../utils/emailTemplates/forgotpassword')
 const resetpasswordEmailTemplate = require('../utils/emailTemplates/resetpassword')
+const Document = require('../models/document');
 
 // 🔐 Generate a signed JWT token
 const generateToken = (userId) => {
@@ -49,6 +55,7 @@ exports.registerUser = async (req, res) => {
       email,
       password,
       phone,
+      inviteCode,
       preferredVerificationMethod = 'email',
     } = req.body;
 
@@ -62,6 +69,17 @@ exports.registerUser = async (req, res) => {
     if (userPhoneExists) {
       return res.status(400).json({ message: 'User Phone Number Already exists' });
     }
+
+    // ✅ Check invite code
+    const codeDoc = await InviteCode.findOne({ code: inviteCode, status: 'unused' });
+    if (!codeDoc) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or already used invite code.',
+      });
+    }
+
+
 
     // 2️⃣ Generate OTP (for email or fallback SMS)
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -79,6 +97,13 @@ exports.registerUser = async (req, res) => {
       phoneVerificationOTP: preferredVerificationMethod === 'phone' ? otp : undefined,
       phoneVerificationExpire: preferredVerificationMethod === 'phone' ? Date.now() + 15 * 60 * 1000 : undefined,
     });
+
+
+        // ✅ Mark code as used
+    codeDoc.status = 'used';
+    codeDoc.usedBy = (({ _id, email, name, role, phone, isVerified , preferredVerificationMethod }) => ({ _id, email, name, role, phone, isVerified ,preferredVerificationMethod }))(user);
+    codeDoc.usedAt = new Date();
+    await codeDoc.save();
 
     // 4️⃣ Handle Email Verification
     if (preferredVerificationMethod === 'email') {
@@ -103,13 +128,26 @@ exports.registerUser = async (req, res) => {
     }
 
     // 6️⃣ Log registration
-    const logEntry = {
-      action: 'register',
-      message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Was Registered`,
-    };
-    if (user.role === 'admin') logEntry.admin = user;
-    else logEntry.user = user;
-    await Log.create(logEntry);
+    if (user.role === 'admin') {
+      await Log.create({
+        action: 'register',
+        admin: user,
+        message: `Admin ${user.name} With Email ${user.email} Registered An Account.`,
+      });
+    } else {
+      await Log.create({
+        action: 'register',
+        user: user,
+        message: `User ${user.name} With Email ${user.email} Registered An Account.`,
+      });
+    }
+    // const logEntry = {
+    //   action: 'register',
+    //   message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Was Registered`,
+    // };
+    // if (user.role === 'admin') logEntry.admin = user;
+    // else logEntry.user = user;
+    // await Log.create(logEntry);
 
     // 7️⃣ Respond to client
     res.status(201).json({
@@ -417,6 +455,9 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    if (!user.isVerified && user.role === "user") {
+      return res.status(403).json({ message: 'Please Verify Your Email Before Attempting To Change Your Password.' });
+    }
     // 2️⃣ Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -488,7 +529,9 @@ exports.resetPassword = async (req, res) => {
       logger.error(' User not found in DB');
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
+    if (!user.isVerified && user.role === "user") {
+      return res.status(403).json({ message: 'Please Verify Your Email Before Attempting To reset Your Password.' });
+    }
     // 2️⃣ Prevent reusing old password
     const isMatch = await user.matchPassword(newPassword);
     if (isMatch) {
@@ -553,6 +596,82 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// exports.getMyDocuments = async (req, res) => {
+//   try {
+//     const {
+//       page = 1,
+//       limit = 10,
+//       fieldReviewedKey,
+//       fieldReviewedStatus,
+//       docNumber,
+//       docType,
+//       state,
+//       status,
+//     } = req.query;
+
+//     const skip = (parseInt(page) - 1) * parseInt(limit);
+
+//     // 🔍 Base filter — current user only
+//     const filter = {
+//       'user._id': req.user._id,
+//     };
+
+//     // 🎯 Top-level filters
+//     if (docNumber) {
+//       filter.docNumber = { $regex: docNumber, $options: 'i' };
+//     }
+//     if (docType) {
+//       filter.docType = { $regex: docType, $options: 'i' };
+//     }
+//     if (state) {
+//       filter.state = { $regex: state, $options: 'i' };
+//     }
+//     if (status) {
+//       filter.status = status.toLowerCase();
+//     }
+
+//     // 🧩 Field-level filter (inside `fields` map)
+//     if (fieldReviewedKey && fieldReviewedStatus) {
+//       // Matches documents where that specific field’s review.status matches the desired value
+//       filter[`fields.${fieldReviewedKey}.review.status`] = fieldReviewedStatus.toLowerCase();
+//     }
+
+//     // 🧮 Count total before pagination
+//     const totalDocuments = await Document.countDocuments(filter);
+
+//     // 📄 Fetch paginated results
+//     const documents = await Document.find(filter)
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(parseInt(limit));
+
+//     // 🪵 Log the user action
+//     await Log.create({
+//       action: 'GetAllPersonalDocs',
+//       user: req.user,
+//       message: `User ${req.user.name} (Email: ${req.user.email}) viewed their submitted documents.`,
+//     });
+
+//     // 📤 Send response
+//     res.status(200).json({
+//       success: true,
+//       pagination: {
+//         totalDocuments,
+//         totalPages: Math.ceil(totalDocuments / limit),
+//         currentPage: parseInt(page),
+//       },
+//       count: documents.length,
+//       documents,
+//     });
+//   } catch (error) {
+//     console.error('Get My Documents Error:', error.message);
+//     logger.error(error.message);
+//     res.status(500).json({ message: 'Server error retrieving documents' });
+//   }
+// };
+
+
+
 // ✅ @desc    Get all documents submitted by the logged-in user
 // ✅ @route   GET /api/documents/my-submissions
 // ✅ @access  Private (Authenticated users only)
@@ -562,54 +681,159 @@ exports.getMyDocuments = async (req, res) => {
     const {
       page = 1,
       limit = 10,
-      fileName,
-      title,
-      description,
-      category,
+      fieldReviewedKey,
+      fieldReviewedStatus,
+      docNumber,
+      docType,
+      state,
       status,
+      hasPendingResubmission,
+      certificateStatus,
+      startDate,
+      endDate,
     } = req.query;
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // 🔍 Build dynamic filter based on query
-    const filter = {
-      'user._id': req.user._id, // Only the logged-in user's documents
-    };
+    // 🎯 Base user filter
+    const matchStage = { 'user._id': req.user._id };
 
-    if (fileName) {
-      filter.fileName = { $regex: fileName, $options: 'i' };
-    }
-    if (title) {
-      filter.title = { $regex: title, $options: 'i' };
-    }
-    if (description) {
-      filter.description = { $regex: description, $options: 'i' };
-    }
-    if (category) {
-      filter.category = { $regex: category, $options: 'i' };
-    }
+    // 🔍 Top-level filters
+    if (docNumber) matchStage.docNumber = { $regex: docNumber, $options: 'i' };
+    if (docType) matchStage.docType = { $regex: docType, $options: 'i' };
+    if (state) matchStage.state = { $regex: state, $options: 'i' };
     if (status) {
-      filter.status = status.toLowerCase(); // Must be one of the enum values
+      matchStage.status =
+        status === 'partiallyApproved'
+          ? status
+          : status.toLowerCase();
+    }
+    // 📄 4. Filter by Final Certificate Status
+    if (certificateStatus) matchStage['certificate.status'] = { $regex: certificateStatus, $options: 'i' };
+
+    // ⏳ 5. Filter by "hasPendingResubmission" (boolean)
+    if (typeof hasPendingResubmission !== 'undefined') {
+      const value = hasPendingResubmission === 'true' || hasPendingResubmission === true;
+      matchStage.hasPendingResubmission = value;
     }
 
-    const totalDocuments = await Document.countDocuments(filter);
-    const documents = await Document.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit));
+        // 📅 6. Date range filter (createdAt)
+    if (startDate || endDate) {
+      matchStage.createdAt = {};
+      if (startDate) matchStage.createdAt.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Include full day
+        // end.setHours(999,59,59,23); // Include full day
+        matchStage.createdAt.$lte = end;
+      }
+    }
+    
+    const pipeline = [{ $match: matchStage }];
 
-      await Log.create({
-        action: 'GetAllPersonalDocs',
-        user: req.user,
-        message: `User ${req.user.name} With Email ${req.user.email} Is Attempting To View All His / Her Submitted Documents' Data`,
+    // 🧩 Optional field-level filtering (partial key + case-insensitive)
+    if (fieldReviewedKey && fieldReviewedStatus) {
+      pipeline.push({
+        $match: {
+          $expr: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: { $objectToArray: "$fields" },
+                    as: "f",
+                    cond: {
+                      $and: [
+                        // Match partial field key (case-insensitive)
+                        { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
+                        // Match review status (case-insensitive)
+                        { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
+                        // {
+                        //   $eq: [
+                        //     { $toLower: "$$f.v.review.status" },
+                        //     fieldReviewedStatus.toLowerCase()
+                        //   ]
+                        // }
+                      ]
+                    }
+                  }
+                }
+              },
+              0
+            ]
+          }
+        }
       });
+    }
+    // if (fieldReviewedStatus) filter['matchStage.fields.name'] = { $regex: currentHolderName, $options: 'i' };
 
+    // 📊 Pagination & sorting
+    pipeline.push(
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: parseInt(limit) }
+    );
+
+    // 🧮 Get paginated documents
+    const documents = await Document.aggregate(pipeline);
+
+    // 🧮 Total count (run separately without skip/limit)
+    const totalDocuments = await Document.aggregate([
+      { $match: matchStage },
+      ...(fieldReviewedKey && fieldReviewedStatus
+        ? [
+            {
+              $match: {
+                $expr: {
+                  $gt: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: { $objectToArray: "$fields" },
+                          as: "f",
+                          cond: {
+                            $and: [
+                              { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
+                              { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
+                              // {
+                              //   $eq: [
+                              //     { $toLower: "$$f.v.review.status" },
+                              //     fieldReviewedStatus.toLowerCase()
+                              //   ]
+                              // }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    0
+                  ]
+                }
+              }
+            }
+          ]
+        : []),
+      { $count: "total" }
+    ]);
+
+    const totalCount = totalDocuments[0]?.total || 0;
+
+    // 🪵 Log action
+    await Log.create({
+      action: 'GetAllPersonalDocs',
+      user: req.user,
+      message: `User ${req.user.name} (${req.user.email}) viewed their submitted documents.`,
+    });
+
+    // 📤 Respond
     res.status(200).json({
+      success: true,
       pagination: {
-        totalDocuments,
-        totalPages: Math.ceil(totalDocuments / limit),
+        totalDocuments: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
         currentPage: parseInt(page),
       },
+      count: documents.length,
       documents,
     });
   } catch (error) {
@@ -619,17 +843,9 @@ exports.getMyDocuments = async (req, res) => {
   }
 };
 
-
-
-// controllers/user.controller.js
-const Document = require('../models/document');
-
-// ✅ @desc    Get stats for all regular users
-// ✅ @route   GET /api/users/stats
-// ✅ @access  Admin only
 exports.getAllUserStats = async (req, res) => {
   try {
-    const { page = 1, limit = 10, name, email, createdAfter, createdBefore } = req.query;
+    const { page = 1, limit = 10, name, email,expiryStatus,expiresBefore,expiresAfter, createdAfter, createdBefore } = req.query;
 
     // 🔍 Build dynamic filters
     const filter = { role: 'user' };
@@ -641,11 +857,19 @@ exports.getAllUserStats = async (req, res) => {
     if (email) {
       filter.email = { $regex: email, $options: 'i' };
     }
+    if (expiryStatus) {
+      filter.expiryStatus = { $regex: expiryStatus, $options: 'i' };
+    }
 
     if (createdAfter || createdBefore) {
       filter.createdAt = {};
       if (createdAfter) filter.createdAt.$gte = new Date(createdAfter);
       if (createdBefore) filter.createdAt.$lte = new Date(createdBefore);
+    }
+    if (expiresAfter || expiresBefore) {
+      filter.expiryDate = {};
+      if (expiresAfter) filter.expiryDate.$gte = new Date(expiresAfter);
+      if (expiresBefore) filter.expiryDate.$lte = new Date(expiresBefore);
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -667,18 +891,24 @@ exports.getAllUserStats = async (req, res) => {
 
         const pending = documents.filter((doc) => doc.status === 'pending');
         const approved = documents.filter((doc) => doc.status === 'approved');
+        const partiallyApproved = documents.filter((doc) => doc.status === 'partiallyApproved');
         const rejected = documents.filter((doc) => doc.status === 'rejected');
 
         return {
-          userId: user._id,
-          name: user.name,
-          email: user.email,
+          // userId: user._id,
+          // name: user.name,
+          // email: user.email,
+          // expiryStatus: user.expiryStatus,
+          // phone: user.phone,
+          user,
           totalDocuments: documents.length,
           pendingCount: pending.length,
           approvedCount: approved.length,
+          partiallyApprovedCount: partiallyApproved.length,
           rejectedCount: rejected.length,
           pendingDocuments: pending,
           approvedDocuments: approved,
+          partiallyApprovedDocuments: partiallyApproved,
           rejectedDocuments: rejected,
         };
       })
@@ -686,7 +916,7 @@ exports.getAllUserStats = async (req, res) => {
 
     await Log.create({
       action: 'GetAllUsersStats',
-      user: req.user,
+      admin: req.user,
       // document : document,
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Users Data`,
     });
@@ -742,7 +972,7 @@ exports.getAdminStats = async (req, res) => {
 
     const adminStats = await Promise.all(
       admins.map(async (admin) => {
-        const reviews = await Review.find({"reviewedBy._id": admin._id})
+        const reviews = await Review.find({"reviewedBy": admin.name})
           .populate({
             path: 'document',
             model: 'Document', // make sure this matches your actual model name
@@ -751,6 +981,7 @@ exports.getAdminStats = async (req, res) => {
           });
 
         const approved = reviews.filter((r) => r.status === 'approved' && r.document);
+        const partiallyApproved = reviews.filter((r) => r.status === 'partiallyApproved' && r.document);
         const rejected = reviews.filter((r) => r.status === 'rejected' && r.document);
         const pending = reviews.filter((r) => r.status === 'pending' && r.document);
 
@@ -761,9 +992,11 @@ exports.getAdminStats = async (req, res) => {
           createdAt: admin.createdAt,
           totalReviewed: reviews.length,
           approvedCount: approved.length,
+          partiallyApprovedCount: partiallyApproved.length,
           rejectedCount: rejected.length,
           pendingCount: pending.length,
           approvedDocuments: approved,  // includes full review + document
+          partiallyApprovedDocuments: partiallyApproved,  // includes full review + document
           rejectedDocuments: rejected,
           pendingDocuments: pending,
         };
@@ -773,7 +1006,7 @@ exports.getAdminStats = async (req, res) => {
 
     await Log.create({
       action: 'GetAllAdminsStats',
-      user: req.user,
+      admin: req.user,
       // document : document,
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Admins' Statistics`,
     });
@@ -793,3 +1026,126 @@ exports.getAdminStats = async (req, res) => {
     res.status(500).json({ message: 'Server error fetching admin stats' });
   }
 };
+
+exports.generateInviteCode = async (req, res) => {
+  try {
+    const { generatedFor } = req.body;
+
+    if (!generatedFor) {
+      return res.status(400).json({ message: 'generatedFor field is required.' });
+    }
+
+    // 🔍 Check for an existing active invite code for the same user/company
+    const existingCode = await InviteCode.findOne({
+      generatedFor,
+      used: false, // Only check active ones
+    });
+
+    if (existingCode) {
+      return res.status(400).json({
+        message: `An active invite code already exists for ${generatedFor}.`,
+        existingCode: existingCode.code,
+      });
+    }
+    // const code = crypto.randomBytes(4).toString('hex').toUpperCase(); // e.g. 'A1B2C3D4'
+    const code = nanoid(); // e.g. 'A1B2C3D4'
+
+    const newCode = await InviteCode.create({ 
+      code,
+      generatedFor,
+      generatedBy: (({ _id, email, name, role, phone, adminLevel }) => ({ _id, email, name, role, phone, adminLevel }))(req.user)
+    });
+
+    
+    await Log.create({
+      action: 'GenerateRegistrationCode',
+      admin: (({ _id, email, name, role, phone, adminLevel }) => ({ _id, email, name, role, phone, adminLevel }))(req.user),
+      // document : document,
+      message: `Admin ${req.user.name} With Email ${req.user.email} Generated A Registration Code ${(code)} For ${generatedFor}`,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Invite code generated successfully.',
+      code: newCode.code,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error generating invite code.' });
+  }
+};
+
+
+// exports.extendUserExpiryDate = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     // 🧩 1. Fetch the user
+//     const user = await User.findById(id);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//         // 2️⃣ Ensure expiryDate exists
+//     if (!user.expiryDate) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'This user does not have an expiry date set.',
+//       });
+//     }
+
+//     // 3️⃣ Calculate remaining time before expiry
+//     const now = new Date();
+//     const expiry = new Date(user.expiryDate);
+//     const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+
+//     // 4️⃣ Prevent extending if more than 30 days left
+//     if (diffDays > 30) {
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           `Cannot extend this account yet. It still has ${diffDays} days left before expiry.`,
+//       });
+//     }
+
+//     // 🧩 2. Prevent extending admin accounts
+//     if (user.role === 'admin') {
+//       return res.status(400).json({ message: 'Cannot extend expiry for admin accounts' });
+//     }
+
+//     // 🧮 3. Calculate new expiry date (1 year from now OR from current expiry, whichever is later)
+//     const baseDate = user.expiryDate && user.expiryDate > now ? user.expiryDate : now;
+//     const newExpiryDate = new Date(baseDate);
+//     newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+
+//     // 🛠️ 4. Update user record
+//     user.expiryDate = newExpiryDate;
+//     user.expiryStatus = 'active';
+//     await user.save();
+
+//     // 🧾 5. Log the admin action
+//     await Log.create({
+//       action: 'ExtendUserAccountExpiryDate',
+//       admin: req.user,
+//       user: { _id: user._id, name: user.name, email: user.email },
+//       message: `Admin ${req.user.name} With Email (${req.user.email}) Extended The Expiry Date Of User ${user.name} With Email (${user.email}) By One Year , From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]} .`,
+//     });
+
+//     // 🟢 6. Respond to client
+//     res.status(200).json({
+//       success: true,
+//       message: `User account expiry extended successfully From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]}`,
+//       data: {
+//         userId: user._id,
+//         name: user.name,
+//         email: user.email,
+//         newExpiryDate,
+//         expiryStatus: user.expiryStatus,
+//       },
+//     });
+//   } catch (error) {
+//     logger.error('Extend User Expiry Error:', error.message);
+//     res.status(500).json({ message: 'Server error while extending user expiry' });
+//   }
+// };
+

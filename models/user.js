@@ -32,27 +32,28 @@ const userSchema = new mongoose.Schema(
       default: null // only populated if role === 'admin'
     },
         // Account expiration management
-    expirable: {
-      type: Boolean,
-      default: function () {
-        return this.role === 'user';
-      },
-    },
-    expiryStatus: {
-      type: String,
-      enum: ['active', 'expired'],
-      default: 'active',
-    },
-    expiryDate: {
-      type: Date,
-      default: function () {
-        if (this.role === 'user') {
-          const oneYear = 365 * 24 * 60 * 60 * 1000;
-          return new Date(Date.now() + oneYear);
-        }
-        return null;
-      },
-    },
+    // expirable: {
+    //   type: Boolean,
+    //   default: function () {
+    //     return this.role === 'user';
+    //   },
+    // },
+    // expiryStatus: {
+    //   type: String,
+    //   enum: ['active', 'expired'],
+    //   default: 'active',
+    // },
+    // expiryDate: {
+    //   type: Date,
+    //   default: function () {
+    //     if (this.role === 'user') {
+    //       const oneYear = 30 * 1000; // 30 seconds
+    //       // const oneYear = 365 * 24 * 60 * 60 * 1000;
+    //       return new Date(Date.now() + oneYear);
+    //     }
+    //     return null;
+    //   },
+    // },
     
     // OTP support
 
@@ -69,7 +70,12 @@ const userSchema = new mongoose.Schema(
     phoneVerificationExpire: Date,
     isVerified: {
       type: Boolean,
-      default: false,
+      default: function () {
+        if (this.role === 'admin') {
+          return true;
+        }
+        return false;
+      },
     },
     emailVerificationOTP: {
       type: String,

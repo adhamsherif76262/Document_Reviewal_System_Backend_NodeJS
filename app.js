@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const documentRoutes = require('./routes/document.routes');
+// import assignmentRoutes from './routes/assignmentRoutes.js';
+const assignmentRoutes = require ('./routes/assignmentRoutes');
 const { defaultLimiter } = require('./utils/rateLimiter');
 const logger = require('./utils/logger');
 
@@ -54,5 +56,9 @@ app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/admin/logs', require('./routes/log.routes'));
 
 app.use('/api/reviews/', require('./routes/reviewRoutes'));
+
+app.use('/api/assignments', assignmentRoutes);
+
+app.use('/api/certificates', require('./routes/certificateRoutes'));
 
 module.exports = app;

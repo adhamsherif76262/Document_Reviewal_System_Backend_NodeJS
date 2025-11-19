@@ -1,0 +1,107 @@
+{
+    "General":{
+        "tabs":{
+            "Images":[
+              {
+                "name": "commercialRegistryAndTaxCardAndManufacturingLicense",
+                "label": {
+                  "en": "Copy of the commercial registry, tax card, and manufacturing license for locally produced products, or the authorization / registration permit issued by the foreign producing company for imported products (certified by the Egyptian consulate in the country of origin).",
+                  "ar": "صورة من السجل التجارى والبطاقة الضريبية وترخيص التصنيع في حالة المنتج المحلى أو التوكيل أو التصريح بالتسجيل الصادر من الجهة المنتجة الاجنبية موثقاً من القنصلية المصرية في بلد المنشأ طالبة التسجيل للمستورد."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "compositionStatement",
+                "label": {
+                  "en": "Certificate or statement showing the ingredients, the percentage of each component, method of use, dosage rate, type of animal, and purpose of use.",
+                  "ar": "شهادة أو بيان بالمواد الداخلة في التركيب والنسب المئوية لكل منها وطريقة الاستخدام ومعدل الاضافة ونوع الحيوان والغرض من استخدام المنتج ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "manufacturingStepsDocument",
+                "label": {
+                  "en": "Simplified manufacturing steps printed on the company’s official paper and stamped with the company seal.",
+                  "ar": "خطوات التصنيع بشكل مبسط مطبوعة على الورق الخاص بالشركة وختم الشركة ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "importedProductCompositionCertificate",
+                "label": {
+                  "en": "For imported products: the composition statement mentioned in item (2) must be issued by the foreign producing company and certified by the Egyptian consulate in the country of origin.",
+                  "ar": "في حالة المنتج المستورد يجب احضار ما سبق بند ( ۲ ) من الشركة المنتجة الاجنبية موثقة من القنصلية المصرية في بلدالمنشأ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "productSample",
+                "label": {
+                  "en": "Sample of the product or the nutritional elements intended for registration.",
+                  "ar": "عينه من المنتج أو عناصر التغذية المزمع تسجيلها ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "pesticideResiduesAndHeavyMetalsCertificate",
+                "label": {
+                  "en": "Certificate of analysis for pesticide residues and heavy metals in the raw materials.",
+                  "ar": "شهادة تحليل متبقيات المبيدات والعناصر الثقيلة للمواد الخام العلنية ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "nanoParticlesFreeCertificate",
+                "label": {
+                  "en": "Certificate confirming that the product does not contain nano particles.",
+                  "ar": "شهادة تفيد بأن المركب لا يحتوى على جزيئات نانونية ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "nonGmoRawMaterialsCertificate",
+                "label": {
+                  "en": "Certificate proving that the raw materials used are not genetically engineered.",
+                  "ar": "ما يفيد بأن المواد الخام المستخدمة غير مهندسة وراثيا ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "organicRawMaterialsCertificate",
+                "label": {
+                  "en": "Certificate proving that the raw materials used are sourced from organic farms.",
+                  "ar": "ما يفيد بأن المواد الخام المستخدمة من مزارع عضوية ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "productLabelArabicEnglish",
+                "label": {
+                  "en": "Copy of the label matching the analysis and composition data, in both Arabic and English.",
+                  "ar": "صورة من الملصق مطابقاً لبيانات التحليل والتركيب باللغة العربية واللغة الانجليزية ."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "registrationAndTechnicalInspectionFeesReceipt",
+                "label": {
+                  "en": "Receipt for payment of the registration fees issued by the General Administration of Organic Agriculture, and receipt for the technical inspection fee for each material or mixture to be registered.",
+                  "ar": "الايصال الدال على دفع رسوم التسجيل والصادر من الادارة العامة للزراعة العضوية وكذلك ايصال سداد مصاريف الفحص الفنى عن كل مادة أو مخلوط مطلوب تسجيله ."
+                },
+                "type": "image",
+                "required": true
+              }
+            ]
+        }
+    }
+}

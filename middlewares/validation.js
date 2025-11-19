@@ -11,9 +11,9 @@ const validate = (req, res, next) => {
 
 // Validation rules
 exports.validateDocumentUpload = [
-  body('title').notEmpty().withMessage('Title is required'),
-  body('description').optional().isLength({ max: 500 }).withMessage('Description too long'),
-  body('category').optional().isString(),
+  // body('docType').notEmpty().withMessage('The Doc Type is required'),
+  // body('description').optional().isLength({ max: 500 }).withMessage('Description too long'),
+  // body('category').optional().isString(),
   validate,
 ];
 

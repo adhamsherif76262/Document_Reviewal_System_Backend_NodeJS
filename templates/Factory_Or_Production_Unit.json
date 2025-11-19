@@ -1,0 +1,134 @@
+{
+    "General":{
+      "tabs":{
+        "Images": [
+          {
+            "name": "registrationRequestLetter",
+            "label": {
+              "en": "Formal request addressed to the Director of the Central Lab for Organic Agriculture – Director of the General Department of Organic Agriculture, submitted by the company requesting approval to register the production unit/factory at the Central Lab for Organic Agriculture (attached).",
+              "ar": "طلب بإسم الأستاذ الدكتور مدير المعمل المركزي للزراعة العضوية - مدير الإدارة العامة للزراعة العضوية مقدم من الشركة بالموافقة علي تسجيل وحدة الإنتاج مصنع بالمعمل المركزي للزراعة العضوية (مرفق)."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "authorizationOrPowerOfAttorney",
+            "label": {
+              "en": "Original authorization or power of attorney to deal with the General Department of Organic Agriculture, plus a social insurance printout, or a power of attorney for a registration consultancy office provided the office is accredited by the General Department of Organic Agriculture.",
+              "ar": "اصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لـ Print من التأمينات أو تفويض لمكتب إستشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد الإدارة العامة للزراعة العضوية."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "industrialRegistryCertificate",
+            "label": {
+              "en": "Copy of the industrial registry certificate (original for review).",
+              "ar": "صورة شهادة السجل الصناعي (الأصل للإطلاع)."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "operatingLicense",
+            "label": {
+              "en": "Copy of the operating license (original for review).",
+              "ar": "صورة رخصة التشغيل (الأصل للإطلاع)"
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "updatedCommercialRegistryExtract",
+            "label": {
+              "en": "Recent updated extract of the commercial registry issued within the past six months (original for review).",
+              "ar": "مستخرج حديث (محدث) من السجل التجاري بحد أقصي ستة شهور (الأصل للإطلاع)."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "validTaxCardCopy",
+            "label": {
+              "en": "Copy of the valid tax card (original for review).",
+              "ar": "صورة السجل الضريبي ساري (الأصل للإطلاع)."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "productionUnitOwnershipDocument",
+            "label": {
+              "en": "Copy of ownership/possession document of the production unit (ownership deed, lease contract, usufruct, or allocation document) – original for review.",
+              "ar": "صورة من سند حيازة وحدة الإنتاج (عقد الملكية - إيجار - انتفاع - تخصيص) (الأصل للإطلاع)."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "siteEngineeringDrawing",
+            "label": {
+              "en": "Site engineering drawing, stamped and showing the total area.",
+              "ar": "الرسم الهندسي الخاص بالموقع ومختوم وموضح به المساحة."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "productionUnitPhotosWithCoordinates",
+            "label": {
+              "en": "General photographs of the production unit (factory) from inside and outside, including storage units, with GPS coordinates.",
+              "ar": "صور فوتوغرافية عامة لوحدة الإنتاج المصنع من الخارج ومن الداخل ووحدة التخزين عليها الإحداثيات."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "productsToBeManufactured",
+            "label": {
+              "en": "Products intended for production (including analysis reports of ingredients used in the formulations).",
+              "ar": "المركبات المزمع إنتاجها (صورة من التحليلات الخاصة بالمركبات المنتجة للمواد الداخلة في التركيب)"
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "productIdentificationCard",
+            "label": {
+              "en": "Copy of the product identification card.",
+              "ar": "صورة من بطاقة تعريف المنتج"
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "healthSafetyOrFireSystem",
+            "label": {
+              "en": "Health and safety system or fire safety system.",
+              "ar": "نظام صحة وسلامة أو نظام إطفاء."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "trainingCourseCertificate",
+            "label": {
+              "en": "Evidence of completing the training course related to the nature of the products, whether organic inputs (fertilizers), plant protection products, or livestock/fish feed additives.",
+              "ar": "ما يفيد إجتياز الدورة الخاصة بطبيعة المنتجات سواء كانت مدخلات عضوية سمادية / وقاية / إضافات أعلاف حيوانية / إضافات اعلاف سمكية."
+            },
+            "type": "image",
+            "required": true
+          },
+          {
+            "name": "registrationAndInspectionFeeReceipt",
+            "label": {
+              "en": "Proof of payment of registration fees and inspection fees.",
+              "ar": " ما يفيد سداد الرسوم المقررة للتسجيل ورسوم المعاينة."
+            },
+            "type": "image",
+            "required": true
+          }
+        ]
+      }
+    }
+}

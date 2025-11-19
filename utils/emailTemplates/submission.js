@@ -12,14 +12,14 @@ function submissionEmailTemplate(user, document) {
           <h2 style="color: #f0ad4e; text-align: center;">⏳ Document Submitted – Pending Review</h2>
   
           <p>Dear <strong>${user.name}</strong>,</p>
-          <p>Thank you for submitting your document <strong>"${document.title}"</strong>.</p>
+          <p>Thank you for submitting your document <strong>"${document.docType}"</strong>.</p>
           <p>Your file is currently <strong style="color:#f0ad4e;">pending review</strong>.</p>
   
           <hr style="margin: 20px 0;" />
   
           <ul style="list-style: none; padding: 0;">
-            <li><strong>📄 Document Title:</strong> ${document.title}</li>
-            <li><strong>📁 Category:</strong> ${document.category || 'N/A'}</li>
+            <li><strong>📄 Document Title:</strong> ${document.docType}</li>
+            <li><strong>📁 Document Number:</strong> ${document.docNumber}</li>
             <li><strong>⏱️ Status:</strong> Pending Review</li>
             <li><strong>📅 Submitted:</strong> ${new Date().toLocaleString()}</li>
           </ul>
@@ -34,8 +34,8 @@ function submissionEmailTemplate(user, document) {
   
           <p>Thanks for using the <strong>Document Review System</strong>.</p>
   
-          <p style="margin-top: 30px;">Warm regards,<br/><strong>The Document Review System Team</strong><br/><a href="#">yourdomain.com</a></p>
-          <p style="font-size: 0.9em; color: #888;">Need help? Contact <a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
+          <p style="margin-top: 30px;">Warm regards,<br/><strong>The Document Review System Team</strong><br/><a href=${process.env.DOMAIN_URL}>CLOADocumentReviewSystem.com</a></p>
+          <p style="font-size: 0.9em; color: #888;">Need help? Contact <a href="mailto:${process.env.EMAIL_USER}">${process.env.EMAIL_USER}</a></p>
         </div>
       `;
 

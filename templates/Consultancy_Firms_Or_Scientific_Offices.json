@@ -1,0 +1,89 @@
+{
+    "General":{
+        "tabs":{
+            "Images": [
+                {
+                  "name": "consultancyRegistrationRequest",
+                  "label": {
+                    "en": "Official request addressed to the Director of the Central Lab for Organic Agriculture, submitted by the company requesting approval to register as a consultancy firm for organic input registration only.",
+                    "ar": "طلب بإسم الأستاذ الدكتور مدير المعمل المركزي للزراعة العضوية مقدم من الشركة بالموافقة علي تسجيل الشركة كشركة إستشارية في نشاط تسجيل المدخلات العضوية فقط."
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "commercialRegistryUpdated",
+                  "label": {
+                    "en": "Copy of the commercial registry showing the relevant activity, valid and updated (original for review).",
+                    "ar": "صورة من السجل التجاري مذكور بها النشاط ساري ومحدث (الأصل للإطلاع)."
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "taxCardValid",
+                  "label": {
+                    "en": "Copy of the valid tax card (original for review).",
+                    "ar": "صورة من البطاقة الضريبية سارية (الأصل للإطلاع)."
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "companyProfileAndExperience",
+                  "label": {
+                    "en": "Copy of the company profile and previous work portfolio.",
+                    "ar": "نسخة من بروفايل الشركة و سابقة الأعمال."
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "consultantsCVsList",
+                  "label": {
+                    "en": "List of CVs of the consulting staff.",
+                    "ar": "كلمة قائمة بالسيرات الذاتية للسادة الإستشارين"
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "administrativeOrganizationalStructure",
+                  "label": {
+                    "en": "Administrative and organizational structure of the office.",
+                    "ar": "الهيكل الإدارى والتنظيمي بالمكتب"
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "consultantsListWithInsurancePrint",
+                  "label": {
+                    "en": "List of consultants in the company (responsible for the registration process) along with the insurance printout.",
+                    "ar": "قائمة بأسماء الإستشاريين بالشركة (القائمين على عملية التسجيل) مع برينت التأمينات"
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "consultantsTrainingCertificate",
+                  "label": {
+                    "en": "Certificate proving that the company staff have been trained in the activity to be practiced by the consultants to be accredited in the lab.",
+                    "ar": "شهادة تفيد بتدريب منسوبي الشركة في  النشاط الذي سيمارسه الإستشاريين المراد إعتمادهم بالمعمل."
+                  },
+                  "type": "image",
+                  "required": true
+                },
+                {
+                  "name": "registrationFeesReceipt",
+                  "label": {
+                    "en": "Proof of payment of the required registration fees.",
+                    "ar": "ما يفيد سداد الرسوم المقررة للتسجيل"
+                  },
+                  "type": "image",
+                  "required": true
+                }
+            ]
+        }
+    }
+}

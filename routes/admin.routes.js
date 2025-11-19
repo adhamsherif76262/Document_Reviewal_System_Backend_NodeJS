@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middlewares/auth');
+const { protect , isAdmin, isSuperAdmin} = require('../middlewares/auth');
 const User = require('../models/user');
 const Document = require('../models/document');
 const Review = require('../models/review');
@@ -10,7 +10,7 @@ const Review = require('../models/review');
 // @route   GET /api/admin/metrics
 // @desc    Admin dashboard metrics
 // @access  Private (Admins only)
-router.get('/metrics', protect, async (req, res) => {
+router.get('/metrics', protect,isAdmin, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Admins only' });
@@ -41,6 +41,7 @@ router.get('/metrics', protect, async (req, res) => {
       documentStatuses: {
         pending: statusMap.pending || 0,
         approved: statusMap.approved || 0,
+        partiallyApproved: statusMap.partiallyApproved || 0,
         rejected: statusMap.rejected || 0
       }
     });
@@ -54,7 +55,7 @@ router.get('/metrics', protect, async (req, res) => {
 // @route   GET /api/admin/documents
 // @desc    Admin view all documents with filters and pagination
 // @access  Private (Admins only)
-router.get('/documents', protect, async (req, res) => {
+router.get('/documents', protect,isAdmin, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Admins only' });
@@ -65,7 +66,7 @@ router.get('/documents', protect, async (req, res) => {
 
     const query = {};
 
-    if (status && ['pending', 'approved', 'rejected'].includes(status)) {
+    if (status && ['pending', 'approved','partiallyApproved', 'rejected'].includes(status)) {
       query.status = status;
     }
 

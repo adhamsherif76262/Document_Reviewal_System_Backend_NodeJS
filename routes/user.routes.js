@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect, isAdmin } = require('../middlewares/auth');
+const { protect, isAdmin ,isSuperAdmin} = require('../middlewares/auth');
 const {
   registerUser,
   verifyAccount,
@@ -12,6 +12,8 @@ const {
   getAdminStats,
   logoutUser,
   getMyDocuments,
+  generateInviteCode,
+  // extendUserExpiryDate,
 } = require('../controllers/user.controller');
 
 const {
@@ -57,6 +59,11 @@ router.get('/my-submissions', protect, getMyDocuments);
 router.get('/stats', protect, isAdmin, getAllUserStats);
 
 // 👇 Add this new route for admin stats
-router.get('/admins', protect, isAdmin, getAdminStats);
+router.get('/admins', protect, isSuperAdmin, getAdminStats);
+
+router.post('/generate-invite-code', protect, isAdmin, generateInviteCode);
+
+// ✅ Admin-only route to extend the user's account expiry date
+// router.patch('/:id/extend-user-expiry', protect, isAdmin, extendUserExpiryDate);
 
 module.exports = router;

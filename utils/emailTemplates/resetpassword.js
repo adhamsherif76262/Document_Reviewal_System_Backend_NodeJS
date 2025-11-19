@@ -19,12 +19,12 @@ function resetpasswordEmailTemplate(user) {
         <hr style="margin: 20px 0;" />
 
         <p>Need help? Contact our support team:</p>
-        <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
+        <p><a href="mailto:${process.env.EMAIL_USER}">${process.env.EMAIL_USER}</a></p>
 
         <p style="margin-top: 30px;">
           Warm regards,<br/>
           <strong>The Document Review System Team</strong><br/>
-          <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
+          <a href=${process.env.DOMAIN_URL} style="color: #4A90E2;">CLOADocumentReviewSystem.com</a>
         </p>
 
         <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>

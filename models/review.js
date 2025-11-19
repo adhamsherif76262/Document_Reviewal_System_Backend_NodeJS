@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const fieldReviewSchema = new mongoose.Schema(
   {
     fieldKey: { type: String, required: true },
-    status: { type: String, enum: ['approved', 'rejected'], required: true },
+    status: { type: String, enum: ['approved', 'rejected' , 'pending'], required: true },
     comment: { type: String },
   },
   { _id: false }
@@ -30,7 +30,34 @@ const reviewSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+  docType: {
+    type: String,
+    enum: [
+      'Domestic Organic Pesticide',
+      'Imported Organic Pesticide',
+      'Domestic Organic Nutrition',
+      'Imported Organic Nutrition',
+      'Organic Farm',
+      'Exporters Organic Production',
+      'Importers Organic Production',
+      'Warehouse',
+      'Factory Or Production Unit',
+      'Conformity Office Or Entity',
+      'Consultancy Firms Or Scientific Offices',
+      'Organic Feed Logo',
+      'Under_Development_1',
+      'Under_Development_2',
+      'Under_Development_3',
+    ], // adjust as needed
+    required: true
+  },
 
+  state: {
+    type: String,
+    enum: ['Domestic', 'Imported' ,'General'],
+    default: 'General',
+    required: true
+  },
     // Field-level review info (optional)
     fieldsReviewed: [fieldReviewSchema],
 

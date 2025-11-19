@@ -1,0 +1,62 @@
+{
+    "General":{
+        "tabs":{
+            "Images":[
+              {
+                "name": "importerRegistrationRequest",
+                "label": {
+                  "en": "Request addressed to the Director of the Central Lab for Organic Agriculture – General Administration of Organic Agriculture, submitted by the company to approve registration in the importers’ registry at the Central Lab for Organic Agriculture.",
+                  "ar": "طلب بإسم الأستاذ الدكتور مدير المعمل المركزي للزراعة العضوية - مدير الإدارة العامة للزراعة و العضوية مقدم من الشركة بالموافقة علي التسجيل في سجل المستوردين بالمعمل المركزي للزراعة العضوية."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "authorizationLetterWithInsurancePrint",
+                "label": {
+                  "en": "Original authorization or power of attorney to deal with the General Administration of Organic Agriculture, along with an insurance Print, or an authorization for a registration consultancy office provided it is accredited by the General Administration of Organic Agriculture.",
+                  "ar": "أصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لـ Print من التأمينات أو تفويض لمكتب إستشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "importerRegistrationCertificate",
+                "label": {
+                  "en": "Importer registration certificate from the General Organization for Export and Import Control.",
+                  "ar": "شهادة تسجيل المستورد في هيئة الصادرات والواردات."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "updatedCommercialRegistry",
+                "label": {
+                  "en": "Recently issued (updated) commercial registry extract, not exceeding six months.",
+                  "ar": "مستخرج حديث (محدث) من السجل التجاري بحد أقصي ستة شهور."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "productCategoryTrainingCertificate",
+                "label": {
+                  "en": "Certificate proving completion of the training course related to the product category (organic fertilizers / plant protection / animal feed additives / fish feed additives).",
+                  "ar": "ما يفيد إجتياز الدورة الخاصة بطبيعة المنتجات سواء كانت مدخلات عضوية سمادية / وقاية / إضافات أعلاف حيوانية / إضافات اعلاف سمكية"
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "paymentProofForRequiredFees",
+                "label": {
+                  "en": "Proof of payment of the required fees.",
+                  "ar": "ما يفيد سداد الرسوم المقررة."
+                },
+                "type": "image",
+                "required": true
+              }
+            ]
+        }
+    }
+}

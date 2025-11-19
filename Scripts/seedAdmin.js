@@ -54,12 +54,13 @@ const seedAdmin = async () => {
   try {
     await connectDB();
 
+    const adminName = process.env.ADMIN_NAME;
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const adminName = process.env.ADMIN_NAME;
-    const adminRole = process.env.ADMIN_ROLE;
+    const adminPhone = process.env.ADMIN_PHONE;
+    const adminLevel = process.env.ADMIN_LEVEL;
 
-    if (!adminEmail || !adminPassword || !adminName || !adminRole) {
+    if (!adminEmail || !adminPassword || !adminName || !adminLevel || !adminPhone) {
       throw new Error('Missing admin environment variables');
     }
 
@@ -72,16 +73,18 @@ const seedAdmin = async () => {
 
     console.log('🧪 Creating admin with:');
     console.log('Name:', adminName);
-    console.log('Role:', adminRole);
     console.log('Email:', adminEmail);
     console.log('Password:', adminPassword);
+    console.log('Role:', adminLevel);
+    console.log('Phone:', adminPhone);
 
     const admin = new User({
       name: adminName,
       email: adminEmail,
       password: adminPassword,
       role: 'admin',
-      adminLevel : adminRole,
+      adminLevel : adminLevel,
+      phone : adminPhone
     });
 
     await admin.save();
@@ -90,8 +93,8 @@ const seedAdmin = async () => {
     // if (user.role === 'admin') {
       await Log.create({
         action: 'register',
-        admin: admin._id,
-        message: `Admin ${adminName} With Email ${adminEmail} & Administration Level ("${adminRole}") Was Registered`,
+        admin: admin,
+        message: `Admin ${adminName} With Email ${adminEmail} , Administration Level ("${adminLevel}") & Phone ("${adminPhone}) Was Registered`,
       });
     // } else {
     //   await Log.create({

@@ -11,29 +11,29 @@ const generatereSubmissionPDFBuffer = (user, document) => {
   
           const submissionDate = new Date().toLocaleString();
   
-          doc.fontSize(25).fillColor('#333').text('Document Re-Submission Summary', {
+          doc.font('Helvetica-Bold').fontSize(25).fillColor('#333').text('Document Re-Submission Summary', {
             align: 'center',
             underline: true,
           });
   
           doc.moveDown(2);
   
-          const rows = [
-            ['User', user.name],
-            ['Email', user.email],
-            ['Document Title', document.title],
-            ['Category', document.category || 'N/A'],
-            ['File Name', document.fileName],
-            ['Re-Submission Date', submissionDate],
-            ['Status', 'Pending Review'],
-          ];
+    const rows = [
+      ['User', user.name],
+      ['Email', user.email],
+      ['Document Title', document.docType],
+      ['Document Number', document.docNumber],
+      ['Submission Date', submissionDate],
+      ['Status', 'Pending Review'],
+    ];
   
-          doc.fontSize(16);
-          const startX = doc.x;
-          let y = doc.y;
-          const labelWidth = 130;
-          const valueWidth = 400;
-          const rowHeight = 50;
+    doc.fontSize(16);
+    const startX = doc.x;
+    let y = doc.y;
+  
+    const labelWidth = 200;
+    const valueWidth = 330;
+    const rowHeight = 50;
   
           for (const [label, value] of rows) {
             doc.rect(startX, y, labelWidth + valueWidth, rowHeight)
@@ -45,12 +45,21 @@ const generatereSubmissionPDFBuffer = (user, document) => {
                 width: labelWidth,
                 align: 'left',
               });
-  
-            doc.font('Helvetica')
-              .text(value, startX + 10 + labelWidth, y + 7, {
-                width: valueWidth - 20,
-                align: 'left',
-              });
+              if(value === "Pending Review"){
+
+                doc.font('Helvetica').fillColor('#e67e22')
+                  .text(value, startX + 10 + labelWidth, y + 7, {
+                    width: valueWidth - 20,
+                    align: 'left',
+                  });
+                }
+                else{
+                  doc.font('Helvetica').fillColor('#000')
+                    .text(value, startX + 10 + labelWidth, y + 7, {
+                      width: valueWidth - 20,
+                      align: 'left',
+                  });
+                }
   
             y += rowHeight;
           }

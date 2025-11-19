@@ -11,7 +11,7 @@ const generateSubmissionPDFBuffer = (user, document) => {
   
     const submissionDate = new Date().toLocaleString();
   
-    doc.fontSize(25).fillColor('#333').text('Document Submission Summary', {
+    doc.font('Helvetica-Bold').fontSize(25).fillColor('#333').text('Document Submission Summary', {
       align: 'center',
       underline: true,
     });
@@ -21,9 +21,8 @@ const generateSubmissionPDFBuffer = (user, document) => {
     const rows = [
       ['User', user.name],
       ['Email', user.email],
-      ['Document Title', document.title],
-      ['Category', document.category || 'N/A'],
-      ['File Name', document.fileName],
+      ['Document Title', document.docType],
+      ['Document Number', document.docNumber],
       ['Submission Date', submissionDate],
       ['Status', 'Pending Review'],
     ];
@@ -32,8 +31,8 @@ const generateSubmissionPDFBuffer = (user, document) => {
     const startX = doc.x;
     let y = doc.y;
   
-    const labelWidth = 130;
-    const valueWidth = 400;
+    const labelWidth = 200;
+    const valueWidth = 330;
     const rowHeight = 50;
   
     for (const [label, value] of rows) {
@@ -48,11 +47,22 @@ const generateSubmissionPDFBuffer = (user, document) => {
           align: 'left',
         });
       
-      doc.font('Helvetica')
-        .text(value, startX + 10 + labelWidth, y + 7, {
-          width: valueWidth - 20,
-          align: 'left',
-        });
+        
+        if(value === "Pending Review"){
+        doc.font('Helvetica').fillColor('#e67e22')
+          .text(value, startX + 10 + labelWidth, y + 7, {
+            width: valueWidth - 20,
+            align: 'left',
+          });
+        }
+        else{
+
+          doc.font('Helvetica').fillColor('#000')
+            .text(value, startX + 10 + labelWidth, y + 7, {
+              width: valueWidth - 20,
+              align: 'left',
+          });
+        }
       
       y += rowHeight;
     }

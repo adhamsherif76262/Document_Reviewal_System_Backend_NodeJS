@@ -2,6 +2,9 @@
 
 // 1. Load environment variables from the .env file into process.env
 require('dotenv').config();
+const {refreshDocTypeAssignments}  =require ('./utils/refreshDocTypeAssignments');
+const { syncDocAssignments } = require('./utils/syncAssignments');
+const DocTypeAssignment = require('./models/DocTypeAssignment');
 
 // 2. Import the Express app from app.js
 const app = require('./app');
@@ -25,6 +28,24 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   logger.info(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+// in server.js (after DB connection)
+(async () => {
+  try {
+    await refreshDocTypeAssignments();
+    console.log('✅ DocType assignments refreshed at startup');
+  } catch (err) {
+    console.error('⚠️ Failed to refresh DocType assignments:', err.message);
+  }
+})();
+
+(async () => {
+  const assignments = await DocTypeAssignment.find();
+  for (const a of assignments) {
+    await syncDocAssignments(a.docType);
+  }
+})();
+
 
 // Optional: catch unhandled errors
 process.on('unhandledRejection', (err) => {

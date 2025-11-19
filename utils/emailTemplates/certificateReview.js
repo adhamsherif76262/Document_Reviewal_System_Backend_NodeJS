@@ -1,13 +1,13 @@
 // utils/emailTemplates/review.js
-function reviewsubmissionEmailTemplate(user, document, status, admin, comment) {
+function finalcertificatereviewsubmissionEmailTemplate(user, document, status, admin, comment) {
     
  // 6️⃣ Send beautiful HTML email
-const subjectPrefix = status === 'approved' ? '✅ Document Review Update – Approved' : status === 'partiallyApproved' ? '❌ Document Review Update – Action Required' : '❌ Document Review Update – Action Required';
+const subjectPrefix = status === 'approved' ? '✅ Document Final Certificate Review Update – Approved' : '❌ Document Final Certificate Review Update – Action Required';
 
 const htmlBody = `
   <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-    <h2 style="color: ${status === 'approved' ? '#28a745' : status === 'partiallyApproved' ? '#e67e22' : '#e74c3c'}; text-align: center;">
-      ${status === 'approved' ? '✅ Document Approved' :status === 'partiallyApproved' ? '❌ Document Partially Approved' : '❌ Document Rejected'}
+    <h2 style="color: ${status === 'approved' ? '#28a745' : '#e74c3c'}; text-align: center;">
+      ${status === 'approved' ? '✅ Document Final Certificate Approved' : '❌ Document Final Certificate Rejected'}
     </h2>
 
     <p>Dear <strong>${document.user.name}</strong>,</p>
@@ -15,17 +15,15 @@ const htmlBody = `
     <p>We hope you're doing well.</p>
 
     <p>
-      We wanted to inform you that your recent document submission has been reviewed by one of our administrators.
+      We wanted to inform you that your recent document submission with number <strong>${document.docNumber}</strong> has been reviewed by one of our administrators.
       ${status === 'approved' 
         ? `We’re happy to inform you that it <strong>meets all our criteria</strong> and has been marked as <strong style="color:#28a745;">APPROVED</strong>.`
-        : status === 'partiallyApproved' ? 
-        `Unfortunately, the document <strong>only met some of the required criteria</strong> and has been marked as <strong style="color:#e67e22;">PARTIALLY APPROVED</strong>.`
         : `Unfortunately, the document <strong>did not meet the required criteria</strong> and has been marked as <strong style="color:#e74c3c;">REJECTED</strong>.`}
     </p>
 
     <hr style="margin: 20px 0;" />
 
-    <p><strong>📄 Document Status:</strong> ${status === 'approved' ? '✅ Approved' : status === 'partiallyApproved' ? '❌ Partially Approved' : '❌ Rejected'}</p>
+    <p><strong>📄 Document Status:</strong> ${status === 'approved' ? '✅ Approved' : status === 'partiallyApproved' ? '❌ partiallyApproved' : '❌ Rejected'}</p>
     <p><strong>👤 Reviewed By:</strong> ${admin.name} (${admin.email})</p>
     ${comment ? `
       <p><strong>📝 Comment from Reviewer:</strong></p>
@@ -74,4 +72,4 @@ const htmlBody = `
   return { subjectPrefix, htmlBody };
 }
 
-module.exports = reviewsubmissionEmailTemplate;
+module.exports = finalcertificatereviewsubmissionEmailTemplate;

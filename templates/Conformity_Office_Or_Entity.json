@@ -1,0 +1,116 @@
+{
+    "General":{
+        "tabs":{
+          "Images": [
+            {
+              "name": "authorizationLetter",
+              "label": {
+                "en": "Original authorization for dealing with the General Department of Organic Agriculture.",
+                "ar": "أصل تفويض التعامل مع الإدارة العامة للزراعة العضوية."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "updatedCommercialRegistry",
+              "label": {
+                "en": "Recent extract of the commercial registry issued within a maximum of six months.",
+                "ar": " مستخرج حديث من السجل التجارى بحد أقصى ستة شهور."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "validTaxCard",
+              "label": {
+                "en": "Valid tax card.",
+                "ar": "بطاقة ضريبية سارية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "accreditationCertificateCopy",
+              "label": {
+                "en": "Copy of the accreditation certificate for accredited companies (local companies – EGAC).",
+                "ar": "تقديم صورة من شهادة الإعتماد بالنسبة للشركات المعتمدة (الشركات المحلية-الإيجاك)."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "agencyContractForConformityBody",
+              "label": {
+                "en": "For conformity bodies and their branches: attach the agency contract with the parent company, provided that the parent company is internationally accredited.",
+                "ar": "بالنسبة لجهات المطابقة وفروعها يرفق عقد الوكالة مع الشركة الأم على أن يكون هذه الشركة معتمدة دولياً."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "staffStructureDetails",
+              "label": {
+                "en": "Details of the conformity body’s staff: number of employees, qualifications, and job distribution (administrative structure).",
+                "ar": "تقديم البيانات الخاصة بالعاملين بجهه المطابقة من حيث العدد والمؤهلات وتوزيعهم على الوظائف (الهيكل الإداري)."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "conformityBodyActivitiesReport",
+              "label": {
+                "en": "Report of the conformity body’s activities showing the number of registered farms or registered companies for each agricultural season (including a list of farm names, registered companies, and organic inputs where applicable).",
+                "ar": "تقديم أعمال جهه المطابقة من حيث عدد المزارع المسجلة أو عدد الشركات المسجلة وذلك كل موسم زراعي (قائمة بأسماء المزارع والشركات المسجلة وعدد المدخلات العضوية (إن وجدت)."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "issuedCertificatesList",
+              "label": {
+                "en": "List of the content of certificates issued for the local market during the previous period before registration, along with copies of export certificates for external and local markets.",
+                "ar": "يقدم مقدم الطلب قائمة بمحتوى الشهادات الصادرة للسوق المحلى عن الفترة السابقة قبل التسجيل وصور شهادات التصدير للأسواق الخارجية والمحلية."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "exportCertificatesSubmissionCommitment",
+              "label": {
+                "en": "Commitment to submit copies of export certificates for external and local markets every three months to the administration after completing the registration procedures.",
+                "ar": "عمل تعهد بإرسال صور شهادات التصدير للأسواق الخارجية والمحلية / ٣ شهور للإدارة بعد إتمام إجراءات التسجيل."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "shipmentRejectionNotification",
+              "label": {
+                "en": "Applicant must notify the General Department of Organic Agriculture immediately if any organic shipment is rejected due to non-compliance with specifications.",
+                "ar": "يتقدم مقدم الطلب ببلاغ للإدارة العامة للزراعة العضوية فوراً حين تعرض اى من الشحنات العضوية لارفض نتيجة عدم مطابقته للمواصفات."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "internationalAccreditationUpdateReport",
+              "label": {
+                "en": "Applicant must inform the General Department of Organic Agriculture – Central Lab for Organic Agriculture with the results of annual international accreditation renewal or continuation, conducted by international accreditation or conformity bodies, especially if updates to organic agriculture regulations occur.",
+                "ar": "على مقدم الطلب إبلاغ الادارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية بنتائج تجديد أو مواصلة الاعتماد الدولي السنوي والتي تتم بواسطة مكاتب الإعتماد الدولية أو المطابقة في حال وجود تحديثات لقوانين الزراعة العضوية المعتمد فيها."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "complaintsListCommitment",
+              "label": {
+                "en": "Commitment to submit a list of complaints submitted by clients or accreditation bodies.",
+                "ar": "تعهد تقديم قائمة بالشكاوي المقدمة الخاصة بالعملاء او جهات الاعتماد ."
+              },
+              "type": "image",
+              "required": true
+            }
+          ]
+        }
+    }
+}

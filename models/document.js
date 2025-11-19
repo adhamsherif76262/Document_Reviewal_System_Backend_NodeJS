@@ -1,7 +1,16 @@
 // models/document.js
 const mongoose = require('mongoose');
-const {nanoid} = require('nanoid');
+// const {nanoid} = require('nanoid');
 // import { nanoid } from 'nanoid'; // optional if you go with random IDs
+const { customAlphabet } = require('nanoid');
+
+// Define the alphabet to include only digits (0-9)
+const nanoid = customAlphabet('0123456789', 8);
+
+// // Generate an 8-digit random number
+// const randomNumber = nanoid();
+
+// console.log(randomNumber);
 
 const FieldSchema = new mongoose.Schema({
   type: {
@@ -23,7 +32,7 @@ const FieldSchema = new mongoose.Schema({
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
-    adminComment: String,
+      adminComment: { type: String, default: '' },
   }
   
 }, { _id: false } // ✅ Prevents generating _id for each field
@@ -68,7 +77,7 @@ const documentSchema = new mongoose.Schema({
     type: String,
     unique: true,
     index: true, // index to speed up searches
-    default: () => `DOC-${nanoid(8)}`, // or use incremental method if preferred
+    default: () => `${nanoid()}`, // or use incremental method if preferred
   },
 
   fields: {
@@ -82,6 +91,44 @@ const documentSchema = new mongoose.Schema({
     enum: ['pending', 'partiallyApproved', 'approved', 'rejected'],
     default: 'pending'
   },
+  certificate: {
+  images: [String], // array of URLs (Cloudinary/Supabase)
+  uploadedBy: {
+    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    name: String,
+    email: String,
+    role: String, // e.g. "admin"
+    adminLevel: String, // e.g. "regular" or "super"
+    phone: String,
+  },
+  uploadedAt: Date,
+
+  approvedBy: {
+    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    name: String,
+    email: String,
+    role: String, // always "admin"
+    adminLevel: String, // always "super"
+    phone: String,
+  },
+  approvedAt: Date,
+  rejectedBy: {
+    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    name: String,
+    email: String,
+    role: String, // always "admin"
+    adminLevel: String, // always "super"
+    phone: String,
+  },
+  rejectedAt: Date,
+
+  status: {
+    type: String,
+    enum: ['none', 'pending', 'approved', 'rejected'],
+    default: 'none',
+  },
+  comment: String, // optional comment if rejected
+  },
 
   submittedAt: {
     type: Date,
@@ -91,25 +138,24 @@ const documentSchema = new mongoose.Schema({
   lastReviewedAt: {
     type: Date
   },
-    // 🧭 Custody management
-    custody: {
-      currentHolder: {
+  // 🧭 Custody management
+  custody: {
+    currentHolder: {
+      type: Object,
+      ref: 'User',
+    },
+    previousHolders: [
+      {
         type: Object,
         ref: 'User',
       },
-      previousHolders: [
-        {
-          type: Object,
-          ref: 'User',
-        },
-      ],
-    },
+    ],
+  },
 
     // 🧩 Delegated admins (for multi-review process)
     assignedAdmins: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: Object,
       },
     ],
 
@@ -117,17 +163,30 @@ const documentSchema = new mongoose.Schema({
     // activityLog: use denormalized 'by' snapshot for immutability
     activityLog: [
       {
-        action: String, // 'submitted', 'assigned', 'reviewed', 'returned'
-        by: { type: Object, default: null }, // denormalized snapshot of actor
-        at: { type: Date, default: Date.now },
-        note: String,
+        _id: false, // Prevent Mongoose from adding an ObjectId
+        action: { type: String, required: true }, // e.g. "submitted", "approved"
+        by: { type: String, required: true },     // e.g. "Adham Sherif"
+        role: { type: String, required: true },   // "user" or "admin"
+        timestamp: { type: Date, default: Date.now }
       },
-    ]
+    ],
+    hasPendingResubmission: { type: Boolean, default: false },
+    adminComment: { type: String, default: '' },
 },
 {
   timestamps: true, // Adds createdAt and updatedAt fields
 }
 );
+
+documentSchema.pre('save', function (next) {
+  const fields = this.fields || {};
+  const hasPending = Array.from(fields.values()).some(
+    (f) => f.review.status === 'pending'
+  );
+  this.hasPendingResubmission = hasPending;
+  next();
+});
+
 
 // Useful indexes
 documentSchema.index({ 'user._id': 1 }); // get all docs for a user fast

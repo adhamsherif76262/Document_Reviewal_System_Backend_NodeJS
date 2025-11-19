@@ -12,7 +12,7 @@ function forgotpasswordEmailTemplate(user, otp) {
 
         <p>Dear <strong>${user.name}</strong>,</p>
 
-        <p>We received a request to reset the password for your account associated with <strong>${user.email}</strong>.</p>
+        <p>We received a request to reset the password for your account associated with email <strong>${user.email}</strong>.</p>
 
         <p>Please use the following One-Time Password (OTP) to reset your password:</p>
 
@@ -24,12 +24,12 @@ function forgotpasswordEmailTemplate(user, otp) {
         <p>If you did not request a password reset, please ignore this email. Your account remains secure.</p>
 
         <p>Need help? Contact our support team:</p>
-        <p><a href="mailto:adhamsherif7261@gmail.com">adhamsherif7261@gmail.com</a></p>
+        <p><a href="mailto:${process.env.EMAIL_USER}">${process.env.EMAIL_USER}</a></p>
 
         <p style="margin-top: 30px;">
           Warm regards,<br/>
           <strong>The Document Review System Team</strong><br/>
-          <a href="https://yourdomain.com" style="color: #4A90E2;">yourdomain.com</a>
+          <a href=${process.env.DOMAIN_URL} style="color: #4A90E2;">CLOADocumentReviewSystem.com</a>
         </p>
 
         <p style="font-size: 0.8em; color: #999; margin-top: 20px;">This is an automated email. Please do not reply directly.</p>

@@ -1,0 +1,71 @@
+{
+    "General":{
+        "tabs":{
+            "Images": [
+              {
+                "name": "registrationRequestForOrganicInputWarehouse",
+                "label": {
+                  "en": "Request addressed to the Director of the Central Lab for Organic Agriculture – General Administration of Organic Agriculture, submitted by the company to approve registering a warehouse for organic input products at the Central Lab for Organic Agriculture.",
+                  "ar": "طلب بإسم الأستاذ الدكتور مدير المعمل المركزي للزراعة العضوية - مدير الإدارة العامة للزراعة العضوية مقدم من الشركة بالموافقة علي تسجيل مخزن لمدخلات الإنتاج العضوي بالمعمل المركزي للزراعة العضوية."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "authorizationLetterWithInsurancePrint",
+                "label": {
+                  "en": "Original authorization or power of attorney to deal with the General Administration of Organic Agriculture, along with an insurance Print, or an authorization for a registration consultancy office provided it is accredited by the General Administration of Organic Agriculture.",
+                  "ar": "أصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لـ Print من التأمينات أو تفويض لمكتب إستشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "warehousePossessionDocument",
+                "label": {
+                  "en": "Possession document for the warehouse (ownership contract – lease contract with official date – usufruct contract – allocation document).",
+                  "ar": "سند الحيازة للمستودع عقد ملكية - عقد إيجار بصحة تاريخ - عقد إنتفاع أو تخصيص)."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "warehouseLicense",
+                "label": {
+                  "en": "License for establishing a warehouse/storage facility.",
+                  "ar": "رخصة إنشاء مخزن / مستودع."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "warehouseSketchDrawing",
+                "label": {
+                  "en": "Sketch engineering drawing of the warehouse/storage facility.",
+                  "ar": "رسم هندسي كروكي للمستودع / مخزن"
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "trainingCourseCertificateForProductCategory",
+                "label": {
+                  "en": "Certificate proving completion of the training course related to the product category (organic fertilizers / plant protection / animal feed additives / fish feed additives).",
+                  "ar": "ما يفيد إجتياز الدورة الخاصة بطبيعة المنتجات سواء كانت مدخلات عضوية سمادية / وقاية / إضافات أعلاف حيوانية / إضافات أعلاف سمكية."
+                },
+                "type": "image",
+                "required": true
+              },
+              {
+                "name": "paymentProofForRegistrationFees",
+                "label": {
+                  "en": "Proof of payment of the required registration fees.",
+                  "ar": "ما يفيد سداد الرسوم المقررة."
+                },
+                "type": "image",
+                "required": true
+              }
+            ]
+        }
+    }
+}

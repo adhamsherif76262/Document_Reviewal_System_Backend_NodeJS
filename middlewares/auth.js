@@ -45,9 +45,22 @@ exports.protect = async (req, res, next) => {
 
 // ✅ Check if the user is an admin
 exports.isAdmin = (req, res, next) => {
+    if(!req.user){return res.status(404).json({ message: 'User Is Undefined'});}
+
   if (req.user && req.user.role === 'admin') {
     return next();
   } else {
     return res.status(403).json({ message: 'Admin access only' });
+  }
+};
+
+// ✅ Check if the user is a super admin
+exports.isSuperAdmin = (req, res, next) => {
+  if(!req.user){return res.status(404).json({ message: 'User Is Undefined'});}
+  if (req.user && req.user.role === 'admin'&& req.user.adminLevel === 'super') {
+    return next();
+  } else {
+    console.log(req.user.role)
+    return res.status(403).json({ message: 'Only Super Admins Are Granted Access.'});
   }
 };

@@ -1,0 +1,423 @@
+{
+    "Domestic":{
+        "tabs":{
+            "Images": [
+                {
+      "name": "technicalDataFileForm1",
+      "label": {
+        "en": "Technical data file for the nutritional input (Form 1).",
+        "ar": "ملف البيانات الفنية الخاصة بمدخل التغذية (نموذج 1)"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "authorizationOrPowerOfAttorney",
+      "label": {
+        "en": "Original authorization or power of attorney to deal with the General Department of Organic Agriculture, plus a social insurance printout, or a power of attorney for a registration consultancy office (must be accredited by the General Department of Organic Agriculture).",
+        "ar": "اصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لـ Print من التأمينات أو تفويض لمكتب إستشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "compositionCertificate",
+      "label": {
+        "en": "Composition certificate (ingredients).",
+        "ar": "شهادة التركيب المكونات)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "ingredientsAnalysisCertificate",
+      "label": {
+        "en": "Ingredients analysis certificate from the manufacturer and from an accredited independent laboratory.",
+        "ar": "شهادة تحليل المكونات من المصنع ومن معمل محايد معتمد."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "heavyMetalsAnalysisCertificate",
+      "label": {
+        "en": "Heavy metals analysis certificate.",
+        "ar": "شهادة تحليل العناصر الثقيلة"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "pathogenFreeCertificate",
+      "label": {
+        "en": "Certificate confirming the product is free of pathogens or unintended contaminants (certified).",
+        "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بقصد الخلق (موثقة)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "noGmoCertificate",
+      "label": {
+        "en": "Certificate confirming the product is free of genetic modification (GMO).",
+        "ar": "شهادة تحليل بخلو المنتج من المعاملات الوراثية  (GMO) "
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "additionalRequiredAnalyses",
+      "label": {
+        "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture or the Central Lab for Organic Agriculture, depending on the composition of the nutritional input.",
+        "ar": " وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية على حسب تركيبة مدخل التغذية."
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "msds",
+      "label": {
+        "en": "MSDS (Material Safety Data Sheet).",
+        "ar": "MSDS (نشرة معلومات السلامة والتداول)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "tds",
+      "label": {
+        "en": "TDS (Technical Data Sheet).",
+        "ar": "TDS (نشرة المعلومات التقنية)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "finalLabelArtworkForm2",
+      "label": {
+        "en": "The proposed final label for Egypt (Art Work system), signed and stamped by the importing company (Form 2).",
+        "ar": "المتصل المقترح في مصر بشكله النهائي موقع ومختوم من الشركة المستوردة بنظام Art work (نموذج 2) ."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "qualityGuaranteeCertificate",
+      "label": {
+        "en": "Quality guarantee certificate from the producing company.",
+        "ar": "شهادة ضمان جودة من الشركة المنتجة "
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "organicFertilizerFarmData",
+      "label": {
+        "en": "For organic fertilizer (compost) produced for private non-commercial use: submit all farm data for the farms owned by the production unit.",
+        "ar": "في حالة السماد العضوي (الكمبوست) (الإنتاج الخاص الغير مخصص للبيع): إضافة جميع مفادات الحيارة للمزارع التابعة لمالكة وحدة الإنتاج"
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "bioFertilizerEffectivenessStudies",
+      "label": {
+        "en": "For biofertilizers or products containing microbial inputs: effectiveness trials or a published research paper under the product’s trade name, or a study from a specialized research institute or GLP laboratory, or trials and effectiveness tests by the General Department of Organic Agriculture.",
+        "ar": "في حالة المخصب الحيوي أو وجود microbial بالمدخل: لابد من عمل تجارب فاعلية أو بحث منشور بالاسم التجاري للمنتج أو دراسة من معهد بحثي متخصص أو معمل GLP أو تجارب و فاعلية بالإدارة العامة للزراعة العضوية"
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "trainingCourseCertificate",
+      "label": {
+        "en": "Certificate of completing a training course at the General Department of Organic Agriculture.",
+        "ar": "شهادة اجتياز دورة تدريبية بالإدارة العامة للزراعة العضوية ."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "productionProcessFlowchart",
+      "label": {
+        "en": "Flowchart of the production process.",
+        "ar": "مخطط بطريقة الإنتاج."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "registrationAndTechnicalFeesReceipt",
+      "label": {
+        "en": "Proof of payment for registration and technical examination fees.",
+        "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "organicInputLogoRequestForm3",
+      "label": {
+        "en": "Application form for obtaining the organic input logo (Form 3).",
+        "ar": "طلب الحصول علي شعار مدخل عضوي (نموذج 3)."
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "previousRegistrationCertificate",
+      "label": {
+        "en": "Copy of the registration certificate (in case of re-registration).",
+        "ar": "تقديم صورة من شهادة التسجيل في حالة إعادة التسجيل"
+      },
+      "type": "image",
+      "required": false
+                }
+            ],
+            "Pdfs":[
+                {
+                  "name": "",
+                  "label": {
+                    "en": "",
+                    "ar": ""
+                  },
+                  "type": "image",
+                  "required": true
+                }
+            ]
+        }
+    },
+    "Imported":{
+        "tabs":{
+            "Images": [
+                {
+      "name": "exporterAuthorizationLetter",
+      "label": {
+        "en": "Authorization letter from the exporting company to the importing company for fertilizer registration or trade in Egypt (certified).",
+        "ar": "خطاب تفويض من الشركة المصدرة الشركة المستوردة للتسجيل السماد أو الاتجار به في مصر (موثق)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "authorizationOrPowerOfAttorney",
+      "label": {
+        "en": "Original authorization or power of attorney to deal with the General Department of Organic Agriculture, plus a social insurance printout, provided the consultancy office is accredited by the General Department of Organic Agriculture.",
+        "ar": "اصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لـ Print من التأمينات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "freeSaleCertificate",
+      "label": {
+        "en": "Valid Free Sale Certificate authenticated by the embassy of the producing country, in English.",
+        "ar": "شهادة توثيق المنتج في بلد المنشأ سارية موثقة من سفارة الدولة المنتجة باللغة الانجليزية - Free Sale Certificate"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "technicalDataFileForm1",
+      "label": {
+        "en": "Technical data file for the product (Form 1).",
+        "ar": " ملف البيانات الفنية الخاصة بالمستحضر (نموذج ١)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "noGmoAnalysisCertificate",
+      "label": {
+        "en": "Analysis certificate confirming the product is free of genetically modified organisms (No GMO).",
+        "ar": "– شهادة تحليل خلو المنتج من الكائنات المعدلة وراثيآ _ No GMO"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "radiationFreeCertificate",
+      "label": {
+        "en": "Analysis certificate confirming the product is free of radiation.",
+        "ar": "– شهادة تحليل خلو المنتج من الاشعاع"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "heavyMetalsFreeCertificate",
+      "label": {
+        "en": "Analysis certificate confirming the product is free of heavy metals.",
+        "ar": "– شهادة تحليل خلو المنتج من المعادن الثقيلة"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "tds",
+      "label": {
+        "en": "TDS (Technical Data Sheet).",
+        "ar": "– TDS ( نشرة الخصائص الفنية )"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "msds",
+      "label": {
+        "en": "MSDS (Material Safety Data Sheet).",
+        "ar": "– MSDS ( نشرة معلومات السلامة والتداول )"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "originLabelStamped",
+      "label": {
+        "en": "Product label in the country of origin (stamped and signed) by the producing company.",
+        "ar": "– الملصق فى بلد المنشأ (مختوم و موقع) من الشركة المنتجة"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "finalArtworkLabelForm2",
+      "label": {
+        "en": "Proposed final label for Egypt (Art Work system), signed and stamped by the importing company (Form 2).",
+        "ar": "المتصل المقترح في مصر بشكله النهائي موقع ومختوم من الشركة المستوردة بنظام Art work (نموذج 2) ."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "compositionCertificate",
+      "label": {
+        "en": "Composition certificate (ingredients).",
+        "ar": "شهادة التركيب (المكونات)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "ingredientsAnalysisCertificate",
+      "label": {
+        "en": "Ingredients analysis certificate from the manufacturer and from an accredited independent laboratory.",
+        "ar": "شهادة تحليل المكونات من المصنع ومن معمل محايد معتمد."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "pathogenFreeCertificate",
+      "label": {
+        "en": "Certificate confirming the product is free of pathogens or unintended contaminants (certified).",
+        "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بقصد الخلق (موثق)"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "additionalRequiredAnalyses",
+      "label": {
+        "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture or the Central Lab for Organic Agriculture, depending on the composition of the nutritional input.",
+        "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية علي حسب تركيبة مدخل التغذية."
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "qualityGuaranteeCertificate",
+      "label": {
+        "en": "Quality guarantee certificate from the producing company (certified).",
+        "ar": "شهادة ضمان جودة من الشركة المنتجة (موثقة)"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "conformityCertificate",
+      "label": {
+        "en": "Conformity certificate confirming that the product is registered or undergoing registration by conformity bodies within Egypt, provided these bodies are accredited by the General Department of Organic Agriculture – Central Lab for Organic Agriculture.",
+        "ar": "شهادة مطابقة من جهات المطابقة على أن المنتج تم تسجيله أو جديدة يتم تسجيله، جهة المطابقة داخل مصر بالادارة العامة للزراعة العضوية – المعمل المركزي للزراعة العضوية"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "bioFertilizerEffectivenessStudies",
+      "label": {
+        "en": "For biofertilizers or inputs containing microbial content: effectiveness trials, a research study from a specialized research institute, a GLP laboratory report, or effectiveness trials conducted by the General Department of Organic Agriculture – Central Lab for Organic Agriculture.",
+        "ar": "في حالة المخصب الحيوي أو وجود Microbial بالمدخل: لابد من عمل تجارب فاعلية للمنتج/دراسة من معهد بحوث متخصص/معمل GLP/تجارب فاعلية بالإدارة العامة للزراعة العضوية – المعمل المركزي للزراعة العضوية."
+      },
+      "type": "image",
+      "required": false
+                },
+                {
+      "name": "gmpComplianceReference",
+      "label": {
+        "en": "GMP (Good Manufacturing Practice) compliance reference from the producing factory.",
+        "ar": " المرجعية الخاصة بمعايير الإنتاج المطابقة في بلد المنشأ GMP للمصنع المنتج"
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "trainingCourseCertificate",
+      "label": {
+        "en": "Certificate of completing a training course at the General Department of Organic Agriculture – Central Lab for Organic Agriculture.",
+        "ar": "شهادة إجتياز دورة تدريبية بالإدارة العامة للزراعة العضوية – المعمل المركزي للزراعة العضوية."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "organicInputLogoRequestForm3",
+      "label": {
+        "en": "Application form to obtain the organic input logo (Form 3).",
+        "ar": "طلب الحصول على شعار مدخل عضوى (نموذج ٣)."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "productionProcessFlowchart",
+      "label": {
+        "en": "Flowchart of the production process.",
+        "ar": "مخطط بطريقة الإنتاج."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "registrationAndTechnicalFeesReceipt",
+      "label": {
+        "en": "Proof of payment for registration and technical examination fees.",
+        "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني."
+      },
+      "type": "image",
+      "required": true
+                },
+                {
+      "name": "previousRegistrationCertificate",
+      "label": {
+        "en": "Copy of the registration certificate (in case of re-registration).",
+        "ar": "تقديم صورة من شهادة التسجيل بالإدارة العامة للزراعة العضوية في حالة إعادة التسجيل."
+      },
+      "type": "image",
+      "required": false
+                }
+            ],
+            "Pdfs":[
+                {
+                  "name": "",
+                  "label": {
+                    "en": "",
+                    "ar": ""
+                  },
+                  "type": "image",
+                  "required": true
+                }
+            ]
+        }
+    }
+}
