@@ -120,26 +120,26 @@ exports.registerUser = async (req, res) => {
     await codeDoc.save();
 
     // 4️⃣ Handle Email Verification
-    if (preferredVerificationMethod === 'email') {
+    // if (preferredVerificationMethod === 'email') {
 
-      const { subject, htmlBody } = verificationEmailTemplate(user , otp);
+    //   const { subject, htmlBody } = verificationEmailTemplate(user , otp);
       
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject,
-        html: htmlBody,
-      });
+    //   await transporter.sendMail({
+    //     from: process.env.EMAIL_USER,
+    //     to: user.email,
+    //     subject,
+    //     html: htmlBody,
+    //   });
 
-    } else {
-      // 5️⃣ Firebase Phone Auth (SMS is handled client-side)
-      if (!user.phone) {
-        return res.status(400).json({ message: 'Phone number is required for SMS verification' });
-      }
+    // } else {
+    //   // 5️⃣ Firebase Phone Auth (SMS is handled client-side)
+    //   if (!user.phone) {
+    //     return res.status(400).json({ message: 'Phone number is required for SMS verification' });
+    //   }
 
-      // 🔐 Firebase handles SMS sending via client-side SDK
-      // So here we just return response and expect frontend to trigger phone auth
-    }
+    //   // 🔐 Firebase handles SMS sending via client-side SDK
+    //   // So here we just return response and expect frontend to trigger phone auth
+    // }
 
     // 6️⃣ Log registration
     if (user.role === 'admin') {
