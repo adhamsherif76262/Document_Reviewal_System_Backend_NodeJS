@@ -417,6 +417,17 @@ exports.createDocument = async (req, res) => {
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
+    transporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: req.user.email,
+  subject,
+  html: htmlBody,
+  attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+}, (err, info) => {
+  if (err) console.error("📧 Email sending failed:", err);
+  else console.log("📧 Email sent:", info.response);
+});
+
     // await transporter.sendMail({
     //   from: process.env.EMAIL_USER,
     //   to: req.user.email,
