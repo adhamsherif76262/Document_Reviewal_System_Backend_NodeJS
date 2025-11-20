@@ -417,13 +417,13 @@ exports.createDocument = async (req, res) => {
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: req.user.email,
-      subject,
-      html: htmlBody,
-      // attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-    });
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
+    //   to: req.user.email,
+    //   subject,
+    //   html: htmlBody,
+    //   attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+    // });
 
         // 📨 Log + Email
     await Log.create({
