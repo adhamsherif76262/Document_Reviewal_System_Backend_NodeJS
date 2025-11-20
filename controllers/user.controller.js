@@ -26,29 +26,29 @@ const generateToken = (userId) => {
 
 
 
-const admin = require('firebase-admin');
-// const serviceAccount = require('../document-review-system-firebase-adminsdk-fbsvc-3e2832d831.json'); // 🔐 Path to your Firebase Admin SDK JSON
-const serviceAccount = process.env.FIREBASE_CREDENTIAL_PATH; // 🔐 Path to your Firebase Admin SDK JSON
+// const admin = require('firebase-admin');
+// // const serviceAccount = require('../document-review-system-firebase-adminsdk-fbsvc-3e2832d831.json'); // 🔐 Path to your Firebase Admin SDK JSON
+// const serviceAccount = process.env.FIREBASE_CREDENTIAL_PATH; // 🔐 Path to your Firebase Admin SDK JSON
 
-// ⚙️ Initialize Firebase Admin once globally
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
-
-// const admin = require("firebase-admin");
-
-// const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-
-// if (!serviceAccountJson) {
-//   console.error("❌ Missing Firebase service account environment variable.");
-//   process.exit(1);
+// // ⚙️ Initialize Firebase Admin once globally
+// if (!admin.apps.length) {
+//   admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//   });
 // }
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(JSON.parse(serviceAccountJson))
-// });
+const admin = require("firebase-admin");
+
+const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+if (!serviceAccountJson) {
+  console.error("❌ Missing Firebase service account environment variable.");
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(serviceAccountJson))
+});
 
 
 const transporter = nodemailer.createTransport({
