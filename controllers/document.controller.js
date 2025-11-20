@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs'); // Optional for debugging
 const Log = require('../models/log'); // make sure this is at the top
 const logger = require('../utils/logger');
+const { Resend } = require('resend');
 
 const generateSubmissionPDFBuffer = require('../utils/pdfTemplates/submission');
 const generatereSubmissionPDFBuffer = require('../utils/pdfTemplates/resubmission');
@@ -412,21 +413,43 @@ exports.createDocument = async (req, res) => {
     const pdfBuffer = await generateSubmissionPDFBuffer(req.user, shellDoc);
     const { subject, htmlBody } = submissionEmailTemplate(req.user, shellDoc);
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+  try {
+    await resend.emails.send({
+      from: 'yourname@yourdomain.com',
+      to,
+      subject,
+      html: htmlBody,
+      attachments: [
+        {
+          filename: 'submission-summary.pdf',
+          content: pdfBuffer.toString("base64"),
+        }
+      ]
     });
 
-    transporter.sendMail({
-  from: process.env.EMAIL_USER,
-  to: req.user.email,
-  subject,
-  html: htmlBody,
-  attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-}, (err, info) => {
-  if (err) console.error("📧 Email sending failed:", err);
-  else console.log("📧 Email sent:", info.response);
-});
+    console.log("📧 Email sent successfully");
+  } catch (err) {
+    console.error("📧 Email sending failed:", err);
+  }
+
+//     const transporter = nodemailer.createTransport({
+//       service: 'gmail',
+//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+//     });
+
+//     transporter.sendMail({
+//   from: process.env.EMAIL_USER,
+//   to: req.user.email,
+//   subject,
+//   html: htmlBody,
+//   attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+// }, (err, info) => {
+//   if (err) console.error("📧 Email sending failed:", err);
+//   else console.log("📧 Email sent:", info.response);
+// });
 
     // await transporter.sendMail({
     //   from: process.env.EMAIL_USER,
