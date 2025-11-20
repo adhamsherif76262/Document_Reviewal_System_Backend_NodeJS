@@ -418,16 +418,19 @@ exports.createDocument = async (req, res) => {
 
   try {
     await resend.emails.send({
-      from: 'yourname@yourdomain.com',
-      to,
+      // from: 'yourname@yourdomain.com',
+      from: process.env.EMAIL_USER,
+      // to,
+      to:req.user.email,
       subject,
       html: htmlBody,
-      attachments: [
-        {
-          filename: 'submission-summary.pdf',
-          content: pdfBuffer.toString("base64"),
-        }
-      ]
+      attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+      // attachments: [
+      //   {
+      //     filename: 'submission-summary.pdf',
+      //     content: pdfBuffer.toString("base64"),
+      //   }
+      // ]
     });
 
     console.log("📧 Email sent successfully");
