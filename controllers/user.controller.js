@@ -51,13 +51,13 @@ if (!admin.apps.length) {
 // });
 
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 // ✅ @desc    Register a new user
 // ✅ @route   POST /api/users/register
@@ -120,10 +120,37 @@ exports.registerUser = async (req, res) => {
     await codeDoc.save();
 
     // 4️⃣ Handle Email Verification
-    // if (preferredVerificationMethod === 'email') {
+    if (preferredVerificationMethod === 'email') {
 
-    //   const { subject, htmlBody } = verificationEmailTemplate(user , otp);
+      const { subject, htmlBody } = verificationEmailTemplate(user , otp);
       
+      
+      const brevoClient = new Brevo.TransactionalEmailsApi();
+      brevoClient.setApiKey(
+        Brevo.TransactionalEmailsApiApiKeys.apiKey,
+        process.env.BREVO_API_KEY
+      );
+      
+      /**
+       * Sends an email using Brevo with optional PDF attachment
+       */
+      
+        const emailData = {
+          sender: {
+            name: "CLOA Document Review System",
+            email: process.env.EMAIL_USER
+          },
+          to: [{ email: req.user.email }],
+          subject,
+          htmlContent: htmlBody,
+        };
+      
+        try {
+          await brevoClient.sendTransacEmail(emailData);
+          console.log(`📧 Email sent to ${req.user.email}`);
+        } catch (err) {
+          console.error("📧 Brevo email failed:", err.response?.body || err.message);
+        }
     //   await transporter.sendMail({
     //     from: process.env.EMAIL_USER,
     //     to: user.email,
@@ -139,7 +166,7 @@ exports.registerUser = async (req, res) => {
 
     //   // 🔐 Firebase handles SMS sending via client-side SDK
     //   // So here we just return response and expect frontend to trigger phone auth
-    // }
+    }
 
     // 6️⃣ Log registration
     if (user.role === 'admin') {
@@ -302,22 +329,50 @@ exports.resendVerificationOTP = async (req, res) => {
 
     // ✉️ Send Email
     if (user.preferredVerificationMethod === 'email') {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+      // const transporter = nodemailer.createTransport({
+      //   service: 'gmail',
+      //   auth: {
+      //     user: process.env.EMAIL_USER,
+      //     pass: process.env.EMAIL_PASS,
+      //   },
+      // });
 
       const { subject, htmlBody } = resendverificationEmailTemplate(user , otp);
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject,
-        html: htmlBody,
-      });
+      
+      const brevoClient = new Brevo.TransactionalEmailsApi();
+      brevoClient.setApiKey(
+        Brevo.TransactionalEmailsApiApiKeys.apiKey,
+        process.env.BREVO_API_KEY
+      );
+      
+      /**
+       * Sends an email using Brevo with optional PDF attachment
+       */
+      
+        const emailData = {
+          sender: {
+            name: "CLOA Document Review System",
+            email: process.env.EMAIL_USER
+          },
+          to: [{ email: req.user.email }],
+          subject,
+          htmlContent: htmlBody
+        };
+      
+        try {
+          await brevoClient.sendTransacEmail(emailData);
+          console.log(`📧 Email sent to ${req.user.email}`);
+        } catch (err) {
+          console.error("📧 Brevo email failed:", err.response?.body || err.message);
+        }
+
+      // await transporter.sendMail({
+      //   from: process.env.EMAIL_USER,
+      //   to: email,
+      //   subject,
+      //   html: htmlBody,
+      // });
     }
 
     // 📲 Send SMS via Firebase (uses custom OTP for unified logic)
@@ -481,13 +536,13 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     // 4️⃣ Create reusable transporter for email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
 
 
     const { subject, htmlBody } = forgotpasswordEmailTemplate(user,otp);
@@ -495,12 +550,41 @@ exports.forgotPassword = async (req, res) => {
     // 6️⃣ Decide which method to send OTP (email or phone)
     if (user.preferredVerificationMethod === 'email') {
       // 👉 Send via email
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject,
-        html: htmlBody,
-      });
+
+      
+      const brevoClient = new Brevo.TransactionalEmailsApi();
+      brevoClient.setApiKey(
+        Brevo.TransactionalEmailsApiApiKeys.apiKey,
+        process.env.BREVO_API_KEY
+      );
+      
+      /**
+       * Sends an email using Brevo with optional PDF attachment
+       */
+      
+        const emailData = {
+          sender: {
+            name: "CLOA Document Review System",
+            email: process.env.EMAIL_USER
+          },
+          to: [{ email: req.user.email }],
+          subject,
+          htmlContent: htmlBody
+        };
+      
+        try {
+          await brevoClient.sendTransacEmail(emailData);
+          console.log(`📧 Email sent to ${req.user.email}`);
+        } catch (err) {
+          console.error("📧 Brevo email failed:", err.response?.body || err.message);
+        }
+
+      // await transporter.sendMail({
+      //   from: process.env.EMAIL_USER,
+      //   to: email,
+      //   subject,
+      //   html: htmlBody,
+      // });
     } else {
       // 👉 Send via Firebase (simulated SMS for password reset)
       if (!user.phone) {
@@ -585,22 +669,50 @@ exports.resetPassword = async (req, res) => {
     }
 
     // 6️⃣ Send confirmation email (applies to all, not only email-based OTP)
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
 
     const { subject, htmlBody } = resetpasswordEmailTemplate(user);
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject,
-      html: htmlBody,
-    });
+    
+    const brevoClient = new Brevo.TransactionalEmailsApi();
+    brevoClient.setApiKey(
+      Brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY
+    );
+    
+    /**
+     * Sends an email using Brevo with optional PDF attachment
+     */
+    
+      const emailData = {
+        sender: {
+          name: "CLOA Document Review System",
+          email: process.env.EMAIL_USER
+        },
+        to: [{ email: req.user.email }],
+        subject,
+        htmlContent: htmlBody
+      };
+    
+      try {
+        await brevoClient.sendTransacEmail(emailData);
+        console.log(`📧 Email sent to ${req.user.email}`);
+      } catch (err) {
+        console.error("📧 Brevo email failed:", err.response?.body || err.message);
+      }
+
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
+    //   to: user.email,
+    //   subject,
+    //   html: htmlBody,
+    // });
 
     res.json({ message: 'Password reset successful. You can now log in.' });
   } catch (error) {

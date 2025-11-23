@@ -427,10 +427,6 @@ brevoClient.setApiKey(
  */
 
   const emailData = {
-    // sender: {
-    //   name: "CLOA Document Reviewal System",
-    //   email: process.env.EMAIL_USER, // No domain verification required
-    // },
     sender: {
       name: "CLOA Document Review System",
       email: process.env.EMAIL_USER
@@ -627,25 +623,52 @@ const fieldsReviewed = Object.entries(fieldsObj)
 
     // 1️⃣2️⃣ Send email
     const admin = await User.findById(req.user._id);
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS
+    //   }
+    // });
 
     const pdfBuffer = await generaterereviewPDFBuffer(document, document.status, admin, comment);
-    const { subjectPrefix, htmlBody } =
-      reviewsubmissionEmailTemplate(req.user, document, document.status, admin, comment);
+    const { subjectPrefix, htmlBody } = reviewsubmissionEmailTemplate(req.user, document, document.status, admin, comment);
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: document.user.email,
-      subject: subjectPrefix,
-      html: htmlBody,
-      attachments: [{ filename: "review-summary.pdf", content: pdfBuffer }]
-    });
+      
+const brevoClient = new Brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+/**
+ * Sends an email using Brevo with optional PDF attachment
+ */
+
+  const emailData = {
+    sender: {
+      name: "CLOA Document Review System",
+      email: process.env.EMAIL_USER
+    },
+    to: [{ email: req.user.email }],
+    subject:subjectPrefix,
+    htmlContent: htmlBody,
+      attachment: [{name: "Review-Summary.pdf", content: pdfBuffer.toString("base64")}]
+    };
+
+  try {
+    await brevoClient.sendTransacEmail(emailData);
+    console.log(`📧 Email sent to ${req.user.email}`);
+  } catch (err) {
+    console.error("📧 Brevo email failed:", err.response?.body || err.message);
+  }
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
+    //   to: document.user.email,
+    //   subject: subjectPrefix,
+    //   html: htmlBody,
+    //   attachments: [{ filename: "review-summary.pdf", content: pdfBuffer }]
+    // });
 
     // 1️⃣3️⃣ Optional audit log
     await Log.create({
@@ -987,17 +1010,46 @@ exports.resubmitDocument = async (req, res) => {
     // 🔹 PDF/email
     const pdfBuffer = await generatereSubmissionPDFBuffer(req.user, document);
     const { subject, htmlBody } = resubmissionEmailTemplate(req.user, document);
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: req.user.email,
-      subject,
-      html: htmlBody,
-      attachments: [{ filename: 'resubmission-summary.pdf', content: pdfBuffer }],
-    });
+    
+const brevoClient = new Brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+/**
+ * Sends an email using Brevo with optional PDF attachment
+ */
+
+  const emailData = {
+    sender: {
+      name: "CLOA Document Review System",
+      email: process.env.EMAIL_USER
+    },
+    to: [{ email: req.user.email }],
+    subject,
+    htmlContent: htmlBody,
+        attachment: [{name: "Re-Submission-Summary.pdf", content: pdfBuffer.toString("base64")}]
+    // attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+  };
+
+  try {
+    await brevoClient.sendTransacEmail(emailData);
+    console.log(`📧 Email sent to ${req.user.email}`);
+  } catch (err) {
+    console.error("📧 Brevo email failed:", err.response?.body || err.message);
+  }
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    // });
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
+    //   to: req.user.email,
+    //   subject,
+    //   html: htmlBody,
+    //   attachments: [{ filename: 'resubmission-summary.pdf', content: pdfBuffer }],
+    // });
     // 🧾 Log action
     await Log.create({
       action: 'fileReSubmission',
@@ -1506,24 +1558,54 @@ exports.reviewCertificate = async (req, res) => {
 
       // TODO: send user email notification about approval
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
       
     const pdfBuffer = await generaterereviewPDFBuffer(doc, doc.certificate.status, superAdmin, comment,doc.certificate.images);
     const { subjectPrefix, htmlBody } = finalcertificatereviewsubmissionEmailTemplate(req.user, doc, doc.certificate.status, superAdmin, comment);
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: doc.user.email,
-      subject: subjectPrefix,
-      html: htmlBody,
-      attachments: [{ filename: `Final-Certificate-Review-Summary-For-Document-${doc.docType}-With-Number-${doc.docNumber}.pdf`, content: pdfBuffer }],
-    });
+    
+const brevoClient = new Brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+/**
+ * Sends an email using Brevo with optional PDF attachment
+ */
+
+  const emailData = {
+    sender: {
+      name: "CLOA Document Review System",
+      email: process.env.EMAIL_USER
+    },
+    to: [{ email: req.user.email }],
+    subject:subjectPrefix,
+    htmlContent: htmlBody,
+        attachment: [{name: `Final-Certificate-Review-Summary-For-Document-${doc.docType}-With-Number-${doc.docNumber}.pdf`, content: pdfBuffer.toString("base64")}]
+    // attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+  };
+
+  try {
+    await brevoClient.sendTransacEmail(emailData);
+    console.log(`📧 Email sent to ${req.user.email}`);
+  } catch (err) {
+    console.error("📧 Brevo email failed:", err.response?.body || err.message);
+  }
+
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
+    //   to: doc.user.email,
+    //   subject: subjectPrefix,
+    //   html: htmlBody,
+    //   attachments: [{ filename: `Final-Certificate-Review-Summary-For-Document-${doc.docType}-With-Number-${doc.docNumber}.pdf`, content: pdfBuffer }],
+    // });
 
       // 🧾 8. Log action
     await Log.create({
