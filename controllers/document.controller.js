@@ -31,6 +31,7 @@ const { uploadToSupabase , deleteSupabaseFolder } = require('../utils/supabase')
 const {loadTemplate} = require ('../utils/loadTemplate');
 const { rollbackUploads } = require('../utils/rollbackUploads');
 
+    const Brevo = require("@getbrevo/brevo");
 
 // exports.createDocument = async (req, res) => {
 //   try {
@@ -414,30 +415,70 @@ exports.createDocument = async (req, res) => {
     const { subject, htmlBody } = submissionEmailTemplate(req.user, shellDoc);
 
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
+const brevoClient = new Brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+/**
+ * Sends an email using Brevo with optional PDF attachment
+ */
+// exports.sendEmail = async ({ to, subject, html, pdfBuffer }) => {
+  const emailData = {
+    sender: {
+      name: "CLOA Document Reviewal System",
+      email: process.env.EMAIL_USER, // No domain verification required
+    },
+    to: [{ email: req.user.email }],
+    subject,
+    htmlContent: htmlBody,
+        attachment: [{name: "Submission-Summary.pdf", content: pdfBuffer.toString("base64")}]
+    // attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+    // attachment: pdfBuffer
+    //   ? [
+    //       {
+    //         name: "submission-summary.pdf",
+    //         content: pdfBuffer.toString("base64"),
+    //       },
+    //     ]
+    //   : [],
+  };
 
   try {
-    await resend.emails.send({
-      // from: process.env.EMAIL_USER,
-      // The Resend does not allow sending emails from "GMAILS"
-      from: "onboarding@resend.dev",
-      // to,
-      to:req.user.email,
-      subject,
-      html: htmlBody,
-      attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-      // attachments: [
-      //   {
-      //     filename: 'submission-summary.pdf',
-      //     content: pdfBuffer.toString("base64"),
-      //   }
-      // ]
-    });
-
-    console.log("📧 Email sent successfully");
+    await brevoClient.sendTransacEmail(emailData);
+    console.log(`📧 Email sent to ${req.user.email}`);
   } catch (err) {
-    console.error("📧 Email sending failed:", err);
+    console.error("📧 Brevo email failed:", err.response?.body || err.message);
   }
+// };
+
+
+  //   const resend = new Resend(process.env.RESEND_API_KEY);
+
+  // try {
+  //   await resend.emails.send({
+  //     // from: "onboarding@resend.dev",
+  //     // The Resend does not allow sending emails from "GMAILS"
+  //     from: process.env.EMAIL_USER,
+  //     to:req.user.email,
+  //     subject,
+  //     html: htmlBody,
+  //     attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
+  //     // attachments: [
+  //     //   {
+  //     //     filename: 'submission-summary.pdf',
+  //     //     content: pdfBuffer.toString("base64"),
+  //     //   }
+  //     // ]
+  //   });
+
+  //   console.log("📧 Email sent successfully");
+  //   console.log(`📧 Email sent to ${req.user.email}`);
+  // } catch (err) {
+  //   console.error("📧 Email sending failed:", err);
+  // }
 
 //     const transporter = nodemailer.createTransport({
 //       service: 'gmail',
