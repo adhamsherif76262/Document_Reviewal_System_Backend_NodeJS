@@ -418,8 +418,9 @@ exports.createDocument = async (req, res) => {
 
   try {
     await resend.emails.send({
-      // from: 'yourname@yourdomain.com',
-      from: process.env.EMAIL_USER,
+      // from: process.env.EMAIL_USER,
+      // The Resend does not allow sending emails from "GMAILS"
+      from: "onboarding@resend.dev",
       // to,
       to:req.user.email,
       subject,
