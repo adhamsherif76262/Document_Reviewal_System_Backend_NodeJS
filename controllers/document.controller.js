@@ -650,7 +650,7 @@ brevoClient.setApiKey(
       name: "CLOA Document Review System",
       email: process.env.EMAIL_USER
     },
-    to: [{ email: req.user.email }],
+    to: [{ email: document.user.email }],
     subject:subjectPrefix,
     htmlContent: htmlBody,
       attachment: [{name: "Review-Summary.pdf", content: pdfBuffer.toString("base64")}]
@@ -658,7 +658,7 @@ brevoClient.setApiKey(
 
   try {
     await brevoClient.sendTransacEmail(emailData);
-    console.log(`📧 Email sent to ${req.user.email}`);
+    console.log(`📧 Email sent to ${document.user.email}`);
   } catch (err) {
     console.error("📧 Brevo email failed:", err.response?.body || err.message);
   }
@@ -1585,7 +1585,7 @@ brevoClient.setApiKey(
       name: "CLOA Document Review System",
       email: process.env.EMAIL_USER
     },
-    to: [{ email: req.user.email }],
+    to: [{ email: doc.user.email }],
     subject:subjectPrefix,
     htmlContent: htmlBody,
         attachment: [{name: `Final-Certificate-Review-Summary-For-Document-${doc.docType}-With-Number-${doc.docNumber}.pdf`, content: pdfBuffer.toString("base64")}]
@@ -1594,7 +1594,7 @@ brevoClient.setApiKey(
 
   try {
     await brevoClient.sendTransacEmail(emailData);
-    console.log(`📧 Email sent to ${req.user.email}`);
+    console.log(`📧 Email sent to ${doc.user.email}`);
   } catch (err) {
     console.error("📧 Brevo email failed:", err.response?.body || err.message);
   }
