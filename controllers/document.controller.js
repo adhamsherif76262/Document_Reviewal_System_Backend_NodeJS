@@ -425,25 +425,21 @@ brevoClient.setApiKey(
 /**
  * Sends an email using Brevo with optional PDF attachment
  */
-// exports.sendEmail = async ({ to, subject, html, pdfBuffer }) => {
+
   const emailData = {
+    // sender: {
+    //   name: "CLOA Document Reviewal System",
+    //   email: process.env.EMAIL_USER, // No domain verification required
+    // },
     sender: {
-      name: "CLOA Document Reviewal System",
-      email: process.env.EMAIL_USER, // No domain verification required
+      name: "CLOA Document Review System",
+      email: process.env.EMAIL_USER
     },
     to: [{ email: req.user.email }],
     subject,
     htmlContent: htmlBody,
         attachment: [{name: "Submission-Summary.pdf", content: pdfBuffer.toString("base64")}]
     // attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-    // attachment: pdfBuffer
-    //   ? [
-    //       {
-    //         name: "submission-summary.pdf",
-    //         content: pdfBuffer.toString("base64"),
-    //       },
-    //     ]
-    //   : [],
   };
 
   try {
@@ -452,58 +448,6 @@ brevoClient.setApiKey(
   } catch (err) {
     console.error("📧 Brevo email failed:", err.response?.body || err.message);
   }
-// };
-
-
-  //   const resend = new Resend(process.env.RESEND_API_KEY);
-
-  // try {
-  //   await resend.emails.send({
-  //     // from: "onboarding@resend.dev",
-  //     // The Resend does not allow sending emails from "GMAILS"
-  //     from: process.env.EMAIL_USER,
-  //     to:req.user.email,
-  //     subject,
-  //     html: htmlBody,
-  //     attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-  //     // attachments: [
-  //     //   {
-  //     //     filename: 'submission-summary.pdf',
-  //     //     content: pdfBuffer.toString("base64"),
-  //     //   }
-  //     // ]
-  //   });
-
-  //   console.log("📧 Email sent successfully");
-  //   console.log(`📧 Email sent to ${req.user.email}`);
-  // } catch (err) {
-  //   console.error("📧 Email sending failed:", err);
-  // }
-
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-//     });
-
-//     transporter.sendMail({
-//   from: process.env.EMAIL_USER,
-//   to: req.user.email,
-//   subject,
-//   html: htmlBody,
-//   attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-// }, (err, info) => {
-//   if (err) console.error("📧 Email sending failed:", err);
-//   else console.log("📧 Email sent:", info.response);
-// });
-
-    // await transporter.sendMail({
-    //   from: process.env.EMAIL_USER,
-    //   to: req.user.email,
-    //   subject,
-    //   html: htmlBody,
-    //   attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-    // });
-
         // 📨 Log + Email
     await Log.create({
       action: 'fileSubmission',
