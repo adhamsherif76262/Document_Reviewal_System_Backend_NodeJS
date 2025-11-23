@@ -141,14 +141,14 @@ exports.registerUser = async (req, res) => {
             name: "CLOA Document Review System",
             email: process.env.EMAIL_USER
           },
-          to: [{ email: req.user.email }],
+          to: [{ email: user.email }],
           subject,
           htmlContent: htmlBody,
         };
       
         try {
           await brevoClient.sendTransacEmail(emailData);
-          console.log(`📧 Email sent to ${req.user.email}`);
+          console.log(`📧 Email sent to ${user.email}`);
         } catch (err) {
           console.error("📧 Brevo email failed:", err.response?.body || err.message);
         }
@@ -356,14 +356,14 @@ exports.resendVerificationOTP = async (req, res) => {
             name: "CLOA Document Review System",
             email: process.env.EMAIL_USER
           },
-          to: [{ email: req.user.email }],
+          to: [{ email: email }],
           subject,
           htmlContent: htmlBody
         };
       
         try {
           await brevoClient.sendTransacEmail(emailData);
-          console.log(`📧 Email sent to ${req.user.email}`);
+          console.log(`📧 Email sent to ${email}`);
         } catch (err) {
           console.error("📧 Brevo email failed:", err.response?.body || err.message);
         }
@@ -568,14 +568,14 @@ exports.forgotPassword = async (req, res) => {
             name: "CLOA Document Review System",
             email: process.env.EMAIL_USER
           },
-          to: [{ email: req.user.email }],
+          to: [{ email: email }],
           subject,
           htmlContent: htmlBody
         };
       
         try {
           await brevoClient.sendTransacEmail(emailData);
-          console.log(`📧 Email sent to ${req.user.email}`);
+          console.log(`📧 Email sent to ${email}`);
         } catch (err) {
           console.error("📧 Brevo email failed:", err.response?.body || err.message);
         }
@@ -696,14 +696,14 @@ exports.resetPassword = async (req, res) => {
           name: "CLOA Document Review System",
           email: process.env.EMAIL_USER
         },
-        to: [{ email: req.user.email }],
+        to: [{ email: user.email }],
         subject,
         htmlContent: htmlBody
       };
     
       try {
         await brevoClient.sendTransacEmail(emailData);
-        console.log(`📧 Email sent to ${req.user.email}`);
+        console.log(`📧 Email sent to ${user.email}`);
       } catch (err) {
         console.error("📧 Brevo email failed:", err.response?.body || err.message);
       }
