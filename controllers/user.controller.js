@@ -16,6 +16,7 @@ const resendverificationEmailTemplate = require('../utils/emailTemplates/resendv
 const forgotpasswordEmailTemplate = require('../utils/emailTemplates/forgotpassword')
 const resetpasswordEmailTemplate = require('../utils/emailTemplates/resetpassword')
 const Document = require('../models/document');
+const Brevo = require("@getbrevo/brevo");
 
 // 🔐 Generate a signed JWT token
 const generateToken = (userId) => {
