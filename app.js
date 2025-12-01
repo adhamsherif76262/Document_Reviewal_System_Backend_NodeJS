@@ -8,6 +8,7 @@ const documentRoutes = require('./routes/document.routes');
 const assignmentRoutes = require ('./routes/assignmentRoutes');
 const { defaultLimiter } = require('./utils/rateLimiter');
 const logger = require('./utils/logger');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use(defaultLimiter); // applies to everything
 
 // Middleware: Enable CORS for cross-origin requests (Netlify → Render)
 app.use(cors());
+
+app.use(cookieParser());
 
 // Middleware: Parse incoming JSON requests (application/json)
 app.use(express.json());

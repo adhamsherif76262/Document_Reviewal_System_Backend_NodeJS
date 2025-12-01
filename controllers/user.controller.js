@@ -443,27 +443,30 @@ exports.loginUser = async (req, res) => {
 
     console.log('🎉 Login successful');
 
+     // Generate token
+    const token = generateToken(user._id);
+
     // ✅ Log the login
-    if (user.role === 'admin') {
-      await Log.create({
-        action: 'login',
-        admin: user,
-        message: `Admin ${user.name} With Email ${user.email} Logged In`,
-      });
-    } else {
-      await Log.create({
-        action: 'login',
-        user: user,
-        message: `User ${user.name} With Email ${user.email} Logged In`,
-      });
-    }
+    await Log.create({
+      action: 'login',
+      [user.role === 'admin' ? 'admin' : 'user']: user,
+      message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+    });
+
+        // Set cookie
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // only HTTPS in prod
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    });
 
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      // token: generateToken(user._id),
       preferredVerificationMethod: user.preferredVerificationMethod,
       verificationStatus: user.verificationStatus,
       isVerified: true,
@@ -481,8 +484,6 @@ exports.loginUser = async (req, res) => {
 // ✅ @access  Private
 exports.logoutUser = async (req, res) => {
   try {
-    const Log = require('../models/log');
-
     // ✅ Log the logout
 
     const { email} = req.body;
@@ -491,19 +492,19 @@ exports.logoutUser = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (user.role === 'admin') {
-      await Log.create({
-        action: 'logout',
-        admin: user,
-        message: `Admin ${user.name} With Email ${user.email} logged Out`,
-      });
-    } else {
-      await Log.create({
-        action: 'logout',
-        user: user,
-        message: `User ${user.name} With Email ${user.email} logged Out`,
-      });
-    }
+    // Log The Logout
+    await Log.create({
+      action: 'logout',
+      [user.role === 'admin' ? 'admin' : 'user']: user,
+      message: `${user.role} ${user.name} With Email ${user.email} logged Out`,
+    });
+
+        // Clear cookie
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
   
     res.json({ message: 'Logout successful' });
   } catch (err) {
