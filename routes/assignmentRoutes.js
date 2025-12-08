@@ -8,7 +8,7 @@ const  {isSuperAdmin , protect} =require ('../middlewares/auth');
 
 const router = express.Router();
 
-// Only superadmins or authorized admins should access this route
+// Only superadmins or authorized admins should access these routes
 router.post('/sync',protect, isSuperAdmin, syncDocTypeAssignments);
 router.get('/',protect, isSuperAdmin, getDocTypeAssignments);
 

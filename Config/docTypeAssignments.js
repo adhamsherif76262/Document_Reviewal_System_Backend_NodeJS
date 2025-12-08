@@ -13,5 +13,5 @@ export const docTypeAssignments = {
   "Organic Farm": ['2ND_regular_admin@yourdomain.com','3RD_regular_admin@yourdomain.com'],
   "Factory Or Production Unit": ['1ST_regular_admin@yourdomain.com','3RD_regular_admin@yourdomain.com'],
 //   DocC: ['adminA@example.com', 'adminD@example.com'],
-  // Add more mappings as neededs
+  // Add more mappings as needed
 };

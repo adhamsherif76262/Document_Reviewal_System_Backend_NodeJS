@@ -30,6 +30,16 @@ const {
   authLimiter
 } = require('../utils/rateLimiter');
 
+// Returns current user based on the httpOnly cookie
+router.get("/me", protect, (req, res) => {
+  res.json({
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    role: req.user.role,
+  });
+  // res.json(req.user);
+});
 
 // @route   POST /api/users/register
 router.post('/register',authLimiter,validateUserRegister, registerUser);
