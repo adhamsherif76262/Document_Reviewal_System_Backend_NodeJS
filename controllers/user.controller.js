@@ -468,8 +468,8 @@ exports.loginUser = async (req, res) => {
       email: user.email,
       role: user.role,
       // token: generateToken(user._id),
+      // verificationStatus: user.verificationStatus,
       preferredVerificationMethod: user.preferredVerificationMethod,
-      verificationStatus: user.verificationStatus,
       isVerified: true,
     });
   } catch (error) {

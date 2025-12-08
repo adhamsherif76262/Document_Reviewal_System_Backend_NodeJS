@@ -32,13 +32,16 @@ const {
 
 // Returns current user based on the httpOnly cookie
 router.get("/me", protect, (req, res) => {
-  res.json({
-    _id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
-    role: req.user.role,
-  });
-  // res.json(req.user);
+  // res.json({
+  //   _id: req.user._id,
+  //   name: req.user.name,
+  //   email: req.user.email,
+  //   phone: req.user.phone,
+  //   preferredVerificationMethod: req.user.preferredVerificationMethod,
+  //   role: req.user.role,
+  //   isVerified: req.user.isVerified,
+  // });
+  res.json(req.user);
 });
 
 // @route   POST /api/users/register

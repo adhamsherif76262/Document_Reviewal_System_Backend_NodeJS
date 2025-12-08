@@ -33,7 +33,7 @@ app.use(defaultLimiter); // applies to everything
 
 // Middleware: Enable CORS for cross-origin requests (Netlify → Render)
 // app.use(cors());
-const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.com'];
+const allowedOrigins = ['http://localhost:3000', 'https://cloa-document-review-system.netlify.app'];
 
 app.use(
   cors({
