@@ -1206,76 +1206,76 @@ exports.generateInviteCode = async (req, res) => {
 };
 
 
-// exports.extendUserExpiryDate = async (req, res) => {
-//   try {
-//     const { id } = req.params;
+exports.extendUserExpiryDate = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-//     // 🧩 1. Fetch the user
-//     const user = await User.findById(id);
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
+    // 🧩 1. Fetch the user
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-//         // 2️⃣ Ensure expiryDate exists
-//     if (!user.expiryDate) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'This user does not have an expiry date set.',
-//       });
-//     }
+        // 2️⃣ Ensure expiryDate exists
+    if (!user.expiryDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'This user does not have an expiry date set.',
+      });
+    }
 
-//     // 3️⃣ Calculate remaining time before expiry
-//     const now = new Date();
-//     const expiry = new Date(user.expiryDate);
-//     const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+    // 3️⃣ Calculate remaining time before expiry
+    const now = new Date();
+    const expiry = new Date(user.expiryDate);
+    const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
 
-//     // 4️⃣ Prevent extending if more than 30 days left
-//     if (diffDays > 30) {
-//       return res.status(400).json({
-//         success: false,
-//         message:
-//           `Cannot extend this account yet. It still has ${diffDays} days left before expiry.`,
-//       });
-//     }
+    // 4️⃣ Prevent extending if more than 30 days left
+    if (diffDays > 30) {
+      return res.status(400).json({
+        success: false,
+        message:
+          `Cannot extend this account yet. It still has ${diffDays} days left before expiry.`,
+      });
+    }
 
-//     // 🧩 2. Prevent extending admin accounts
-//     if (user.role === 'admin') {
-//       return res.status(400).json({ message: 'Cannot extend expiry for admin accounts' });
-//     }
+    // 🧩 2. Prevent extending admin accounts
+    if (user.role === 'admin') {
+      return res.status(400).json({ message: 'Cannot extend expiry for admin accounts' });
+    }
 
-//     // 🧮 3. Calculate new expiry date (1 year from now OR from current expiry, whichever is later)
-//     const baseDate = user.expiryDate && user.expiryDate > now ? user.expiryDate : now;
-//     const newExpiryDate = new Date(baseDate);
-//     newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+    // 🧮 3. Calculate new expiry date (1 year from now OR from current expiry, whichever is later)
+    const baseDate = user.expiryDate && user.expiryDate > now ? user.expiryDate : now;
+    const newExpiryDate = new Date(baseDate);
+    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
 
-//     // 🛠️ 4. Update user record
-//     user.expiryDate = newExpiryDate;
-//     user.expiryStatus = 'active';
-//     await user.save();
+    // 🛠️ 4. Update user record
+    user.expiryDate = newExpiryDate;
+    user.expiryStatus = 'active';
+    await user.save();
 
-//     // 🧾 5. Log the admin action
-//     await Log.create({
-//       action: 'ExtendUserAccountExpiryDate',
-//       admin: req.user,
-//       user: { _id: user._id, name: user.name, email: user.email },
-//       message: `Admin ${req.user.name} With Email (${req.user.email}) Extended The Expiry Date Of User ${user.name} With Email (${user.email}) By One Year , From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]} .`,
-//     });
+    // 🧾 5. Log the admin action
+    await Log.create({
+      action: 'ExtendUserAccountExpiryDate',
+      admin: req.user,
+      user: { _id: user._id, name: user.name, email: user.email },
+      message: `Admin ${req.user.name} With Email (${req.user.email}) Extended The Expiry Date Of User ${user.name} With Email (${user.email}) By One Year , From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]} .`,
+    });
 
-//     // 🟢 6. Respond to client
-//     res.status(200).json({
-//       success: true,
-//       message: `User account expiry extended successfully From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]}`,
-//       data: {
-//         userId: user._id,
-//         name: user.name,
-//         email: user.email,
-//         newExpiryDate,
-//         expiryStatus: user.expiryStatus,
-//       },
-//     });
-//   } catch (error) {
-//     logger.error('Extend User Expiry Error:', error.message);
-//     res.status(500).json({ message: 'Server error while extending user expiry' });
-//   }
-// };
+    // 🟢 6. Respond to client
+    res.status(200).json({
+      success: true,
+      message: `User account expiry extended successfully From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]}`,
+      data: {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        newExpiryDate,
+        expiryStatus: user.expiryStatus,
+      },
+    });
+  } catch (error) {
+    logger.error('Extend User Expiry Error:', error.message);
+    res.status(500).json({ message: 'Server error while extending user expiry' });
+  }
+};
 

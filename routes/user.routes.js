@@ -77,6 +77,6 @@ router.get('/admins', protect, isSuperAdmin, getAdminStats);
 router.post('/generate-invite-code', protect, isAdmin, generateInviteCode);
 
 // ✅ Admin-only route to extend the user's account expiry date
-// router.patch('/:id/extend-user-expiry', protect, isAdmin, extendUserExpiryDate);
+router.patch('/:id/extend-user-expiry', protect, isAdmin, extendUserExpiryDate);
 
 module.exports = router;
