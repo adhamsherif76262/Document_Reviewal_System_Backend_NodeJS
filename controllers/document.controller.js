@@ -252,6 +252,9 @@ exports.createDocument = async (req, res) => {
     if (req.user.role !== 'user')
       return res.status(403).json({ message: 'Only Users Can Submit Documents' });
 
+    if (req.user.expiryStatus === 'expired')
+      return res.status(403).json({ message: "Your Account Has Expired, Please Contact The System Admins To Extend Your Account's Expiry Date. (Only Users With Active Accounts Can Submit Documents)" });
+
     const { docType, state } = req.body;
     const template = loadTemplate(docType);
 
@@ -889,6 +892,9 @@ exports.resubmitDocument = async (req, res) => {
     if (req.user.role !== 'user') {
       return res.status(403).json({ message: 'Only users can resubmit documents' });
     }
+
+    if (req.user.expiryStatus === 'expired')
+    return res.status(403).json({ message: "Your Account Has Expired, Please Contact The System Admins To Extend Your Account's Expiry Date. (Only Users With Active Accounts Can Re-Submit Documents)" });
 
     document = await Document.findById(req.params.id);
     if (!document) return res.status(404).json({ message: 'Document not found' });
