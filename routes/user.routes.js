@@ -13,7 +13,7 @@ const {
   logoutUser,
   getMyDocuments,
   generateInviteCode,
-  // extendUserExpiryDate,
+  extendUserExpiryDate,
 } = require('../controllers/user.controller');
 
 const {
