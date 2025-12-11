@@ -903,8 +903,8 @@ exports.resubmitDocument = async (req, res) => {
       return res.status(403).json({ message: 'You can only resubmit your own documents' });
     }
 
-    if (document.status === 'approved') {
-      return res.status(400).json({ message: 'Approved documents cannot be resubmitted' });
+    if (document.status !== 'rejected') {
+      return res.status(400).json({ message: 'Only Rejected documents can be resubmitted' });
     }
 
     const { docType, state } = document;
