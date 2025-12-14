@@ -76,8 +76,12 @@ exports.registerUser = async (req, res) => {
 
     // 1️⃣ Check if user already exists
     const userExists = await User.findOne({ email });
+    const userExists2 = await User.findOne({ name });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'A User already exists With this Email' });
+    }
+    if (userExists2) {
+      return res.status(400).json({ message: 'A User already exists With this User Name' });
     }
 
     const userPhoneExists = await User.findOne({ phone });
@@ -278,7 +282,7 @@ exports.verifyAccount = async (req, res) => {
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Verified Their Account`,
     });
 
-    res.json({ message: 'Account verified successfully. You can now log in.' });
+    res.status(200).json({ message: 'Account verified successfully. You can now log in.' });
   } catch (error) {
     console.error('Account Verification Error:', error.message);
     logger.error(error.message);
@@ -395,7 +399,7 @@ exports.resendVerificationOTP = async (req, res) => {
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Requested a new OTP`,
     });
 
-    res.json({ message: 'New OTP sent successfully (email or SMS)' });
+    res.status(200).json({ message: 'New OTP sent successfully (email or SMS)' });
   } catch (error) {
     console.error('Resend OTP Error:', error.message);
     logger.error(error.message);
@@ -467,6 +471,10 @@ exports.loginUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      phone: user.phone,
+      expiryStatus: user.expiryStatus,
+      expirable: user.expirable,
+      expiryDate: user.expiryDate,
       // token: generateToken(user._id),
       // verificationStatus: user.verificationStatus,
       preferredVerificationMethod: user.preferredVerificationMethod,
@@ -609,7 +617,7 @@ exports.forgotPassword = async (req, res) => {
     });
 
     // console.log(otp); // helpful for testing
-    res.json({ message: 'OTP sent via email or phone' });
+    res.status(200).json({ message: 'OTP sent via email or phone' });
   } catch (error) {
     console.error('Forgot Password Error:', error.message);
     logger.error(error.message);
@@ -629,7 +637,7 @@ exports.resetPassword = async (req, res) => {
     if (!user) {
       console.log('❌ User not found in DB');
       logger.error(' User not found in DB');
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email' });
     }
     if (!user.isVerified && user.role === "user") {
       return res.status(403).json({ message: 'Please Verify Your Email Before Attempting To reset Your Password.' });
@@ -718,7 +726,7 @@ exports.resetPassword = async (req, res) => {
     //   html: htmlBody,
     // });
 
-    res.json({ message: 'Password reset successful. You can now log in.' });
+    res.status(200).json({ message: 'Password reset successful. You can now log in.' });
   } catch (error) {
     console.error('Reset Password Error:', error.message);
     logger.error(error.message);

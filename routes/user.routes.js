@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, isAdmin ,isSuperAdmin} = require('../middlewares/auth');
+const User = require('../models/user');
 const {
   registerUser,
   verifyAccount,
@@ -44,26 +45,43 @@ router.get("/me", protect, (req, res) => {
   res.json(req.user);
 });
 
+router.get("/getUserByEmail", protect, isAdmin, async (req, res) => {
+  try {
+    const {email} = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log('❌ User not found in DB');
+      return res.status(401).json({ message: 'Invalid User email' });
+    }
+    if (!user.isVerified && user.role === "user") {
+      return res.status(403).json({ message: `Please Make Sure That The User's Account Is Verified Before Attempting To Extend The Account's Expiry Date.` });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while retrieving user data' });
+  }
+});
+
 // @route   POST /api/users/register
-router.post('/register',authLimiter,validateUserRegister, registerUser);
+router.post('/register',authLimiter, registerUser);
 
 //@route POST /api/users/verify-email
-router.post('/verify-email',authLimiter,validateVerifyEmail, verifyAccount);
+router.post('/verify-email',authLimiter, verifyAccount);
 
-//@route POST /api/users/verify-email
-router.post('/resend-verification',authLimiter,validateResendVerification, resendVerificationOTP);
+//@route POST /api/users/resend-verification-email
+router.post('/resend-verification',authLimiter, resendVerificationOTP);
 
 // @route   POST /api/users/login
-router.post('/login',authLimiter,validateUserLogin, loginUser);
+router.post('/login',authLimiter, loginUser);
 
 // Protected
 router.post('/logout', protect, logoutUser); 
 
 // @route   POST /api/users/forgot-password
-router.post('/forgot-password',authLimiter,validateForgotPassword, forgotPassword);
+router.post('/forgot-password',authLimiter, forgotPassword);
 
 // @route   POST /api/users/reset-password
-router.post('/reset-password',authLimiter,validateResetPassword, resetPassword);
+router.post('/reset-password',authLimiter, resetPassword);
 
 // @route   GET /api/users/my-submissions
 router.get('/my-submissions', protect, getMyDocuments);
