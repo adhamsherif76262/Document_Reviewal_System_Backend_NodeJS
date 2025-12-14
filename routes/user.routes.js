@@ -45,10 +45,11 @@ router.get("/me", protect, (req, res) => {
   res.json(req.user);
 });
 
-router.get("/getUserByEmail", protect, isAdmin, async (req, res) => {
+router.get("/:email/getUserByEmail", protect, isAdmin, async (req, res) => {
   try {
-    const {email} = req.body;
-    const user = await User.findOne({ email });
+    const email = req.params.email;
+    // const user = await User.findById(req.params.id);
+    const user = await User.findOne({email});
     if (!user) {
       console.log('❌ User not found in DB');
       return res.status(401).json({ message: 'Invalid User email' });
