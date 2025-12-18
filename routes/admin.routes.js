@@ -55,6 +55,7 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
 // @route   GET /api/admin/documents
 // @desc    Admin view all documents with filters and pagination
 // @access  Private (Admins only)
+// Not Updated
 router.get('/documents', protect,isAdmin, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {

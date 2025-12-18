@@ -14,13 +14,16 @@ const reviewSchema = new mongoose.Schema(
   {
     // Denormalized document reference
     document: {
-      type: Object, // { _id, docNumber, docType, state }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Document', 
+      // type: Object, // { _id, docNumber, docType, state }
       required: true,
     },
 
     // Denormalized reviewer snapshot
     reviewedBy: {
-      type: Object, // { _id, name, email, role, adminLevel }
+      // type: String,
+     type: Object, // { _id, name, email, role, adminLevel }
       required: true,
     },
 

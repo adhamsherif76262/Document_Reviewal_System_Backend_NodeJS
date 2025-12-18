@@ -480,6 +480,7 @@ exports.loginUser = async (req, res) => {
       // verificationStatus: user.verificationStatus,
       preferredVerificationMethod: user.preferredVerificationMethod,
       isVerified: true,
+      // message: 'Login successful',
     });
   } catch (error) {
     console.error('Login Error:', error.message);

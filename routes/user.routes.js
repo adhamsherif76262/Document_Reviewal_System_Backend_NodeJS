@@ -88,9 +88,11 @@ router.post('/reset-password',authLimiter, resetPassword);
 router.get('/my-submissions', protect, getMyDocuments);
 
 // ✅ Admin-only route to get all user statistics
+// return all Users
 router.get('/stats', protect, isAdmin, getAllUserStats);
 
 // 👇 Add this new route for admin stats
+// return all admins
 router.get('/admins', protect, isSuperAdmin, getAdminStats);
 
 router.post('/generate-invite-code', protect, isAdmin, generateInviteCode);

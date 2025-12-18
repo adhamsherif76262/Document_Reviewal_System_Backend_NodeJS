@@ -615,7 +615,8 @@ const fieldsReviewed = Object.entries(fieldsObj)
 
     const review = await Review.create({
       document: document,
-      reviewedBy: req.user.name,
+      // reviewedBy: req.user.name,
+      reviewedBy: (({ _id, email, name, phone, adminLevel }) => ({ _id, email, name, phone, adminLevel }))(req.user),
       status: document.status,
       comment,
       docNumber: document.docNumber,
@@ -676,8 +677,8 @@ brevoClient.setApiKey(
     // 1️⃣3️⃣ Optional audit log
     await Log.create({
       action: document.status,
-      user: document.user.name,
-      admin: req.user.name,
+      user: document.user._id,
+      admin: req.user._id,
       document: document,
       message: `Document ${document.docType} was ${document.status} by ${req.user.name} with email ${req.user.email}.`
     });

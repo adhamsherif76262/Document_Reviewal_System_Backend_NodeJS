@@ -92,42 +92,42 @@ const documentSchema = new mongoose.Schema({
     default: 'pending'
   },
   certificate: {
-  images: [String], // array of URLs (Cloudinary/Supabase)
-  uploadedBy: {
-    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
-    name: String,
-    email: String,
-    role: String, // e.g. "admin"
-    adminLevel: String, // e.g. "regular" or "super"
-    phone: String,
-  },
-  uploadedAt: Date,
-
-  approvedBy: {
-    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
-    name: String,
-    email: String,
-    role: String, // always "admin"
-    adminLevel: String, // always "super"
-    phone: String,
-  },
-  approvedAt: Date,
-  rejectedBy: {
-    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
-    name: String,
-    email: String,
-    role: String, // always "admin"
-    adminLevel: String, // always "super"
-    phone: String,
-  },
-  rejectedAt: Date,
-
-  status: {
-    type: String,
-    enum: ['none', 'pending', 'approved', 'rejected'],
-    default: 'none',
-  },
-  comment: String, // optional comment if rejected
+      images: [String], // array of URLs (Cloudinary/Supabase)
+      uploadedBy: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+        name: String,
+        email: String,
+        role: String, // e.g. "admin"
+        adminLevel: String, // e.g. "regular" or "super"
+        phone: String,
+      },
+      uploadedAt: Date,
+    
+      approvedBy: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+        name: String,
+        email: String,
+        role: String, // always "admin"
+        adminLevel: String, // always "super"
+        phone: String,
+      },
+      approvedAt: Date,
+      rejectedBy: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+        name: String,
+        email: String,
+        role: String, // always "admin"
+        adminLevel: String, // always "super"
+        phone: String,
+      },
+      rejectedAt: Date,
+    
+      status: {
+        type: String,
+        enum: ['none', 'pending', 'approved', 'rejected'],
+        default: 'none',
+      },
+      comment: String, // optional comment if rejected
   },
 
   submittedAt: {

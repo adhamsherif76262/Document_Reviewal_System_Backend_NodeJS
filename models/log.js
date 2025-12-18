@@ -37,19 +37,24 @@ const logSchema = new mongoose.Schema(
 
     // ✅ Embedded admin data (denormalized)
     admin: {
-      type: Object, // { _id, name, role }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      // type: Object, // { _id, name, role }
       default: null,
     },
 
     // ✅ Embedded user data (denormalized)
     user: {
-      type: Object, // { _id, name, email }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      // type: Object, // { _id, name, email }
       default: null,
     },
 
     // ✅ Embedded document info
     document: {
-      type: Object, // { _id, docNumber, docType, status }
+      type: mongoose.Schema.Types.ObjectId, // { _id, docNumber, docType, status }
+      ref: 'Document',
       default: null,
     },
 
