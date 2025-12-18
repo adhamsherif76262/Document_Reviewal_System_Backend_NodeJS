@@ -70,7 +70,7 @@ exports.registerUser = async (req, res) => {
       email,
       password,
       phone,
-      inviteCode,
+      invitationCode,
       preferredVerificationMethod = 'email',
     } = req.body;
 
@@ -90,7 +90,7 @@ exports.registerUser = async (req, res) => {
     }
 
     // ✅ Check invite code
-    const codeDoc = await InviteCode.findOne({ code: inviteCode, status: 'unused' });
+    const codeDoc = await InviteCode.findOne({ code: invitationCode, status: 'unused' });
     if (!codeDoc) {
       return res.status(400).json({
         success: false,
