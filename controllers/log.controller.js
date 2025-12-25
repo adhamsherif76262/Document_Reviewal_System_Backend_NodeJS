@@ -1,8 +1,10 @@
 const Log = require('../models/log');
 const User = require('../models/user');
 const logger = require('../utils/logger');
+const mongoose = require('mongoose');
 
 exports.getLogs = async (req, res) => {
+
   try {
     const {
       page = 1,
@@ -24,9 +26,9 @@ exports.getLogs = async (req, res) => {
       filter.action = { $regex: `${action}`, $options: 'i' };
         console.log("valid Action Passed")
     }
-    else{
-        logger.error("Invalid Action Passed")
-    }
+    // else{
+    //     logger.error("Invalid Action Passed")
+    // }
 
     // 🗓️ Filter by date range
     if (startDate || endDate) {
@@ -55,6 +57,58 @@ exports.getLogs = async (req, res) => {
   }
 }
 
+
+// Example input: actor and adminEmail are now expected to be ObjectId strings
+// if (actor || adminEmail) {
+//   const orConditions = [];
+
+//   if (actor) {
+//     // Match user or admin _id with the provided actor string
+//     if (mongoose.Types.ObjectId.isValid(actor)) {
+//       const actorId = new mongoose.Types.ObjectId(actor);
+//       orConditions.push({ admin: actorId });
+//       orConditions.push({ user: actorId });
+//     }
+//   }
+
+//   if (adminEmail) {
+//     // If adminEmail is actually an ID (e.g., passed from frontend)
+//     if (mongoose.Types.ObjectId.isValid(adminEmail)) {
+//       const adminId = new mongoose.Types.ObjectId(adminEmail);
+//       orConditions.push({ admin: adminId });
+//       orConditions.push({ user: adminId });
+//     }
+//   }
+
+//   if (orConditions.length > 0) {
+//     filter.$or = orConditions;
+//   }
+// }
+
+
+
+// 🔍 Actor / adminEmail filter
+// const orConditions = [];
+
+// if (actor && mongoose.Types.ObjectId.isValid(actor)) {
+//   const actorId = new mongoose.Types.ObjectId(actor);
+//   orConditions.push({ admin: actorId });
+//   orConditions.push({ user: actorId });
+// }
+
+// if (adminEmail && mongoose.Types.ObjectId.isValid(adminEmail)) {
+//   const adminId = new mongoose.Types.ObjectId(adminEmail);
+//   orConditions.push({ admin: adminId });
+//   orConditions.push({ user: adminId });
+// }
+
+// if (orConditions.length > 0) {
+//   // Combine $or with other filters via $and
+//   filter.$and = [
+//     { $or: orConditions },
+//     // any other top-level filters can be merged here if needed
+//   ];
+// }
 
     // 🔍 User filter (for denormalized user object)
     if (userName) {

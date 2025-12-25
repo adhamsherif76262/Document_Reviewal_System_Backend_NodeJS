@@ -15,7 +15,7 @@ const connectDB = require('./Config/db');
 const logger = require('./utils/logger');
 
 // 4. Connect to MongoDB
-connectDB();
+ connectDB();
 
 // 5. Define the port, fallback to 5000 if not specified in .env
 const PORT = process.env.PORT || 5000;
@@ -28,6 +28,21 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   logger.info(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+
+// mongoose.connection.once('open', async () => {
+//   console.log('🟢 MongoDB connection established')
+
+//   try {
+  //     await refreshDocTypeAssignments()
+//     console.log('✅ DocType assignments refreshed at startup')
+//   } catch (err) {
+//     console.error(
+  //       '⚠️ Failed to refresh DocType assignments:',
+//       err
+//     )
+//   }
+// })
 
 // in server.js (after DB connection)
 (async () => {

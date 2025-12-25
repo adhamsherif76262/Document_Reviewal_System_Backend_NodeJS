@@ -449,11 +449,28 @@ exports.loginUser = async (req, res) => {
 
      // Generate token
     const token = generateToken(user._id);
-
+    
     // ✅ Log the login
+    // if(user.role === "admin"){
+    //   await Log.create({
+    //     action: 'login',
+    //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
+    //     user: user,
+    //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+    //   });
+    // }else{
+    //   await Log.create({
+    //     action: 'login',
+    //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
+    //     user: user,
+    //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+    //   });
+      
+    // }
     await Log.create({
       action: 'login',
       [user.role === 'admin' ? 'admin' : 'user']: user,
+      // user: user,
       message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
     });
 
@@ -504,9 +521,31 @@ exports.logoutUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     // Log The Logout
+    // const logData = {
+    //   action: 'logout',
+    //   message: `${user.role} ${user.name} With Email ${user.email} logged Out`,
+    // };
+
+    // if (user.role === 'admin') {
+    //   logData.admin = {
+    //     _id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //   }; // assign admin field
+    // } else {
+    //   logData.user = {
+    //     _id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //   }; // assign user field
+    // }
+
+    // await Log.create(logData);
+
     await Log.create({
       action: 'logout',
-      [user.role === 'admin' ? 'admin' : 'user']: user,
+      [user.role === "admin" ? "admin" : "user"]: user,
+      // user: user,
       message: `${user.role} ${user.name} With Email ${user.email} logged Out`,
     });
 
