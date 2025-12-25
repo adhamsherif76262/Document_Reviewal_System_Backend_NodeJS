@@ -8,7 +8,7 @@ exports.getLogs = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 100,
+      limit = 10,
       // adminName,
       actor,
       adminEmail,
@@ -44,6 +44,8 @@ exports.getLogs = async (req, res) => {
   if (actor) {
     orConditions.push({ 'admin.name': { $regex: actor, $options: 'i' } });
     orConditions.push({ 'user.name': { $regex: actor, $options: 'i' } });
+    // orConditions.push({ 'admin.email': { $regex: adminEmail, $options: 'i' } });
+    // orConditions.push({ 'user.email': { $regex: adminEmail, $options: 'i' } });
   }
 
   if (adminEmail) {
@@ -118,14 +120,21 @@ exports.getLogs = async (req, res) => {
       filter['user.email'] = { $regex: userEmail, $options: 'i' };
     }
 
+    const skip = (Number(page) - 1) * Number(limit);
 
     // 🧾 Fetch logs
     const logs = await Log.find(filter)
-      .populate('admin', 'name email')
-      .populate('user', 'name email')
-      .populate('document', 'fileName fileUrl status')
+    
+    //  THESE POPULATE ORDERS PREVENT THE SYSTEM FROM RENDERING MORE THAN 375 LOGS PER PAGE & CAUSES SERVER ERRORS
+    //  DURING THE PAGINATION NAVIGATION EITHER USING NEXT FOR LARGE LIMIT NUMBERS OR PREVIOUS FOR SMALL LIMIT NUMBERS 
+    // & UNTILL NOW AFTER REMOVING THEM I HAVE TESTED MOST OF THE SCENARIOS OF RENDERING & EVERYTHING SEEMS SEAMLESS 
+    // SO I WILL KEEP THEM OFFLINE
+    
+      // .populate('admin', 'name email')
+      // .populate('user', 'name email')
+      // .populate('document', 'fileName fileUrl status')
       .sort({ timestamp: -1 })
-      .skip((page - 1) * limit)
+      .skip(skip)
       .limit(Number(limit));
 
     const total = await Log.countDocuments(filter);
@@ -133,7 +142,7 @@ exports.getLogs = async (req, res) => {
     res.status(200).json({
       total,
       page: Number(page),
-      pages: Math.ceil(total / limit),
+      pages: Math.ceil(total / Number(limit)),
       logs,
     });
   } catch (error) {

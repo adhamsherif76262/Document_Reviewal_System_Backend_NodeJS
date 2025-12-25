@@ -6,6 +6,7 @@ const { protect , isAdmin, isSuperAdmin} = require('../middlewares/auth');
 const User = require('../models/user');
 const Document = require('../models/document');
 const Review = require('../models/review');
+const Log = require('../models/log');
 
 // @route   GET /api/admin/metrics
 // @desc    Admin dashboard metrics
@@ -19,6 +20,7 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
     const totalUsers = await User.countDocuments();
     const totalDocuments = await Document.countDocuments();
     const totalReviews = await Review.countDocuments();
+    const totalLogs = await Log.countDocuments();
 
     const statusCounts = await Document.aggregate([
       {
@@ -38,6 +40,7 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
       totalUsers,
       totalDocuments,
       totalReviews,
+      totalLogs,
       documentStatuses: {
         pending: statusMap.pending || 0,
         approved: statusMap.approved || 0,

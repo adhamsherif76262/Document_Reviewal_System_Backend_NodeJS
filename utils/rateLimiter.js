@@ -12,7 +12,7 @@ exports.defaultLimiter = rateLimit({
 // ✅ More aggressive limiter: 7 attempts per 10 minutes
 exports.authLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 100,
+  max: 1000,
   message: 'Too many attempts. Please wait 10 minutes and try again.',
   standardHeaders: true,
   legacyHeaders: false,
