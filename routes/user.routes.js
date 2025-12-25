@@ -63,6 +63,24 @@ router.get("/:email/getUserByEmail", protect, isAdmin, async (req, res) => {
   }
 });
 
+router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
+  try {
+    const ID = req.params.id;
+    // const user = await User.findById(req.params.id);
+    const user = await User.findById(ID);
+    if (!user) {
+      console.log('❌ User not found in DB');
+      return res.status(401).json({ message: 'Invalid User ID' });
+    }
+    // if (!user.isVerified && user.role === "user") {
+    //   return res.status(403).json({ message: `Please Make Sure That The User's Account Is Verified Before Attempting To Extend The Account's Expiry Date.` });
+    // }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while retrieving user data' });
+  }
+});
+
 // @route   POST /api/users/register
 router.post('/register',authLimiter, registerUser);
 

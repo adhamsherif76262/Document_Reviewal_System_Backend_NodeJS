@@ -6,8 +6,9 @@ exports.getLogs = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 10,
-      adminName,
+      limit = 100,
+      // adminName,
+      actor,
       adminEmail,
       userName,
       userEmail,
@@ -20,7 +21,7 @@ exports.getLogs = async (req, res) => {
 
     // 🎯 Filter by action
     if (action) {
-      filter.action = { $regex: `^${action}$`, $options: 'i' };
+      filter.action = { $regex: `${action}`, $options: 'i' };
         console.log("valid Action Passed")
     }
     else{
@@ -35,12 +36,12 @@ exports.getLogs = async (req, res) => {
     }
     
     // 🔍 Admin filter
-    if (adminName || adminEmail) {
+    if (actor || adminEmail) {
   const orConditions = [];
 
-  if (adminName) {
-    orConditions.push({ 'admin.name': { $regex: adminName, $options: 'i' } });
-    orConditions.push({ 'user.name': { $regex: adminName, $options: 'i' } });
+  if (actor) {
+    orConditions.push({ 'admin.name': { $regex: actor, $options: 'i' } });
+    orConditions.push({ 'user.name': { $regex: actor, $options: 'i' } });
   }
 
   if (adminEmail) {
