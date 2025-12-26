@@ -34,7 +34,7 @@ exports.syncDocTypeAssignments = async (req, res) => {
         // 🧾 Log action
     await Log.create({
       action: 'SyncDocTypeAssignments',
-      admin : req.user,
+      admin : {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `Super Admin ${req.user.name} with email ${req.user.email} Attempted To Sync All Document Type Assignments.`,
     });
     res.status(200).json({
@@ -56,7 +56,7 @@ exports.getDocTypeAssignments = async (req, res) => {
 // 🧾 Log action
     await Log.create({
       action: 'GetDocTypeAssignments',
-      admin : req.user,
+      admin : {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `Super Admin ${req.user.name} with email ${req.user.email} Attempted View All Document Type Assignments.`,
     });
     res.status(200).json(assignments);

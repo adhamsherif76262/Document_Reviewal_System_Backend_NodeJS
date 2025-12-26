@@ -450,7 +450,7 @@ brevoClient.setApiKey(
         // 📨 Log + Email
     await Log.create({
       action: 'fileSubmission',
-      user: req.user,
+      user: {_id : req.user._id, name : req.user.name, email: req.user.email},
       document: shellDoc,
       message: `User ${req.user.name} with email ${req.user.email} submitted a document.`,
     });
@@ -677,8 +677,8 @@ brevoClient.setApiKey(
     // 1️⃣3️⃣ Optional audit log
     await Log.create({
       action: document.status,
-      user: document.user._id,
-      admin: req.user._id,
+      user: {_id : document.user._id, name : document.user.name, email: document.user.email},
+      admin: {_id : req.user._id, name : req.user.name, email: req.user.email},
       document: document,
       message: `Document ${document.docType} was ${document.status} by ${req.user.name} with email ${req.user.email}.`
     });
@@ -904,8 +904,9 @@ exports.resubmitDocument = async (req, res) => {
       return res.status(403).json({ message: 'You can only resubmit your own documents' });
     }
 
-    if (document.status !== 'rejected') {
-      return res.status(400).json({ message: 'Only Rejected documents can be resubmitted' });
+    if (document.status !== 'rejected' && document.status !== 'partiallyApproved') {
+      // return res.status(400).json({ message: 'Only Rejected documents can be resubmitted' });
+      return res.status(400).json({ message: 'Only Rejected or Partially Approved documents can be resubmitted' });
     }
 
     const { docType, state } = document;
@@ -1061,7 +1062,8 @@ brevoClient.setApiKey(
     await Log.create({
       action: 'fileReSubmission',
       document,
-      user : document.user.name,
+      // user : document.user.name,
+      user : {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `User ${req.user.name} with email ${req.user.email} resubmitted document #${document.docNumber}.`,
     });
     res.json({ message: 'Document resubmitted successfully — rejected fields pending review again', document });
@@ -1359,7 +1361,7 @@ exports.adminListDocuments = async (req, res) => {
     // 🧾 8. Log action
     await Log.create({
       action: 'ListAllDocs',
-      admin: req.user,
+      admin: {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `Admin ${req.user.name} with email ${req.user.email} viewed document list.`,
     });
 
@@ -1441,7 +1443,7 @@ exports.submitCertificate = async (req, res) => {
     // 🧾 8. Log action
     await Log.create({
       action: 'SubmitFinalCertificate',
-      admin: admin,
+      admin: {_id : admin._id, name : admin.name, email: admin.email},
       message: `Admin ${admin.name} with email ${admin.email} Has Submitted The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
 
@@ -1521,7 +1523,7 @@ try {
     // 🧾 8. Log action
     await Log.create({
       action: 'ResubmitFinalCertificate',
-      admin: admin,
+      admin: {_id : admin._id, name : admin.name, email: admin.email},
       message: `Admin ${admin.name} with email ${admin.email} Attempted To  Re-Submit The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
 
@@ -1617,7 +1619,7 @@ brevoClient.setApiKey(
       // 🧾 8. Log action
     await Log.create({
       action: 'ApproveFinalCertificate',
-      admin: superAdmin,
+      admin: {_id : superAdmin._id, name : superAdmin.name, email: superAdmin.email},
       message: `Admin ${superAdmin.name} with email ${superAdmin.email} Has Approved The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
     
@@ -1647,7 +1649,7 @@ brevoClient.setApiKey(
       // 🧾 8. Log action
     await Log.create({
       action: 'RejectFinalCertificate',
-      admin: superAdmin,
+      admin: {_id : superAdmin._id, name : superAdmin.name, email: superAdmin.email},
       message: `Admin ${superAdmin.name} with email ${superAdmin.email} Has Rejected The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
       return res.json({ message: 'Certificate rejected successfully' });

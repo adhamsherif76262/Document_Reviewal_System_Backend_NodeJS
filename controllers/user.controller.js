@@ -177,13 +177,13 @@ exports.registerUser = async (req, res) => {
     if (user.role === 'admin') {
       await Log.create({
         action: 'register',
-        admin: user,
+        admin: {_id : user._id, name : user.name, email: user.email},
         message: `Admin ${user.name} With Email ${user.email} Registered An Account.`,
       });
     } else {
       await Log.create({
         action: 'register',
-        user: user,
+        user:  {_id : user._id, name : user.name, email: user.email},
         message: `User ${user.name} With Email ${user.email} Registered An Account.`,
       });
     }
@@ -278,7 +278,7 @@ exports.verifyAccount = async (req, res) => {
     // ✅ Log the verification
     await Log.create({
       action: 'verifyEmail',
-      [user.role === 'admin' ? 'admin' : 'user']: user,
+      [user.role === 'admin' ? 'admin' : 'user']:  {_id : user._id, name : user.name, email: user.email},
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Verified Their Account`,
     });
 
@@ -395,7 +395,7 @@ exports.resendVerificationOTP = async (req, res) => {
     // 📝 Log the resend attempt
     await Log.create({
       action: 'register',
-      [user.role === 'admin' ? 'admin' : 'user']: user,
+      [user.role === 'admin' ? 'admin' : 'user']:  {_id : user._id, name : user.name, email: user.email},
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Requested a new OTP`,
     });
 
@@ -467,12 +467,29 @@ exports.loginUser = async (req, res) => {
     //   });
       
     // }
+        if (user.role === 'admin') {
+          await Log.create({
+            action: 'login',
+            admin:  {_id : user._id, name : user.name, email: user.email},
+            // user: user,
+            message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+          });
+      
+    } else {
+      
     await Log.create({
       action: 'login',
-      [user.role === 'admin' ? 'admin' : 'user']: user,
+      user:  {_id : user._id, name : user.name, email: user.email},
       // user: user,
       message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
     });
+  }
+    // await Log.create({
+    //   action: 'login',
+    //   [user.role === 'admin' ? 'admin' : 'user']:  {_id : req.user._id, name : req.user.name, email: req.user.email},
+    //   // user: user,
+    //   message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+    // });
 
         // Set cookie
     res.cookie('auth_token', token, {
@@ -544,7 +561,7 @@ exports.logoutUser = async (req, res) => {
 
     await Log.create({
       action: 'logout',
-      [user.role === "admin" ? "admin" : "user"]: user,
+      [user.role === "admin" ? "admin" : "user"]:  {_id : user._id, name : user.name, email: user.email},
       // user: user,
       message: `${user.role} ${user.name} With Email ${user.email} logged Out`,
     });
@@ -653,7 +670,7 @@ exports.forgotPassword = async (req, res) => {
     // 7️⃣ Log the password reset attempt
     await Log.create({
       action: 'forgotPassword',
-      [user.role === 'admin' ? 'admin' : 'user']: user,
+      [user.role === 'admin' ? 'admin' : 'user']:  {_id : user._id, name : user.name, email: user.email},
       message: `${user.role === 'admin' ? 'Admin' : 'User'} ${user.name} With Email ${user.email} Is Attempting A Forgot Password`,
     });
 
@@ -710,13 +727,13 @@ exports.resetPassword = async (req, res) => {
     if (user.role === 'admin') {
       await Log.create({
         action: 'resetPassword',
-        admin: user,
+        admin:  {_id : user._id, name : user.name, email: user.email},
         message: `Admin ${user.name} With Email ${user.email} Is Attempting To Reset His/Her Password`,
       });
     } else {
       await Log.create({
         action: 'resetPassword',
-        user: user,
+        user: {_id : user._id, name : user.name, email: user.email},
         message: `User ${user.name} With Email ${user.email} Is Attempting To Reset His/Her Password`,
       });
     }
@@ -1000,7 +1017,7 @@ exports.getMyDocuments = async (req, res) => {
     // 🪵 Log action
     await Log.create({
       action: 'GetAllPersonalDocs',
-      user: req.user,
+      user:  {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `User ${req.user.name} (${req.user.email}) viewed their submitted documents.`,
     });
 
@@ -1095,7 +1112,7 @@ exports.getAllUserStats = async (req, res) => {
 
     await Log.create({
       action: 'GetAllUsersStats',
-      admin: req.user,
+      admin:  {_id : req.user._id, name : req.user.name, email: req.user.email},
       // document : document,
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Users Data`,
     });
@@ -1190,7 +1207,7 @@ exports.getAdminStats = async (req, res) => {
 
     await Log.create({
       action: 'GetAllAdminsStats',
-      admin: req.user,
+      admin:  {_id : req.user._id, name : req.user.name, email: req.user.email},
       // document : document,
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Admins' Statistics`,
     });
@@ -1310,7 +1327,7 @@ exports.extendUserExpiryDate = async (req, res) => {
     // 🧾 5. Log the admin action
     await Log.create({
       action: 'ExtendUserAccountExpiryDate',
-      admin: req.user,
+      admin:  {_id : req.user._id, name : req.user.name, email: req.user.email},
       user: { _id: user._id, name: user.name, email: user.email },
       message: `Admin ${req.user.name} With Email (${req.user.email}) Extended The Expiry Date Of User ${user.name} With Email (${user.email}) By One Year , From ${baseDate.toISOString().split('T')[0]} to ${newExpiryDate.toISOString().split('T')[0]} .`,
     });

@@ -618,7 +618,7 @@ exports.getAdminReviews = async (req, res) => {
     // 🔹 8. Log admin action
     await Log.create({
       action: 'GetAllReviews',
-      admin: req.user,
+      admin: {_id : req.user._id, name : req.user.name, email: req.user.email},
       message: `Admin ${req.user.name} (${req.user.email}) viewed review list.`,
     });
 

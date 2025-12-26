@@ -122,16 +122,16 @@ exports.getLogs = async (req, res) => {
 
     const skip = (Number(page) - 1) * Number(limit);
 
-    // 🧾 Fetch logs
-    const logs = await Log.find(filter)
     
     //  THESE POPULATE ORDERS PREVENT THE SYSTEM FROM RENDERING MORE THAN 375 LOGS PER PAGE & CAUSES SERVER ERRORS
     //  DURING THE PAGINATION NAVIGATION EITHER USING NEXT FOR LARGE LIMIT NUMBERS OR PREVIOUS FOR SMALL LIMIT NUMBERS 
     // & UNTILL NOW AFTER REMOVING THEM I HAVE TESTED MOST OF THE SCENARIOS OF RENDERING & EVERYTHING SEEMS SEAMLESS 
     // SO I WILL KEEP THEM OFFLINE
     
-      // .populate('admin', 'name email')
-      // .populate('user', 'name email')
+    // 🧾 Fetch logs
+    const logs = await Log.find(filter)
+      // .populate('admin', 'name')
+      // .populate('user', 'name')
       // .populate('document', 'fileName fileUrl status')
       .sort({ timestamp: -1 })
       .skip(skip)
