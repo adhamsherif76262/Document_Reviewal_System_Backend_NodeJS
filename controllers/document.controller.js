@@ -1344,9 +1344,14 @@ exports.adminListDocuments = async (req, res) => {
     // 🔢 6. Pagination
     const skip = (Number(page) - 1) * Number(limit);
 
+        //  THESE POPULATE ORDERS PREVENT THE SYSTEM FROM RENDERING MORE THAN 375 LOGS PER PAGE & CAUSES SERVER ERRORS
+    //  DURING THE PAGINATION NAVIGATION EITHER USING NEXT FOR LARGE LIMIT NUMBERS OR PREVIOUS FOR SMALL LIMIT NUMBERS 
+    // & UNTILL NOW AFTER REMOVING THEM I HAVE TESTED MOST OF THE SCENARIOS OF RENDERING & EVERYTHING SEEMS SEAMLESS 
+    // SO I WILL KEEP THEM OFFLINE
+
     // 📄 7. Query documents
     const documents = await Document.find(filter)
-      .populate('user', 'name email')
+      // .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
@@ -1443,6 +1448,7 @@ exports.submitCertificate = async (req, res) => {
     // 🧾 8. Log action
     await Log.create({
       action: 'SubmitFinalCertificate',
+      document: doc._id,
       admin: {_id : admin._id, name : admin.name, email: admin.email},
       message: `Admin ${admin.name} with email ${admin.email} Has Submitted The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
@@ -1523,6 +1529,7 @@ try {
     // 🧾 8. Log action
     await Log.create({
       action: 'ResubmitFinalCertificate',
+      document: doc._id,
       admin: {_id : admin._id, name : admin.name, email: admin.email},
       message: `Admin ${admin.name} with email ${admin.email} Attempted To  Re-Submit The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
@@ -1619,6 +1626,7 @@ brevoClient.setApiKey(
       // 🧾 8. Log action
     await Log.create({
       action: 'ApproveFinalCertificate',
+      document: doc._id,
       admin: {_id : superAdmin._id, name : superAdmin.name, email: superAdmin.email},
       message: `Admin ${superAdmin.name} with email ${superAdmin.email} Has Approved The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });
@@ -1649,6 +1657,7 @@ brevoClient.setApiKey(
       // 🧾 8. Log action
     await Log.create({
       action: 'RejectFinalCertificate',
+      document: doc._id,
       admin: {_id : superAdmin._id, name : superAdmin.name, email: superAdmin.email},
       message: `Admin ${superAdmin.name} with email ${superAdmin.email} Has Rejected The Final Authorization Certificate For The Document ${doc.docType} With Number ${doc.docNumber}.`,
     });

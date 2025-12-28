@@ -31,6 +31,34 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
       }
     ]);
 
+    const usersStatusCounts = await User.aggregate([
+      {
+        $group: {
+          _id: '$adminLevel',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const logsActionsCounts = await Log.aggregate([
+      {
+        $group: {
+          _id: '$action',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const logsActionsMap = {};
+    logsActionsCounts.forEach(({ _id, count }) => {
+      logsActionsMap[_id] = count;
+    });
+
+    const usersStatusMap = {};
+    usersStatusCounts.forEach(({ _id, count }) => {
+      usersStatusMap[_id] = count;
+    });
+
     const statusMap = {};
     statusCounts.forEach(({ _id, count }) => {
       statusMap[_id] = count;
@@ -38,9 +66,42 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
 
     res.json({
       totalUsers,
-      totalDocuments,
+      usersRoles:{
+        regularUsers:usersStatusMap.null || 0,
+        admins:usersStatusMap.regular || 0,
+        superAdmins:usersStatusMap.super || 0
+      },
       totalReviews,
       totalLogs,
+      logsActionsCount : {
+        login :logsActionsMap.login || 0,
+        logout :logsActionsMap.logout || 0,
+        register :logsActionsMap.register || 0,
+        verifyEmail :logsActionsMap.verifyEmail || 0,
+        forgotPassword :logsActionsMap.forgotPassword || 0,
+        resetPassword :logsActionsMap.resetPassword || 0,
+        fileSubmission :logsActionsMap.fileSubmission || 0,
+        fileReSubmission :logsActionsMap.fileReSubmission || 0,
+        approved :logsActionsMap.approved || 0,
+        partiallyApproved :logsActionsMap.partiallyApproved || 0,
+        rejected :logsActionsMap.rejected || 0,
+        assign :logsActionsMap.assign || 0,
+        reviewReturn :logsActionsMap.reviewReturn || 0,
+        ListAllDocs :logsActionsMap.ListAllDocs || 0,
+        GetAllReviews :logsActionsMap.GetAllReviews || 0,
+        ExtendUserAccountExpiryDate :logsActionsMap.ExtendUserAccountExpiryDate || 0,
+        GenerateRegistrationCode :logsActionsMap.GenerateRegistrationCode || 0,
+        SyncDocTypeAssignments :logsActionsMap.SyncDocTypeAssignments || 0,
+        GetDocTypeAssignments :logsActionsMap.GetDocTypeAssignments || 0,
+        SubmitFinalCertificate :logsActionsMap.SubmitFinalCertificate || 0,
+        ResubmitFinalCertificate :logsActionsMap.ResubmitFinalCertificate || 0,
+        ApproveFinalCertificate :logsActionsMap.ApproveFinalCertificate || 0,
+        RejectFinalCertificate :logsActionsMap.RejectFinalCertificate || 0,
+        GetAllPersonalDocs :logsActionsMap.GetAllPersonalDocs || 0,
+        GetAllUsersStats :logsActionsMap.GetAllUsersStats || 0,
+        GetAllAdminsStats :logsActionsMap.GetAllAdminsStats || 0,
+      },
+      totalDocuments,
       documentStatuses: {
         pending: statusMap.pending || 0,
         approved: statusMap.approved || 0,
@@ -78,6 +139,11 @@ router.get('/documents', protect,isAdmin, async (req, res) => {
       query.fileName = { $regex: search, $options: 'i' }; // case-insensitive search
     }
 
+        //  THESE POPULATE ORDERS PREVENT THE SYSTEM FROM RENDERING MORE THAN 375 LOGS PER PAGE & CAUSES SERVER ERRORS
+    //  DURING THE PAGINATION NAVIGATION EITHER USING NEXT FOR LARGE LIMIT NUMBERS OR PREVIOUS FOR SMALL LIMIT NUMBERS 
+    // & UNTILL NOW AFTER REMOVING THEM I HAVE TESTED MOST OF THE SCENARIOS OF RENDERING & EVERYTHING SEEMS SEAMLESS 
+    // SO I WILL KEEP THEM OFFLINE
+    
     const documents = await Document.find(query)
       .populate('user', 'name email') // Include uploader info
       .sort({ createdAt: -1 }) // newest first
