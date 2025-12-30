@@ -1,7 +1,7 @@
 // config/docTypeAssignments.js
 export const docTypeAssignments = {
   "Domestic Organic Pesticide": ['1ST_regular_admin@yourdomain.com','3RD_regular_admin@yourdomain.com'],
-  "Imported Organic Pesticide": ['3RD_regular_admin@yourdomain.com'],
+  "Imported Organic Pesticide": ['3RD_regular_admin@yourdomain.com', '1ST_regular_admin@yourdomain.com'],
   "Imported Organic Nutrition": ['2ND_regular_admin@yourdomain.com'],
   "Domestic Organic Nutrition": ['2ND_regular_admin@yourdomain.com'],
   "Warehouse": ['3RD_regular_admin@yourdomain.com'],

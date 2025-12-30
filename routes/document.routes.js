@@ -7,7 +7,7 @@ const { protect , isAdmin, isSuperAdmin} = require('../middlewares/auth'); // JW
 const multer = require('multer');
 // const upload = multer({ storage: multer.memoryStorage() });
 const upload = multer();
-
+const Doc = require('../models/document');
 const {
   // uploadDocument,
   createDocument,
@@ -21,6 +21,24 @@ const {
   validateResubmission,
   validateDocumentReview,
 } = require('../middlewares/validation');
+
+router.get("/:id/getDocumentById", protect, async (req, res) => {
+  try {
+    const ID = req.params.id;
+    // const user = await User.findById(req.params.id);
+    const doc = await Doc.findById(ID);
+    if (!doc) {
+      console.log('❌ doc not found in DB');
+      return res.status(401).json({ message: 'Invalid doc ID' });
+    }
+    // if (!user.isVerified && user.role === "user") {
+    //   return res.status(403).json({ message: `Please Make Sure That The User's Account Is Verified Before Attempting To Extend The Account's Expiry Date.` });
+    // }
+    res.status(200).json(doc);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while retrieving doc data' });
+  }
+});
 
 router.post('/upload',
   protect,
