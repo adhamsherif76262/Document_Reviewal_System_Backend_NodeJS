@@ -1041,11 +1041,18 @@ exports.getMyDocuments = async (req, res) => {
 
 exports.getAllUserStats = async (req, res) => {
   try {
-    const { page = 1, limit = 10, name, email,expiryStatus,expiresBefore,expiresAfter, createdAfter, createdBefore } = req.query;
+    const { page = 1, limit = 10, id, name, email,expiryStatus,expiresBefore,expiresAfter, createdAfter, createdBefore } = req.query;
 
     // 🔍 Build dynamic filters
     const filter = { role: 'user' };
 
+    if (id) {
+      filter._id = id; 
+    }
+
+    // if (id) {
+    //   filter.id = { $regex: id, $options: 'i' };
+    // }
     if (name) {
       filter.name = { $regex: name, $options: 'i' };
     }

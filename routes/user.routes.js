@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { protect, isAdmin ,isSuperAdmin} = require('../middlewares/auth');
 const User = require('../models/user');
+const Document = require('../models/document');
+
 const {
   registerUser,
   verifyAccount,
@@ -72,10 +74,25 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
       console.log('❌ User not found in DB');
       return res.status(401).json({ message: 'Invalid User ID' });
     }
-    // if (!user.isVerified && user.role === "user") {
-    //   return res.status(403).json({ message: `Please Make Sure That The User's Account Is Verified Before Attempting To Extend The Account's Expiry Date.` });
-    // }
-    res.status(200).json(user);
+    // res.status(200).json(user);
+    // const documents = await Document.find({ user: user._id });
+    const documents = await Document.find({ 'user._id': user._id })
+    const pending = documents.filter((doc) => doc.status === 'pending');
+    const approved = documents.filter((doc) => doc.status === 'approved');
+    const partiallyApproved = documents.filter((doc) => doc.status === 'partiallyApproved');
+    const rejected = documents.filter((doc) => doc.status === 'rejected')
+    return res.status(200).json({
+      user,
+      totalDocuments: documents.length,
+      pendingCount: pending.length,
+      approvedCount: approved.length,
+      partiallyApprovedCount: partiallyApproved.length,
+      rejectedCount: rejected.length,
+      pendingDocuments: pending,
+      approvedDocuments: approved,
+      partiallyApprovedDocuments: partiallyApproved,
+      rejectedDocuments: rejected,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error while retrieving user data' });
   }
