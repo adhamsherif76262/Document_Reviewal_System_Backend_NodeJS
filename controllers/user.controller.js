@@ -1244,7 +1244,7 @@ exports.generateInviteCode = async (req, res) => {
     console.log(existingCode)
     if (existingCode) {
       return res.status(400).json({
-        message: `An active invite code already exists for ${generatedFor}.`,
+        message: `An Active Registration Invitation Code Already Exists For User Name ${generatedFor}.`,
         existingCode: existingCode.code,
       });
     }
