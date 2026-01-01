@@ -1239,9 +1239,9 @@ exports.generateInviteCode = async (req, res) => {
     // 🔍 Check for an existing active invite code for the same user/company
     const existingCode = await InviteCode.findOne({
       generatedFor,
-      used: false, // Only check active ones
+      // used: false, // Only check active ones
     });
-
+    console.log(existingCode)
     if (existingCode) {
       return res.status(400).json({
         message: `An active invite code already exists for ${generatedFor}.`,
