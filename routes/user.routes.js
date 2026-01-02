@@ -74,24 +74,120 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
       console.log('❌ User not found in DB');
       return res.status(401).json({ message: 'Invalid User ID' });
     }
-    // res.status(200).json(user);
-    // const documents = await Document.find({ user: user._id });
-    const documents = await Document.find({ 'user._id': user._id })
-    const pending = documents.filter((doc) => doc.status === 'pending');
-    const approved = documents.filter((doc) => doc.status === 'approved');
-    const partiallyApproved = documents.filter((doc) => doc.status === 'partiallyApproved');
-    const rejected = documents.filter((doc) => doc.status === 'rejected')
+          if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins can view all documents' });
+    }
+
+    const {
+      docType,
+      docNumber,
+      currentHolderName,
+      state,
+      hasPendingResubmission,
+      status,
+      certificateStatus,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    const filter = {'user._id': user._id};
+    // const filter = {};
+
+    // 🔍 1. Basic filters
+    if (status) filter.status = status;
+    if (docType) filter.docType = { $regex: docType, $options: 'i' };
+    if (docNumber) filter.docNumber = { $regex: docNumber, $options: 'i' };
+    if (state) filter.state = { $regex: state, $options: 'i' };
+
+    // 👤 3. Filter by current holder details
+    if (currentHolderName) filter['custody.currentHolder.name'] = { $regex: currentHolderName, $options: 'i' };
+
+    // 📄 4. Filter by Final Certificate Status
+    if (certificateStatus) filter['certificate.status'] = { $regex: certificateStatus, $options: 'i' };
+
+    // ⏳ 5. Filter by "hasPendingResubmission" (boolean)
+    if (typeof hasPendingResubmission !== 'undefined') {
+      const value = hasPendingResubmission === 'true' || hasPendingResubmission === true;
+      filter.hasPendingResubmission = value;
+    }
+
+    // 📅 6. Date range filter (createdAt)
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Include full day
+        filter.createdAt.$lte = end;
+      }
+    }
+
+    // 🧩 Restrict regular admins to only assigned docs
+    if (req.user.role === 'admin' && req.user.adminLevel === 'regular') {
+      filter['assignedAdmins._id'] = req.user._id; // If The assignedAdmins array is an array of objects
+      // filter.assignedAdmins = { $in: [req.user.email] }; ==> If The assignedAdmins array is just an array of strings
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    const totalDocuments = await Document.countDocuments(filter);
+        
+    const documents = await Document.find(filter)
+    .select({
+      docType: 1,
+      docNumber: 1,
+      state: 1,
+      status: 1,
+      hasPendingResubmission: 1,
+      adminComment: 1,
+      submittedAt: 1,
+      lastReviewedAt: 1,
+      'certificate.status': 1,
+      'custody.currentHolder.name': 1,
+    })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum);
+
+    const allDocsForCounts = await Document.find({'user._id': user._id}).select('status');
+
+    const pendingCount = allDocsForCounts.filter(d => d.status === 'pending').length;
+    const approvedCount = allDocsForCounts.filter(d => d.status === 'approved').length;
+    const partiallyApprovedCount = allDocsForCounts.filter(d => d.status === 'partiallyApproved').length;
+    const rejectedCount = allDocsForCounts.filter(d => d.status === 'rejected').length;
+
+    // const pendingCount = documents.filter((doc) => doc.status === 'pending');
+    // const approvedCount = documents.filter((doc) => doc.status === 'approved');
+    // const partiallyApprovedCount = documents.filter((doc) => doc.status === 'partiallyApproved');
+    // const rejectedCount = documents.filter((doc) => doc.status === 'rejected')
+        
+    // const totalDocuments = documents.length
+      
     return res.status(200).json({
+      // user,
+      // totalDocuments: documents.length,
+      // pendingCount: pending.length,
+      // approvedCount: approved.length,
+      // partiallyApprovedCount: partiallyApproved.length,
+      // rejectedCount: rejected.length,
+      // pendingDocuments: pending,
+      // approvedDocuments: approved,
+      // partiallyApprovedDocuments: partiallyApproved,
+      // rejectedDocuments: rejected,
+      pagination: {
+        totalDocuments,
+        pages: Math.ceil(totalDocuments / limit),
+        page: parseInt(page),
+      },
       user,
-      totalDocuments: documents.length,
-      pendingCount: pending.length,
-      approvedCount: approved.length,
-      partiallyApprovedCount: partiallyApproved.length,
-      rejectedCount: rejected.length,
-      pendingDocuments: pending,
-      approvedDocuments: approved,
-      partiallyApprovedDocuments: partiallyApproved,
-      rejectedDocuments: rejected,
+      pendingCount,
+      approvedCount,
+      partiallyApprovedCount,
+      rejectedCount,
+      documents
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error while retrieving user data' });

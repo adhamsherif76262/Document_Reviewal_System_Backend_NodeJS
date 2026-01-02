@@ -1090,30 +1090,46 @@ exports.getAllUserStats = async (req, res) => {
     const userStats = await Promise.all(
       users.map(async (user) => {
         // const documents = await Document.find({ user: user._id });
-        const documents = await Document.find({ 'user._id': user._id });
+        const documents = await Document.find({ 'user._id': user._id },{  docType: 1,  docNumber: 1,  state: 1,  status: 1, _id: 1, hasPendingResubmission: 1, adminComment: 1, "certificate.status": 1, "custody.currentHolder.name": 1,  submittedAt: 1,  lastReviewedAt: 1});
 
         const pending = documents.filter((doc) => doc.status === 'pending');
         const approved = documents.filter((doc) => doc.status === 'approved');
         const partiallyApproved = documents.filter((doc) => doc.status === 'partiallyApproved');
         const rejected = documents.filter((doc) => doc.status === 'rejected');
 
-        return {
-          // userId: user._id,
-          // name: user.name,
-          // email: user.email,
-          // expiryStatus: user.expiryStatus,
-          // phone: user.phone,
-          user,
-          totalDocuments: documents.length,
-          pendingCount: pending.length,
-          approvedCount: approved.length,
-          partiallyApprovedCount: partiallyApproved.length,
-          rejectedCount: rejected.length,
-          pendingDocuments: pending,
-          approvedDocuments: approved,
-          partiallyApprovedDocuments: partiallyApproved,
-          rejectedDocuments: rejected,
-        };
+        if(id){
+
+          return {
+            // userId: user._id,
+            // name: user.name,
+            // email: user.email,
+            // expiryStatus: user.expiryStatus,
+            // phone: user.phone,
+            user,
+            totalDocuments: documents.length,
+            pendingCount: pending.length,
+            approvedCount: approved.length,
+            partiallyApprovedCount: partiallyApproved.length,
+            rejectedCount: rejected.length,
+            pendingDocuments: pending,
+            approvedDocuments: approved,
+            partiallyApprovedDocuments: partiallyApproved,
+            rejectedDocuments: rejected,
+          };
+        }else{
+          return {
+            user,
+            // totalDocuments: documents.length,
+            // pendingCount: pending.length,
+            // approvedCount: approved.length,
+            // partiallyApprovedCount: partiallyApproved.length,
+            // rejectedCount: rejected.length,
+            // pendingDocuments: pending,
+            // approvedDocuments: approved,
+            // partiallyApprovedDocuments: partiallyApproved,
+            // rejectedDocuments: rejected,
+          };
+        }
       })
     );
 
