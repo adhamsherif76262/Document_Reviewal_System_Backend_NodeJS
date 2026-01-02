@@ -127,7 +127,6 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
     // 🧩 Restrict regular admins to only assigned docs
     if (req.user.role === 'admin' && req.user.adminLevel === 'regular') {
       filter['assignedAdmins._id'] = req.user._id; // If The assignedAdmins array is an array of objects
-      // filter.assignedAdmins = { $in: [req.user.email] }; ==> If The assignedAdmins array is just an array of strings
     }
 
     const pageNum = parseInt(page);
