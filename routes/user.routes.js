@@ -143,6 +143,7 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
       hasPendingResubmission: 1,
       adminComment: 1,
       submittedAt: 1,
+      updatedAt: 1,
       lastReviewedAt: 1,
       'certificate.status': 1,
       'custody.currentHolder.name': 1,
