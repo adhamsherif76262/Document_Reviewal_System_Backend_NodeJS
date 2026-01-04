@@ -22,6 +22,15 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
     const totalReviews = await Review.countDocuments();
     const totalLogs = await Log.countDocuments();
 
+    const reviewsCounts = await Review.aggregate([
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
     const statusCounts = await Document.aggregate([
       {
         $group: {
@@ -63,6 +72,10 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
     statusCounts.forEach(({ _id, count }) => {
       statusMap[_id] = count;
     });
+    const reviewsMap = {};
+    reviewsCounts.forEach(({ _id, count }) => {
+      reviewsMap[_id] = count;
+    });
 
     res.json({
       totalUsers,
@@ -72,6 +85,11 @@ router.get('/metrics', protect,isAdmin, async (req, res) => {
         superAdmins:usersStatusMap.super || 0
       },
       totalReviews,
+      reviewsCount:{
+        approved: reviewsMap.approved || 0,
+        partiallyApproved: reviewsMap.partiallyApproved || 0,
+        rejected: reviewsMap.rejected || 0
+      },
       totalLogs,
       logsActionsCount : {
         login :logsActionsMap.login || 0,

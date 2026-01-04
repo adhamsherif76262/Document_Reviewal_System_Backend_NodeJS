@@ -894,6 +894,8 @@ exports.getMyDocuments = async (req, res) => {
     // 🎯 Base user filter
     const matchStage = { 'user._id': req.user._id };
 
+    const allDocsForCounts = await Document.find({'user._id': req.user._id});
+    
     // 🔍 Top-level filters
     if (docNumber) matchStage.docNumber = { $regex: docNumber, $options: 'i' };
     if (docType) matchStage.docType = { $regex: docType, $options: 'i' };
@@ -925,94 +927,109 @@ exports.getMyDocuments = async (req, res) => {
       }
     }
     
-    const pipeline = [{ $match: matchStage }];
+    // const pipeline = [{ $match: matchStage }];
 
-    // 🧩 Optional field-level filtering (partial key + case-insensitive)
-    if (fieldReviewedKey && fieldReviewedStatus) {
-      pipeline.push({
-        $match: {
-          $expr: {
-            $gt: [
-              {
-                $size: {
-                  $filter: {
-                    input: { $objectToArray: "$fields" },
-                    as: "f",
-                    cond: {
-                      $and: [
-                        // Match partial field key (case-insensitive)
-                        { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
-                        // Match review status (case-insensitive)
-                        { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
-                        // {
-                        //   $eq: [
-                        //     { $toLower: "$$f.v.review.status" },
-                        //     fieldReviewedStatus.toLowerCase()
-                        //   ]
-                        // }
-                      ]
-                    }
-                  }
-                }
-              },
-              0
-            ]
-          }
-        }
-      });
-    }
-    // if (fieldReviewedStatus) filter['matchStage.fields.name'] = { $regex: currentHolderName, $options: 'i' };
+    // // 🧩 Optional field-level filtering (partial key + case-insensitive)
+    // if (fieldReviewedKey && fieldReviewedStatus) {
+    //   pipeline.push({
+    //     $match: {
+    //       $expr: {
+    //         $gt: [
+    //           {
+    //             $size: {
+    //               $filter: {
+    //                 input: { $objectToArray: "$fields" },
+    //                 as: "f",
+    //                 cond: {
+    //                   $and: [
+    //                     // Match partial field key (case-insensitive)
+    //                     { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
+    //                     // Match review status (case-insensitive)
+    //                     { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
+    //                     // {
+    //                     //   $eq: [
+    //                     //     { $toLower: "$$f.v.review.status" },
+    //                     //     fieldReviewedStatus.toLowerCase()
+    //                     //   ]
+    //                     // }
+    //                   ]
+    //                 }
+    //               }
+    //             }
+    //           },
+    //           0
+    //         ]
+    //       }
+    //     }
+    //   });
+    // }
+    // // if (fieldReviewedStatus) filter['matchStage.fields.name'] = { $regex: currentHolderName, $options: 'i' };
 
-    // 📊 Pagination & sorting
-    pipeline.push(
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: parseInt(limit) }
-    );
+    // // 📊 Pagination & sorting
+    // pipeline.push(
+    //   { $sort: { createdAt: -1 } },
+    //   { $skip: skip },
+    //   { $limit: parseInt(limit) }
+    // );
 
-    // 🧮 Get paginated documents
-    const documents = await Document.aggregate(pipeline);
+    // // 🧮 Get paginated documents
+    // const documents = await Document.aggregate(pipeline);
 
     // 🧮 Total count (run separately without skip/limit)
-    const totalDocuments = await Document.aggregate([
-      { $match: matchStage },
-      ...(fieldReviewedKey && fieldReviewedStatus
-        ? [
-            {
-              $match: {
-                $expr: {
-                  $gt: [
-                    {
-                      $size: {
-                        $filter: {
-                          input: { $objectToArray: "$fields" },
-                          as: "f",
-                          cond: {
-                            $and: [
-                              { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
-                              { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
-                              // {
-                              //   $eq: [
-                              //     { $toLower: "$$f.v.review.status" },
-                              //     fieldReviewedStatus.toLowerCase()
-                              //   ]
-                              // }
-                            ]
-                          }
-                        }
-                      }
-                    },
-                    0
-                  ]
-                }
-              }
-            }
-          ]
-        : []),
-      { $count: "total" }
-    ]);
+    // const totalDocuments = await Document.aggregate(pipeline);
+    // const totalDocuments = await Document.aggregate([
+    //   { $match: matchStage },
+    //   ...(fieldReviewedKey && fieldReviewedStatus
+    //     ? [
+    //         {
+    //           $match: {
+    //             $expr: {
+    //               $gt: [
+    //                 {
+    //                   $size: {
+    //                     $filter: {
+    //                       input: { $objectToArray: "$fields" },
+    //                       as: "f",
+    //                       cond: {
+    //                         $and: [
+    //                           { $regexMatch: { input: "$$f.k", regex: fieldReviewedKey, options: "i" } },
+    //                           { $regexMatch: { input: "$$f.v.review.status", regex: fieldReviewedStatus, options: "i" } },
+    //                           // {
+    //                           //   $eq: [
+    //                           //     { $toLower: "$$f.v.review.status" },
+    //                           //     fieldReviewedStatus.toLowerCase()
+    //                           //   ]
+    //                           // }
+    //                         ]
+    //                       }
+    //                     }
+    //                   }
+    //                 },
+    //                 0
+    //               ]
+    //             }
+    //           }
+    //         }
+    //       ]
+    //     : []),
+    //   { $count: "total" }
+    // ]);
 
-    const totalCount = totalDocuments[0]?.total || 0;
+    // const totalCount = totalDocuments[0]?.total || 0;
+
+        //  THESE POPULATE ORDERS PREVENT THE SYSTEM FROM RENDERING MORE THAN 375 LOGS PER PAGE & CAUSES SERVER ERRORS
+    //  DURING THE PAGINATION NAVIGATION EITHER USING NEXT FOR LARGE LIMIT NUMBERS OR PREVIOUS FOR SMALL LIMIT NUMBERS 
+    // & UNTILL NOW AFTER REMOVING THEM I HAVE TESTED MOST OF THE SCENARIOS OF RENDERING & EVERYTHING SEEMS SEAMLESS 
+    // SO I WILL KEEP THEM OFFLINE
+
+    // 📄 7. Query documents
+    const documents = await Document.find(matchStage)
+      // .populate('user', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const totalCount = await Document.countDocuments(matchStage);
 
     // 🪵 Log action
     await Log.create({
@@ -1024,12 +1041,10 @@ exports.getMyDocuments = async (req, res) => {
     // 📤 Respond
     res.status(200).json({
       success: true,
-      pagination: {
-        totalDocuments: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        currentPage: parseInt(page),
-      },
-      count: documents.length,
+      total: totalCount,
+      pages: Math.ceil(totalCount / limit),
+      page: parseInt(page),
+      count: allDocsForCounts.length,
       documents,
     });
   } catch (error) {
@@ -1234,7 +1249,6 @@ exports.getAdminStats = async (req, res) => {
       // document : document,
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Admins' Statistics`,
     });
-
     res.status(200).json({
       admins: adminStats,
       pagination: {
