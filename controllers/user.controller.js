@@ -1177,11 +1177,11 @@ exports.getAdminStats = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    const keyword = req.query.keyword
+    const admin = req.query.admin
       ? {
           $or: [
-            { name: { $regex: req.query.keyword, $options: 'i' } },
-            { email: { $regex: req.query.keyword, $options: 'i' } },
+            { name: { $regex: req.query.admin, $options: 'i' } },
+            { email: { $regex: req.query.admin, $options: 'i' } },
           ],
         }
       : {};
@@ -1197,22 +1197,41 @@ exports.getAdminStats = async (req, res) => {
     const dateRange =
       Object.keys(createdFilter).length > 0 ? { createdAt: createdFilter } : {};
 
-    const query = { role: 'admin', ...keyword, ...dateRange };
+    const query = { role: 'admin', ...admin, ...dateRange };
+
+    // const { page = 1, limit = 10, id, admin, createdAfter, createdBefore } = req.query;
+
+    // 🔍 Build dynamic filters
+    // const filter = { role: 'admin' };
+
+    // if (id) {
+    //   filter._id = id; 
+    // }
+
+    // if (id) {
+    //   filter.id = { $regex: id, $options: 'i' };
+    // }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // 🔁 Get paginated users
+    const admins = await User.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
 
     const totalAdmins = await User.countDocuments(query);
-    const admins = await User.find(query)
-      .skip((page - 1) * limit)
-      .limit(limit);
+
 
     const adminStats = await Promise.all(
       admins.map(async (admin) => {
         const reviews = await Review.find({"reviewedBy": admin.name})
-          .populate({
-            path: 'document',
-            model: 'Document', // make sure this matches your actual model name
-            select: '-__v -updatedAt',
-            strictPopulate: false,
-          });
+          // .populate({
+          //   path: 'document',
+          //   model: 'Document', // make sure this matches your actual model name
+          //   select: '-__v -updatedAt',
+          //   strictPopulate: false,
+          // });
 
         const approved = reviews.filter((r) => r.status === 'approved' && r.document);
         const partiallyApproved = reviews.filter((r) => r.status === 'partiallyApproved' && r.document);
@@ -1250,13 +1269,13 @@ exports.getAdminStats = async (req, res) => {
       message: `Admin ${req.user.name} With Email ${req.user.email} Attempted To View All The Admins' Statistics`,
     });
     res.status(200).json({
-      admins: adminStats,
       pagination: {
         total: totalAdmins,
         page,
         limit,
         pages: Math.ceil(totalAdmins / limit),
       },
+      admins: adminStats,
     });
   } catch (error) {
     console.error('Admin Stats Error:', error.message);

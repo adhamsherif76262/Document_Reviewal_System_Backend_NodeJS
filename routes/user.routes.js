@@ -3,6 +3,7 @@ const router = express.Router();
 const { protect, isAdmin ,isSuperAdmin} = require('../middlewares/auth');
 const User = require('../models/user');
 const Document = require('../models/document');
+const Review = require('../models/review');
 
 const {
   registerUser,
@@ -74,8 +75,8 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
       console.log('❌ User not found in DB');
       return res.status(401).json({ message: 'Invalid User ID' });
     }
-          if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Only admins can view all documents' });
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Only Admins Can View This User Details !!' });
     }
 
     const {
@@ -191,6 +192,104 @@ router.get("/:id/getUserById", protect, isAdmin, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error while retrieving user data' });
+  }
+});
+
+router.get("/:id/getAdminById", protect, isAdmin, async (req, res) => {
+  try {
+    const ID = req.params.id;
+    // const user = await User.findById(req.params.id);
+    const admin = await User.findById(ID);
+    if (!admin) {
+      console.log('❌ Admin not found in DB');
+      return res.status(401).json({ message: 'Invalid Admin ID' });
+    }
+          if (req.user.adminLevel !== 'super') {
+      return res.status(403).json({ message: 'Only Super Admins Can View This Admin Details !!' });
+    }
+
+    const {
+      docType,
+      docNumber,
+      state,
+      status,
+      fieldReviewedKey,
+      fieldReviewedStatus,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    const filter = {'reviewedBy._id': admin._id};
+
+    // 🔍 1. Basic filters
+    if (status) filter.status = status;
+    if (docType) filter.docType = { $regex: docType, $options: 'i' };
+    if (docNumber) filter.docNumber = { $regex: docNumber, $options: 'i' };
+    if (state) filter.state = { $regex: state, $options: 'i' };
+
+        // 🔹 4. Field-level filters using $elemMatch
+    if (fieldReviewedKey || fieldReviewedStatus) {
+      filter.fieldsReviewed = {
+        $elemMatch: {},
+      };
+      if (fieldReviewedKey)
+        filter.fieldsReviewed.$elemMatch.fieldKey = { $regex: fieldReviewedKey, $options: 'i' };
+      if (fieldReviewedStatus)
+        filter.fieldsReviewed.$elemMatch.status = { $regex: fieldReviewedStatus, $options: 'i' };
+    }
+
+    // 📅 6. Date range filter (createdAt)
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Include full day
+        filter.createdAt.$lte = end;
+      }
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    const totalReviews = await Review.countDocuments(filter);
+        
+    const reviews = await Review.find(filter)
+    .select({
+      docType: 1,
+      docNumber: 1,
+      state: 1,
+      status: 1,
+      document: 1,
+      comment: 1,
+      createdAt: 1,
+      updatedAt: 1,
+    })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum);
+
+    const reviewsCounts = await Review.find(filter).select('status');
+    const approvedCount = reviewsCounts.filter(d => d.status === 'approved').length;
+    const partiallyApprovedCount = reviewsCounts.filter(d => d.status === 'partiallyApproved').length;
+    const rejectedCount = reviewsCounts.filter(d => d.status === 'rejected').length;
+      
+    return res.status(200).json({
+      pagination: {
+        totalReviews,
+        pages: Math.ceil(totalReviews / limit),
+        page: parseInt(page),
+      },
+      admin,
+      approvedCount,
+      partiallyApprovedCount,
+      rejectedCount,
+      reviews
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while retrieving Admin Data' });
   }
 });
 

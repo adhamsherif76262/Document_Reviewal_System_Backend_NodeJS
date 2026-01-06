@@ -20,15 +20,15 @@ exports.validateDocumentUpload = [
 exports.validateDocumentReview = [
   body('status')
     .notEmpty().withMessage('Status is required')
-    .isIn(['approved', 'rejected']).withMessage('Status must be approved or rejected'),
-  body('comment').optional().isLength({ max: 1000 }),
+    .isIn(['partiallyApproved','approved', 'rejected']).withMessage('Status must be partiallyApproved or approved or rejected'),
+  body('comment').optional().isLength({ max: 2000 }),
   validate,
 ];
 
 exports.validateResubmission = [
-  body('title').optional().isString(),
-  body('description').optional().isString(),
-  body('category').optional().isString(),
+  // body('title').optional().isString(),
+  // body('description').optional().isString(),
+  // body('category').optional().isString(),
   validate,
 ];
 
