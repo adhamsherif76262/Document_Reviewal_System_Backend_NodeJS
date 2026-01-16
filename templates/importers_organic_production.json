@@ -1,7 +1,90 @@
 {
+
+  "templateKey": "importers-organic-production",
+  "appliesTo": [
+    "Importers Organic Production"
+  ],
+  "globals": {
+    "helpText": {
+      "image": {
+        "en": "Upload a clear image (max 5 MB). It will be optimized automatically.",
+        "ar": "ارفع صورة واضحة (حد أقصى ٥ ميجابايت). سيتم تحسينها تلقائيًا."
+      },
+      "pdf": {
+        "en": "Upload a PDF File (max 45 MB).",
+        "ar": "ارفع ملف (حد أقصى 45 ميجابايت)."
+      }
+    },
+
+    "constraints": {
+      "image": {
+        "maxFiles": 1,
+        "maxSizeMB": 5,
+        "allowedMimeTypes": ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+      },
+      "pdf": {
+        "maxFiles": 1,
+        "maxSizeMB": 45,
+        "allowedMimeTypes": ["application/pdf"]
+      }
+    },
+
+    "errors": {
+      "image": {
+        "required": {
+          "en": "This Field is required",
+          "ar": "هذه الصورة مطلوبة"
+        },
+        "maxFiles": {
+          "en": "Only one image is allowed",
+          "ar": "مسموح بصورة واحدة فقط"
+        },
+        "maxSize": {
+          "en": "Image size must not exceed 5 MB",
+          "ar": "حجم الصورة يجب ألا يزيد عن ٥ ميجابايت"
+        },
+        "invalidType": {
+          "en": "Only JPG, PNG or WEBP images are allowed",
+          "ar": "يسمح فقط بصور JPG أو PNG أو WEBP"
+        }
+      },
+      "pdf": {
+        "required": {
+          "en": "This PDF File is required",
+          "ar": "هذا الملف مطلوب"
+        },
+        "maxFiles": {
+          "en": "Only one PDF is allowed",
+          "ar": "مسموح بملف واحد فقط"
+        },
+        "maxSize": {
+          "en": "PDF File Size Must Not Exceed 45 MB",
+          "ar": "حجم الملف يجب ألا يزيد عن 45 ميجابايت"
+        },
+        "invalidType": {
+          "en": "Only PDF Files Are Allowed",
+          "ar": "يسمح فقط بملفات PDF"
+        }
+      },
+
+      "text": {
+        "required": {
+          "en": "This field is required",
+          "ar": "هذا الحقل مطلوب"
+        }
+      }
+    }
+  },
+  "states":{
     "General":{
-        "tabs":{
-            "Images":[
+      "tabs":[
+        {
+          "key": "Images",
+          "label": {
+            "en": "Image File Uploads",
+            "ar": "تحميل ملفات الصور"
+          },
+          "fields":[
               {
                 "name": "importerRegistrationRequest",
                 "label": {
@@ -56,7 +139,9 @@
                 "type": "image",
                 "required": true
               }
-            ]
+          ]
         }
+      ]
     }
+  }
 }

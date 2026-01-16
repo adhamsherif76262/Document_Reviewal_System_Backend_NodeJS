@@ -20,227 +20,15 @@ const resubmissionEmailTemplate = require('../utils/emailTemplates/resubmission'
 const reviewsubmissionEmailTemplate = require('../utils/emailTemplates/review');
 const finalcertificatereviewsubmissionEmailTemplate = require('../utils/emailTemplates/certificateReview');
 // const templates = require('../templates'); // directory containing docType/state definitions
-
-
-// @route   POST /api/documents/upload
-// @desc    Upload a document with metadata
-// @access  Private (Authenticated users only)
 const { uploadToCloudinary , deleteCloudinaryFolder } = require('../utils/cloudinary');
 const { uploadToSupabase , deleteSupabaseFolder } = require('../utils/supabase');
 // import { loadTemplate } from '../utils/loadTemplate.js';
 const {loadTemplate} = require ('../utils/loadTemplate');
 const { rollbackUploads } = require('../utils/rollbackUploads');
+const { resolveAllowedFields } = require('../utils/templateResolver');
+const { resolveResubmissionFields } = require('../utils/resolveResubmissionFields');
 
-    const Brevo = require("@getbrevo/brevo");
-
-// exports.createDocument = async (req, res) => {
-//   try {
-//     if (req.user.role !== 'user') {
-//       return res.status(403).json({ message: 'Only Users Can Submit Documents' });
-//     }
-//     // if (req.user.expiryStatus !== 'active') {
-//     //   return res.status(403).json({ message: 'Only Active Users can Submit Documents , Please Activate Your Account Before Attempting To Submit A Document' });
-//     // }
-//     console.log('🧾 req.body received:', req.body);
-//     console.log('🗂 req.files received:', req.files?.map(f => f.fieldname));
-
-//     const { docType, state } = req.body;
-//     const parsedTexts = {};
-//     const parsedFiles = {};
-
-//     const template = loadTemplate(docType);
-
-//     if (!template[state]) {
-//       return res.status(400).json({ error: `State '${state}' not defined in template.` });
-//     }
-
-//         const stateTemplate = template[state];
-//     const allowedFields = new Map(); // name → { type, required, tab }
-
-//     // 🔍 Collect all valid fields from the JSON template
-//     for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
-//       for (const f of fields) {
-//         allowedFields.set(f.name, {
-//           type: f.type,
-//           required: f.required || false,
-//           tab: tabName,
-//         });
-//       }
-//     }
-
-//         // 🧠 Auto-fetch assigned admins for this docType
-//     // const assignment = await DocTypeAssignment.findOne({ docType });
-//     // const assignedTo = assignment ? assignment.assignedAdmins : [];
-
-//     // 🧱 Parse text fields
-//     if (req.body.text && typeof req.body.text === 'object') {
-//       for (const [key, value] of Object.entries(req.body.text)) {
-//         parsedTexts[key] = { type: 'text', value, tab: 'General_Info' };
-//       }
-//     } else {
-//       for (const [key, value] of Object.entries(req.body)) {
-//         const match = key.match(/^text\[(.+)\]$/);
-//         if (match) {
-//           parsedTexts[match[1]] = { type: 'text', value, tab: 'General_Info' };
-//         }
-//       }
-//     }
-
-//         const assignment = await DocTypeAssignment.findOne({ docType });
-//     const assignedAdmins = assignment
-//       ? assignment.assignedAdmins
-//       : [];
-//       const Prev_Holders = []
-//       const userData = {
-//         _id: req.user._id,
-//         name: req.user.name,
-//         email: req.user.email,
-//         role: req.user.role,
-//         phone: req.user.phone,
-//       };
-//       Prev_Holders.push(userData)
-
-//         // 🧱 STEP 1 — Create a shell document (to generate docNumber)
-//     const shellDoc = await Document.create({
-//       user: req.user,
-//       docType,
-//       state,
-//       assignedAdmins:assignedAdmins,
-//       // assignedAdmins:assignedTo,
-//       fields: {}, // empty initially
-//       status: 'pending',
-//       submittedAt: new Date(),
-//       custody: {
-//         currentHolder: (({ _id, email, name, role, phone, adminLevel }) => ({ _id, email, name, role, phone, adminLevel }))(req.user),
-//         previousHolders: Prev_Holders,
-//       },
-//     });
-
-//     const { docNumber } = shellDoc; // ✅ now available
-//     const userName = req.user?.name?.replace(/\s+/g, '') || 'UnknownUser';
-//     const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${docNumber}_${userName}`;
-//     const baseFolder_Superbase = `${docType}_${docNumber}_${userName}`;
-
-//     // 🧩 STEP 2 — Handle file uploads
-//     if (req.files && Array.isArray(req.files)) {
-//       for (const file of req.files) {
-//         const match = file.fieldname.match(/^files\[(.+)\]$/);
-//         if (!match) continue;
-
-//         const fieldKey = match[1];
-
-//          const def = allowedFields.get(fieldKey);
-
-//         if (!def) {
-//           throw new Error(`Field '${fieldKey}' is not defined for ${docType} with state (${state}).`);
-//         }
-
-//         // check file type consistency
-//         const isImage = file.mimetype.startsWith('image/');
-//         const isPDF = file.mimetype === 'application/pdf';
-
-//         if (def.type === 'image' && !isImage) {
-//           throw new Error(`Field '${fieldKey}' expects image files only.`);
-//         }
-//         if (def.type === 'pdf' && !isPDF) {
-//           throw new Error(`Field '${fieldKey}' expects a PDF file.`);
-//         }
-//         if (def.type === 'images' && !isImage) {
-//           throw new Error(`Field '${fieldKey}' expects multiple images only.`);
-//         }
-
-
-//         // Initialize if not exists
-//         if (!parsedFiles[fieldKey]) {
-//           parsedFiles[fieldKey] = {
-//             type: file.mimetype.startsWith('image/') ? 'image' : 'pdf',
-//             value: [],
-//             tab: file.mimetype.startsWith('image/') ? 'Images' : 'Pdfs',
-//           };
-//         }
-
-//         const fieldFolder_Cloudinary = `${baseFolder_Cloudinary}/${fieldKey}`;
-//         const fieldFolder_Superbase = `${baseFolder_Superbase}/${fieldKey}`;
-//         const index = parsedFiles[fieldKey].value.length + 1;
-//         const ext = file.originalname.split('.').pop();
-//         const readableName = `${fieldKey}_${index}.${ext}`;
-
-//         // Upload based on type
-//         let url;
-//         if (file.mimetype.startsWith('image/')) {
-//           url = await uploadToCloudinary(file, fieldFolder_Cloudinary, `${fieldKey}_${index}`);
-//         } else if (file.mimetype === 'application/pdf') {
-//           url = await uploadToSupabase(file, fieldFolder_Superbase, readableName);
-//         }
-
-//         parsedFiles[fieldKey].value.push(url);
-//       }
-//     }
-
-//               // 🧩 STEP 5 — Ensure all required fields exist
-//     for (const [fieldKey, def] of allowedFields.entries()) {
-//       const exists =
-//         parsedTexts[fieldKey] ||
-//         (parsedFiles[fieldKey] && parsedFiles[fieldKey].value.length > 0);
-//       if (def.required && !exists) {
-//         throw new Error(`Missing required field: '${fieldKey}'`);
-//       }
-//     }
-
-
-//     // 🧩 STEP 3 — Merge fields and update the shell doc
-//     const finalFields = { ...parsedTexts, ...parsedFiles };
-
-//     shellDoc.fields = finalFields;
-//     shellDoc.activityLog.push({
-//       action: 'Submission',
-//       // action: document.status,
-//       by: req.user.name,
-//       role: req.user.role,
-//       timestamp: new Date(),
-//     });
-
-//     await shellDoc.save();
-
-//     console.log('✅ Final parsedTexts:', parsedTexts);
-//     console.log('✅ Final parsedFiles:', parsedFiles);
-//     console.log('✅ Combined fields:', finalFields);
-
-//     // 📨 Log + Email
-//     await Log.create({
-//       action: 'fileSubmission',
-//       user: req.user,
-//       document: shellDoc,
-//       message: `User ${req.user.name} with email ${req.user.email} submitted a document.`,
-//     });
-
-//     const pdfBuffer = await generateSubmissionPDFBuffer(req.user, shellDoc);
-//     const { subject, htmlBody } = submissionEmailTemplate(req.user, shellDoc);
-
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-//     });
-
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: req.user.email,
-//       subject,
-//       html: htmlBody,
-//       attachments: [{ filename: 'submission-summary.pdf', content: pdfBuffer }],
-//     });
-
-//     res.json({ message: 'Document created successfully', fields: finalFields });
-//   } catch (err) {
-//     console.error('❌ Error:', err);
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
-
-// @route   POST /api/documents/:id/review
-// @desc    Admin reviews a document (field-level)
-
+const Brevo = require("@getbrevo/brevo");
 
 exports.createDocument = async (req, res) => {
   const theUploadedFiles = []; // ✅ use this for rollback tracking
@@ -256,20 +44,23 @@ exports.createDocument = async (req, res) => {
       return res.status(403).json({ message: "Your Account Has Expired, Please Contact The System Admins To Extend Your Account's Expiry Date. (Only Users With Active Accounts Can Submit Documents)" });
 
     const { docType, state } = req.body;
-    const template = loadTemplate(docType);
 
-    if (!template[state])
-      return res.status(400).json({ error: `State '${state}' not defined in template.` });
+    const { allowedFields } = resolveAllowedFields(docType, state);
 
-    const stateTemplate = template[state];
-    const allowedFields = new Map();
+    // const template = loadTemplate(docType);
 
-    // Build allowedFields
-    for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
-      for (const f of fields) {
-        allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
-      }
-    }
+    // if (!template[state])
+    //   return res.status(400).json({ error: `State '${state}' not defined in template.` });
+
+    // const stateTemplate = template[state];
+    // const allowedFields = new Map();
+
+    // // Build allowedFields
+    // for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
+    //   for (const f of fields) {
+    //     allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
+    //   }
+    // }
 
     const parsedTexts = {};
     const parsedFiles = {};
@@ -505,17 +296,43 @@ exports.reviewDocument = async (req, res) => {
     }
 
     // 3️⃣ Retrieve template fields for validation
-const fullTemplate = loadTemplate(document.docType); // maybe returns both Domestic & Imported
+// const fullTemplate = loadTemplate(document.docType); // maybe returns both Domestic & Imported
 
 // Pick the right state:
-const template = fullTemplate[document.state]; // e.g., fullTemplate["Imported"]
-    function getTemplateFieldNames(template) {
-  const fieldNames = [];
-  if (!template || !template.tabs) return fieldNames;
+// const template = fullTemplate[document.state]; // e.g., fullTemplate["Imported"]
+  
+const fullTemplate = loadTemplate(document.docType);
+
+if (!fullTemplate?.states?.[document.state]) {
+  return res.status(400).json({
+    message: `Template state '${document.state}' not found for ${document.docType}`
+  });
+}
+
+const template = fullTemplate.states[document.state];
+
+// function getTemplateFieldNames(template) {
+//   const fieldNames = [];
+//   if (!template || !template.tabs) return fieldNames;
     
-  for (const tabFields of Object.values(template.tabs)) {
-    for (const field of tabFields) {
-      if (field.name) fieldNames.push(field.name);
+//   for (const tabFields of Object.values(template.tabs)) {
+//     for (const field of tabFields) {
+//       if (field.name) fieldNames.push(field.name);
+//     }
+//   }
+
+//   return fieldNames;
+// }
+
+function getTemplateFieldNames(template) {
+  const fieldNames = [];
+  if (!template?.tabs || !Array.isArray(template.tabs)) return fieldNames;
+
+  for (const tab of template.tabs) {
+    if (!Array.isArray(tab.fields)) continue;
+
+    for (const field of tab.fields) {
+      if (field?.name) fieldNames.push(field.name);
     }
   }
 
@@ -910,17 +727,36 @@ exports.resubmitDocument = async (req, res) => {
     }
 
     const { docType, state } = document;
-    const template = loadTemplate(docType);
-    if (!template[state]) return res.status(400).json({ error: `State '${state}' not defined in template.` });
-    const stateTemplate = template[state];
+    // const template = loadTemplate(docType);
+    // if (!template[state]) return res.status(400).json({ error: `State '${state}' not defined in template.` });
+    // const stateTemplate = template[state];
+
+    const fullTemplate = loadTemplate(docType);
+
+    // ✅ Check that states exist
+    if (!fullTemplate?.states?.[state]) {
+      return res.status(400).json({ error: `State '${state}' not defined in template for ${docType}.` });
+    }
+
+    // ✅ Pick the right state
+    const stateTemplate = fullTemplate.states[state];
 
     // Build allowedFields map
     const allowedFields = new Map();
-    for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
-      for (const f of fields) {
-        allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
-      }
-    }
+    // for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
+    //   for (const f of fields) {
+    //     allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
+    //   }
+    // }
+
+    for (const tab of stateTemplate.tabs) {
+  const tabName = tab.key || tab.label?.en || 'Tab';
+  if (!Array.isArray(tab.fields)) continue;
+  for (const f of tab.fields) {
+    allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
+  }
+}
+
 
     const parsedTexts = {};
     const parsedFiles = {};
@@ -1078,199 +914,6 @@ brevoClient.setApiKey(
     res.status(400).json({ error: 'Resubmission failed and rolled back', message: err.message });
   }
 };
-
-
-// @route   PATCH /api/documents/:id/resubmit
-// @desc    User re-submits a rejected or pending document
-// @access  Private (Authenticated users only)
-// exports.resubmitDocument = async (req, res) => {
-//   try {
-    
-//     if (req.user.role !== 'user') {
-//       return res.status(403).json({ message: 'Only Users Can Re-Submit Documents' });
-//     }
-//     // if (req.user.expiryStatus !== 'active') {
-//     //   return res.status(403).json({ message: 'Only Active Users can Re-Submit Documents , Please Activate Your Account Before Attempting To Re-Submit A Document' });
-//     // }
-
-//     console.log('♻️ Resubmission request received:');
-//     console.log('🧾 req.body:', req.body);
-//     console.log('🗂 req.files:', req.files?.map(f => f.fieldname));
-
-//     const document = await Document.findById(req.params.id);
-//     if (!document) return res.status(404).json({ message: 'Document not found' });
-
-//     // 🧍 User authorization
-//     if (document.user._id.toString() !== req.user._id.toString()) {
-//       return res.status(403).json({ message: 'You can only resubmit your own documents' });
-//     }
-
-//     // 🚫 Already approved? can't resubmit
-//     if (document.status === 'approved') {
-//       return res.status(400).json({ message: 'Approved documents cannot be resubmitted' });
-//     }
-
-//     const parsedTexts = {};
-//     const parsedFiles = {};
-
-//     // 🧩 Parse text fields (only for rejected ones)
-//     if (req.body.text && typeof req.body.text === 'object') {
-//   // JSON-based submission (e.g., from frontend app sending JSON)
-//   for (const [key, value] of Object.entries(req.body.text)) {
-//     const existingField = document.fields.get(key);
-//     if (!existingField || existingField.review?.status === 'rejected') {
-//       parsedTexts[key] = {
-//         type: 'text',
-//         value,
-//         tab: existingField?.tab || 'General',
-//         review: { status: 'pending', adminComment: '' },
-//       };
-//     }
-//   }
-//     } else {
-//   // Form-data submission (like Postman or <form> upload)
-//   for (const [key, value] of Object.entries(req.body)) {
-//     const match = key.match(/^text\[(.+)\]$/);
-//     if (match) {
-//       const fieldKey = match[1];
-//       const existingField = document.fields.get(fieldKey);
-//       if (!existingField || existingField.review?.status === 'rejected') {
-//         parsedTexts[fieldKey] = {
-//           type: 'text',
-//           value,
-//           tab: existingField?.tab || 'General',
-//           review: { status: 'pending', adminComment: '' },
-//         };
-//       }
-//     }
-//   }
-//     }
-
-
-//     // 🧱 Folder setup
-//     const { docType, docNumber } = document;
-//     const userName = req.user?.name?.replace(/\s+/g, '') || 'UnknownUser';
-//     const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${docNumber}_${userName}`;
-//     const baseFolder_Superbase = `${docType}_${docNumber}_${userName}`;
-
-//     // 🧩 Handle re-uploaded files (only for rejected fields)
-//     if (req.files && Array.isArray(req.files)) {
-//       for (const file of req.files) {
-//         const match = file.fieldname.match(/^files\[(.+)\]$/);
-//         if (!match) continue;
-//         const fieldKey = match[1];
-
-//         const existingField = document.fields.get(fieldKey);
-//         if (existingField && existingField.review?.status !== 'rejected') {
-//           console.log(`⛔ Skipping approved field: ${fieldKey}`);
-//           continue; // skip approved fields
-//         }
-//         const fieldFolder_Cloudinary = `${baseFolder_Cloudinary}`;
-//         const fieldFolder_Superbase = `${baseFolder_Superbase}`;
-//         // const fieldFolder_Cloudinary = `${baseFolder_Cloudinary}/${fieldKey}`;
-//         // const fieldFolder_Superbase = `${baseFolder_Superbase}/${fieldKey}`;
-//         // ✅ Clean existing folder before new uploads
-//         // const fieldFolder_Cloudinary = `${baseFolder_Cloudinary}/${fieldKey}`;
-//         // const fieldFolder_Superbase = `${baseFolder_Superbase}/${fieldKey}`;
-
-//         if (file.mimetype.startsWith('image/')) {
-//           await deleteCloudinaryFolder(fieldFolder_Cloudinary);
-//         } else if (file.mimetype === 'application/pdf') {
-//           await deleteSupabaseFolder(fieldFolder_Superbase);
-//         }
-
-//         // initialize new field container
-//         if (!parsedFiles[fieldKey]) {
-//           parsedFiles[fieldKey] = {
-//             type: file.mimetype.startsWith('image/') ? 'image' : 'pdf',
-//             value: [],
-//             tab: existingField?.tab || 'General',
-//             review: { status: 'pending', adminComment: '' }, // ✅ reset review state
-//           };
-//         }
-
-//         const index = parsedFiles[fieldKey].value.length + 1;
-//         const ext = file.originalname.split('.').pop();
-//         const readableName = `${fieldKey}_${index}.${ext}`;
-
-//         let url;
-//         if (file.mimetype.startsWith('image/')) {
-//           url = await uploadToCloudinary(file, fieldFolder_Cloudinary, `${fieldKey}_${index}`);
-//         } else if (file.mimetype === 'application/pdf') {
-//           url = await uploadToSupabase(file, fieldFolder_Superbase, readableName);
-//         }
-
-//         parsedFiles[fieldKey].value.push(url);
-//       }
-//     }
-
-//     // 🧩 Merge with existing fields — keep approved ones intact
-//     const updatedFields = { ...Object.fromEntries(document.fields) };
-
-//     // Merge resubmitted text and file fields
-//     for (const [key, val] of Object.entries({ ...parsedTexts, ...parsedFiles })) {
-//       updatedFields[key] = val; // replace old rejected field entirely
-//     }
-
-//     const userData = {
-//       _id: req.user._id,
-//       name: req.user.name,
-//       email: req.user.email,
-//       phone: req.user.phone,
-//     };
-
-//     document.fields = updatedFields;
-//     document.status = 'pending';
-//     document.custody.currentHolder = userData
-//     document.lastReviewedAt = null;
-//     await document.save();
-
-//     console.log('✅ Resubmitted fields:', Object.keys(parsedTexts).concat(Object.keys(parsedFiles)));
-
-//     document.activityLog.push({
-//       action: 'Re-Submission',
-//       by: req.user.name,
-//       role: req.user.role,
-//       timestamp: new Date(),
-//     });
-//     await document.save();
-
-//     // 🧾 Log action
-//     await Log.create({
-//       action: 'fileReSubmission',
-//       document,
-//       user : document.user.name,
-//       message: `User ${req.user.name} with email ${req.user.email} resubmitted document #${document.docNumber}.`,
-//     });
-
-//     // 📨 Email confirmation
-//     const pdfBuffer = await generatereSubmissionPDFBuffer(req.user, document);
-//     const { subject, htmlBody } = resubmissionEmailTemplate(req.user, document);
-
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-//     });
-
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: req.user.email,
-//       subject,
-//       html: htmlBody,
-//       attachments: [
-//         { filename: 'resubmission-summary.pdf', content: pdfBuffer },
-//       ],
-//     });
-
-//     res.json({
-//       message: 'Document resubmitted successfully — rejected fields are pending review again',
-//       document,
-//     });
-//   }catch (error) {
-//     logger.error('Re-Submission Error:', error.message);
-//     res.status(500).json({ message: 'Re-Submission Error', error: error.message });
-//   }
-// };
 
 // @route   GET /api/documents
 // @desc    Admin view of all documents with filters, search & pagination
@@ -1669,8 +1312,6 @@ brevoClient.setApiKey(
     res.status(500).json({ message: 'Error reviewing certificate', error: err.message });
   }
 };
-
-
 
 // // PATCH /admin/documents/:id/certificate/review
 // exports.reviewCertificate = async (req, res) => {

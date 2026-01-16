@@ -1,107 +1,191 @@
 {
-    "General":{
-        "tabs":{
-            "Images": [
-                {
-                  "name": "farmRegistrationForm1",
-                  "label": {
-                    "en": "Farm registration / re-registration application form (Form 1).",
-                    "ar": "نموذج طلب تسجيل / إعادة تسجيل مزرعة (نموذج 1)."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "farmOwnershipDocument",
-                  "label": {
-                    "en": "Copy of farm ownership/possession document (lease contract / ownership deed) with the original available for review.",
-                    "ar": " صورة من سند الحيازة للمزرعة عقد إيجار / عقد تمليك والأصل للإطلاع."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "farmRecordsHistory",
-                  "label": {
-                    "en": "Copy of farm records: organic farm documentation cycle for the past two years for annual and field crops, three years for perennial trees, or new records for virgin farms.",
-                    "ar": "إرفاق صورة من سجلات المزرعة الدورة المستندية للمزرعة العضوية لسنتين سابقتين في حالة الزراعات الحولية والحقلية وثلاث سنوات في حالة الأشجار المعمرة أو جديدة في حالة المزرعة البكر."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "soilAnalysisCertificate",
-                  "label": {
-                    "en": "Soil analysis certificate from an accredited laboratory.",
-                    "ar": "شهادة تحليل التربة من معمل معتمد"
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "irrigationWaterAnalysisCertificate",
-                  "label": {
-                    "en": "Irrigation water analysis certificate from an accredited independent laboratory.",
-                    "ar": "شهادة تحليل مياه الري من معمل محايد معتمد."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "pesticideResidueAnalysisCertificate",
-                  "label": {
-                    "en": "Pesticide residue analysis certificate from an accredited independent laboratory.",
-                    "ar": "شهادة تحليل متبقيات المبيدات من معمل محايد معتمد."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "additionalRequiredAnalyses",
-                  "label": {
-                    "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture – Central Lab for Organic Agriculture, depending on the composition of the input.",
-                    "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية علي حسب تركيبة مدخل التغذية."
-                  },
-                  "type": "image",
-                  "required": false
-                },
-                {
-                  "name": "conformityCertificateIfAvailable",
-                  "label": {
-                    "en": "Conformity certificate from accredited conformity bodies, if available, provided the body is accredited by the Central Lab for Organic Agriculture.",
-                    "ar": "شهادة مطابقة من جهات المطابقة إن وجدت علي أن تكون جهة المطابقة معتمدة بالمعمل المركزي للزراعة"
-                  },
-                  "type": "image",
-                  "required": false
-                },
-                {
-                  "name": "farmDetailedMap",
-                  "label": {
-                    "en": "Detailed map of the farm.",
-                    "ar": "مخطط بخريطة تفصيلية المزرعة."
-                  },
-                  "type": "image",
-                  "required": true
-                },
-                {
-                  "name": "previousRegistrationCertificate",
-                  "label": {
-                    "en": "Copy of the previous registration certificate (in case of re-registration).",
-                    "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة التسجيل."
-                  },
-                  "type": "image",
-                  "required": false
-                },
-                {
-                  "name": "registrationAndTechnicalFeesReceipt",
-                  "label": {
-                    "en": "Proof of payment for registration and technical examination fees for the complete file.",
-                    "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني للملف بالكامل."
-                  },
-                  "type": "image",
-                  "required": true
-                }
-              ]
+  "templateKey": "organic-farm",
+  "appliesTo": [
+    "Organic Farm"
+  ],
+  "globals": {
+    "helpText": {
+      "image": {
+        "en": "Upload a clear image (max 5 MB). It will be optimized automatically.",
+        "ar": "ارفع صورة واضحة (حد أقصى ٥ ميجابايت). سيتم تحسينها تلقائيًا."
+      },
+      "pdf": {
+        "en": "Upload a PDF File (max 45 MB).",
+        "ar": "ارفع ملف (حد أقصى 45 ميجابايت)."
+      }
+    },
+
+    "constraints": {
+      "image": {
+        "maxFiles": 1,
+        "maxSizeMB": 5,
+        "allowedMimeTypes": ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+      },
+      "pdf": {
+        "maxFiles": 1,
+        "maxSizeMB": 45,
+        "allowedMimeTypes": ["application/pdf"]
+      }
+    },
+
+    "errors": {
+      "image": {
+        "required": {
+          "en": "This Field is required",
+          "ar": "هذه الصورة مطلوبة"
+        },
+        "maxFiles": {
+          "en": "Only one image is allowed",
+          "ar": "مسموح بصورة واحدة فقط"
+        },
+        "maxSize": {
+          "en": "Image size must not exceed 5 MB",
+          "ar": "حجم الصورة يجب ألا يزيد عن ٥ ميجابايت"
+        },
+        "invalidType": {
+          "en": "Only JPG, PNG or WEBP images are allowed",
+          "ar": "يسمح فقط بصور JPG أو PNG أو WEBP"
         }
+      },
+      "pdf": {
+        "required": {
+          "en": "This PDF File is required",
+          "ar": "هذا الملف مطلوب"
+        },
+        "maxFiles": {
+          "en": "Only one PDF is allowed",
+          "ar": "مسموح بملف واحد فقط"
+        },
+        "maxSize": {
+          "en": "PDF File Size Must Not Exceed 45 MB",
+          "ar": "حجم الملف يجب ألا يزيد عن 45 ميجابايت"
+        },
+        "invalidType": {
+          "en": "Only PDF Files Are Allowed",
+          "ar": "يسمح فقط بملفات PDF"
+        }
+      },
+
+      "text": {
+        "required": {
+          "en": "This field is required",
+          "ar": "هذا الحقل مطلوب"
+        }
+      }
     }
+  },
+  "states":{
+    "General":{
+        "tabs":[
+          {
+            "key": "Images",
+            "label": {
+              "en": "Image File Uploads",
+              "ar": "تحميل ملفات الصور"
+            },
+            "fields": [
+                {
+                    "name": "farmRegistrationForm1",
+                    "label": {
+                      "en": "Farm registration / re-registration application form (Form 1).",
+                      "ar": "نموذج طلب تسجيل / إعادة تسجيل مزرعة (نموذج 1)."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "farmOwnershipDocument",
+                    "label": {
+                      "en": "Copy of farm ownership/possession document (lease contract / ownership deed) with the original available for review.",
+                      "ar": " صورة من سند الحيازة للمزرعة عقد إيجار / عقد تمليك والأصل للإطلاع."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "farmRecordsHistory",
+                    "label": {
+                      "en": "Copy of farm records: organic farm documentation cycle for the past two years for annual and field crops, three years for perennial trees, or new records for virgin farms.",
+                      "ar": "إرفاق صورة من سجلات المزرعة الدورة المستندية للمزرعة العضوية لسنتين سابقتين في حالة الزراعات الحولية والحقلية وثلاث سنوات في حالة الأشجار المعمرة أو جديدة في حالة المزرعة البكر."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "soilAnalysisCertificate",
+                    "label": {
+                      "en": "Soil analysis certificate from an accredited laboratory.",
+                      "ar": "شهادة تحليل التربة من معمل معتمد"
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "irrigationWaterAnalysisCertificate",
+                    "label": {
+                      "en": "Irrigation water analysis certificate from an accredited independent laboratory.",
+                      "ar": "شهادة تحليل مياه الري من معمل محايد معتمد."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "pesticideResidueAnalysisCertificate",
+                    "label": {
+                      "en": "Pesticide residue analysis certificate from an accredited independent laboratory.",
+                      "ar": "شهادة تحليل متبقيات المبيدات من معمل محايد معتمد."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "additionalRequiredAnalyses",
+                    "label": {
+                      "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture – Central Lab for Organic Agriculture, depending on the composition of the input.",
+                      "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية علي حسب تركيبة مدخل التغذية."
+                    },
+                    "type": "image",
+                    "required": false
+                },
+                {
+                    "name": "conformityCertificateIfAvailable",
+                    "label": {
+                      "en": "Conformity certificate from accredited conformity bodies, if available, provided the body is accredited by the Central Lab for Organic Agriculture.",
+                      "ar": "شهادة مطابقة من جهات المطابقة إن وجدت علي أن تكون جهة المطابقة معتمدة بالمعمل المركزي للزراعة"
+                    },
+                    "type": "image",
+                    "required": false
+                },
+                {
+                    "name": "farmDetailedMap",
+                    "label": {
+                      "en": "Detailed map of the farm.",
+                      "ar": "مخطط بخريطة تفصيلية المزرعة."
+                    },
+                    "type": "image",
+                    "required": true
+                },
+                {
+                    "name": "previousRegistrationCertificate",
+                    "label": {
+                      "en": "Copy of the previous registration certificate (in case of re-registration).",
+                      "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة التسجيل."
+                    },
+                    "type": "image",
+                    "required": false
+                },
+                {
+                    "name": "registrationAndTechnicalFeesReceipt",
+                    "label": {
+                      "en": "Proof of payment for registration and technical examination fees for the complete file.",
+                      "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني للملف بالكامل."
+                    },
+                    "type": "image",
+                    "required": true
+                }
+            ]
+          }
+        ]
+    }
+  }
 }

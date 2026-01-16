@@ -1,565 +1,667 @@
 {
-  "Domestic": {
-    "tabs": {
-      "Images": [
-        {
-          "name": "resubmissionRequestForm",
-          "label": {
-            "en": "Letter / Application form for pesticide re-registration (Form 1).",
-            "ar": "خطاب / نموذج طلب تسجيل الإعادة تسجيل مبيد (الموذج 1)."
-          },
-          "type": "image",
-          "required": true
+  "templateKey": "organic-pesticide",
+  "appliesTo": [
+    "Domestic Organic Pesticide",
+    "Imported Organic Pesticide"
+  ],
+  "globals": {
+    "helpText": {
+      "image": {
+        "en": "Upload a clear image (max 5 MB). It will be optimized automatically.",
+        "ar": "ارفع صورة واضحة (حد أقصى ٥ ميجابايت). سيتم تحسينها تلقائيًا."
+      },
+      "pdf": {
+        "en": "Upload a PDF File (max 45 MB).",
+        "ar": "ارفع ملف (حد أقصى 45 ميجابايت)."
+      }
+    },
+
+    "constraints": {
+      "image": {
+        "maxFiles": 1,
+        "maxSizeMB": 5,
+        "allowedMimeTypes": ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+      },
+      "pdf": {
+        "maxFiles": 1,
+        "maxSizeMB": 45,
+        "allowedMimeTypes": ["application/pdf"]
+      }
+    },
+
+    "errors": {
+      "image": {
+        "required": {
+          "en": "This Field is required",
+          "ar": "هذه الصورة مطلوبة"
         },
-        {
-          "name": "authorizationOrPowerOfAttorney",
-          "label": {
-            "en": "Original authorization or power of attorney to deal with the General Department of Organic Agriculture, plus a social insurance printout, or a power of attorney for a registration consultancy office (must be certified by the General Department of Organic Agriculture).",
-            "ar": "اصل تفویض او توكيل التعامل مع الدارة العامة لزراعة العضوية بالإضافة لـ Print من التامينات أو تفويض لمكتب استشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية "
-          },
-          "type": "image",
-          "required": true
+        "maxFiles": {
+          "en": "Only one image is allowed",
+          "ar": "مسموح بصورة واحدة فقط"
         },
-        {
-          "name": "previousFinalProductRegistrationCertificate",
-          "label": {
-            "en": "Copy of the final product registration certificate (in case of re-registration).",
-            "ar": "صورة من شهادة تسجيل المنتج النهائي في حالة إعادة التسجيل"
-          },
-          "type": "image",
-          "required": false
+        "maxSize": {
+          "en": "Image size must not exceed 5 MB",
+          "ar": "حجم الصورة يجب ألا يزيد عن ٥ ميجابايت"
         },
-        {
-          "name": "activeIngredientRegistrationCertificate",
-          "label": {
-            "en": "Valid registration certificate of the active ingredient from the country of origin, certified by the Egyptian embassy, in English.",
-            "ar": "شهادة تسجيل المادة الفعالة في بلد المنشا سارية موثقة من سفارة مصر بالدولة المنتجة بالغة الانجليزية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "activeIngredientSourceCertificate",
-          "label": {
-            "en": "Certificate clarifying the source of the active ingredient (plant-based or microorganisms).",
-            "ar": "مصدر المادة الفعالة (من أصل نباتي - كائنات دقيقة) 'شهادة توضح مصدر المادة الفعالة'."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "technicalDataFile",
-          "label": {
-            "en": "Technical data file for the pesticide (Form 2).",
-            "ar": " ملف البيانات الفنية الخاصة بالمبيدس (نموذج 2)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "compositionCertificate",
-          "label": {
-            "en": "Composition certificate (ingredients).",
-            "ar": "شهادة التركيب (المكونات)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "productAnalysisCertificate",
-          "label": {
-            "en": "Product analysis certificate from the manufacturer and from an accredited independent laboratory.",
-            "ar": "شهادة تحليل المنتج من المصنع ومن معمل محايد محمد."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "activeIngredientAnalysisCertificate",
-          "label": {
-            "en": "Active ingredient analysis certificate from the manufacturer and from an accredited independent laboratory.",
-            "ar": "شهادة تحليل المادة الفعالة من المصنع ومن معمل محايد معتمد."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "pesticideIsomersAnalysisCertificate",
-          "label": {
-            "en": "Pesticide isomers analysis certificate from an accredited independent laboratory.",
-            "ar": "شهادة تحليل متبايات المبيدات من معمل محايد معتمد."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "pathogenFreeCertificate",
-          "label": {
-            "en": "Certificate confirming the product is free of pathogens or unintended contaminants (required for biopesticides – certified).",
-            "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بالقصد الخلق في حالة المبيد الحيوي (موثقة)."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "noGmoCertificate",
-          "label": {
-            "en": "Certificate confirming the product is free of genetic modification (No GMO) — for biopesticides.",
-            "ar": "شهادة تحليل بخلو المنتج من المعاملات الوراثية (No GMO) في حالة المبيدات الحيوية"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "additionalRequiredAnalysis",
-          "label": {
-            "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture or the Central Lab for Organic Agriculture, depending on the composition of the input.",
-            "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية على حسب تركية مدخل الثانية."
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "laboratoryAccreditationCertificate",
-          "label": {
-            "en": "Accreditation certificate for the laboratory (ISO 17025, ISO 180, or GLP).",
-            "ar": "إرفاق شهادة إعتماد مكتبر 17025 180 أو من GLP."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "msds",
-          "label": {
-            "en": "MSDS (Material Safety Data Sheet).",
-            "ar": "MSDS (نشرة معلومات السلامة والتداول)."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "tdeSheet",
-          "label": {
-            "en": "TDE (Second information sheet).",
-            "ar": "TDE (نشرة المعلومات الثانية)."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "hplcActiveIngredientAnalysisMethod",
-          "label": {
-            "en": "Analytical method for determining the active ingredient in the formulation using CIPA and HPLC.",
-            "ar": "طريقة تحليل لمادة العلة في المتحضر والمادة العملة طبقا - CIPA و HPLC"
-          },
-          "type": "image",
-          "required": true
-        },        
-        {
-          "name": "finalArtWorkLabel",
-          "label": {
-            "en": "Final proposed label in Egypt in Art Work format (Form 3).",
-            "ar": "الملصق المقترح في مصر بشكله النهائي بنظام Art work (نموذج 3)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "productQualityGuaranteeCertificate",
-          "label": {
-            "en": "Quality guarantee certificate for the product.",
-            "ar": "شهادة ضمان جودة بالمستحضر."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "conformityCertificate",
-          "label": {
-            "en": "Conformity certificate from conformity bodies accredited by the Central Lab for Organic Agriculture, or from a new body applying for accreditation.",
-            "ar": "شهادة مطابقة من جهات المطابقة علي أن تكون معتمدة بالمعمل المركزي للزراعة العضوية أو لو جهة جديدة"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "conformityBodyRegistrationDocument",
-          "label": {
-            "en": "Document confirming that the conformity body is registered inside Egypt at the General Administration of Organic Agriculture – Central Lab for Organic Agriculture.",
-            "ar": "يتم تسجيل جهه المطابقة داخل مصر بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "productionProcessDiagram",
-          "label": {
-            "en": "Production process flowchart.",
-            "ar": "مخطط بطريقة الانتاج."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "trainingCourseCertificate",
-          "label": {
-            "en": "Training course completion certificate from the General Administration of Organic Agriculture – Central Lab for Organic Agriculture.",
-            "ar": "شهادة اجتياز دورة تدريبية بالادارة العامة للزراعة العضوية - المعمل المركزى للزراعة العضوية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "previousRegistrationCertificate",
-          "label": {
-            "en": "Copy of the previous registration certificate (for re-registration cases).",
-            "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة التسجيل."
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "organicInputLogoRequestForm5",
-          "label": {
-            "en": "Request form to obtain the Organic Input Logo for protection input (Form 5).",
-            "ar": "طلب الحصول على شعار مدخل عضوى لمدخل الوقاية (نموذج 5)"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "paymentProofForRegistrationAndTechnicalInspection",
-          "label": {
-            "en": "Proof of payment for registration and technical inspection fees.",
-            "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني."
-          },
-          "type": "image",
-          "required": true
+        "invalidType": {
+          "en": "Only JPG, PNG or WEBP images are allowed",
+          "ar": "يسمح فقط بصور JPG أو PNG أو WEBP"
         }
-      ],
-      "Pdfs": [
-        {
-          "name": "storageStudy",
-          "label": {
-            "en": "Storage and Stability Study (GLP / ISO 172025)",
-            "ar": "دراسة تخزين وثبات بالإضافة إلى شهادة تخزين من (GLP) أو من (ISO 172025)"
-          },
-          "type": "pdf",
-          "required": true
+      },
+      "pdf": {
+        "required": {
+          "en": "This PDF File is required",
+          "ar": "هذا الملف مطلوب"
         },
-        {
-          "name": "toxicityStudy",
-          "label": {
-            "en": "Toxicity Studies (6 Packages)",
-            "ar": "دراسات سمية (6 Packages)"
-          },
-          "type": "pdf",
-          "required": true
+        "maxFiles": {
+          "en": "Only one PDF is allowed",
+          "ar": "مسموح بملف واحد فقط"
         },
-        {
-          "name": "efficacyStudy",
-          "label": {
-            "en": "Efficacy Study / Published Research",
-            "ar": "تجارب فاعلية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية (GLP)"
-          },
-          "type": "pdf",
-          "required": true
+        "maxSize": {
+          "en": "PDF File Size Must Not Exceed 45 MB",
+          "ar": "حجم الملف يجب ألا يزيد عن 45 ميجابايت"
         },
-        {
-          "name": "internationalEvaluation",
-          "label": {
-            "en": "International Evaluation (EU, EPA, Japan)",
-            "ar": "التقييم من قبل السلطات المرجعية الدولية للمستحضرات (نموذج 4) (EU , EPA , Japan)"
-          },
-          "type": "pdf",
-          "required": true
+        "invalidType": {
+          "en": "Only PDF Files Are Allowed",
+          "ar": "يسمح فقط بملفات PDF"
         }
-      ]
+      },
+
+      "text": {
+        "required": {
+          "en": "This field is required",
+          "ar": "هذا الحقل مطلوب"
+        }
+      }
     }
   },
-  "Imported": {
-    "tabs": {
-      "Images": [
-        {
-          "name": "authorizationLetter",
+  "states": {
+    "Domestic": {
+      "tabs": [{
+          "key": "Images",
           "label": {
-            "en": "Authorization letter from the exporting company to the importing company for pesticide registration and trade in Egypt (certified by the embassy)",
-            "ar": "(خطاب تفويض من الشركة المصدرة للشركة المستوردة لتسجيل المبيد والإتجار به فى مصر (موثق من السفارة"
+            "en": "Image File Uploads",
+            "ar": "تحميل ملفات الصور"
           },
-          "type": "image",
-          "required": true
+          "fields": [{
+              "name": "resubmissionRequestForm",
+              "label": {
+                "en": "Letter / Application form for pesticide re-registration (Form 1).",
+                "ar": "خطاب / نموذج طلب تسجيل الإعادة تسجيل مبيد (الموذج 1)."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "authorizationOrPowerOfAttorney",
+              "label": {
+                "en": "Original authorization or power of attorney to deal with the General Department of Organic Agriculture, plus a social insurance printout, or a power of attorney for a registration consultancy office (must be certified by the General Department of Organic Agriculture).",
+                "ar": "اصل تفویض او توكيل التعامل مع الدارة العامة لزراعة العضوية بالإضافة لـ Print من التامينات أو تفويض لمكتب استشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية "
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "previousFinalProductRegistrationCertificate",
+              "label": {
+                "en": "Copy of the final product registration certificate (in case of re-registration).",
+                "ar": "صورة من شهادة تسجيل المنتج النهائي في حالة إعادة التسجيل"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "activeIngredientRegistrationCertificate",
+              "label": {
+                "en": "Valid registration certificate of the active ingredient from the country of origin, certified by the Egyptian embassy, in English.",
+                "ar": "شهادة تسجيل المادة الفعالة في بلد المنشا سارية موثقة من سفارة مصر بالدولة المنتجة بالغة الانجليزية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "activeIngredientSourceCertificate",
+              "label": {
+                "en": "Certificate clarifying the source of the active ingredient (plant-based or microorganisms).",
+                "ar": "مصدر المادة الفعالة (من أصل نباتي - كائنات دقيقة) 'شهادة توضح مصدر المادة الفعالة'."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "technicalDataFile",
+              "label": {
+                "en": "Technical data file for the pesticide (Form 2).",
+                "ar": " ملف البيانات الفنية الخاصة بالمبيدس (نموذج 2)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "compositionCertificate",
+              "label": {
+                "en": "Composition certificate (ingredients).",
+                "ar": "شهادة التركيب (المكونات)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "productAnalysisCertificate",
+              "label": {
+                "en": "Product analysis certificate from the manufacturer and from an accredited independent laboratory.",
+                "ar": "شهادة تحليل المنتج من المصنع ومن معمل محايد محمد."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "activeIngredientAnalysisCertificate",
+              "label": {
+                "en": "Active ingredient analysis certificate from the manufacturer and from an accredited independent laboratory.",
+                "ar": "شهادة تحليل المادة الفعالة من المصنع ومن معمل محايد معتمد."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "pesticideIsomersAnalysisCertificate",
+              "label": {
+                "en": "Pesticide isomers analysis certificate from an accredited independent laboratory.",
+                "ar": "شهادة تحليل متبايات المبيدات من معمل محايد معتمد."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "pathogenFreeCertificate",
+              "label": {
+                "en": "Certificate confirming the product is free of pathogens or unintended contaminants (required for biopesticides – certified).",
+                "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بالقصد الخلق في حالة المبيد الحيوي (موثقة)."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "noGmoCertificate",
+              "label": {
+                "en": "Certificate confirming the product is free of genetic modification (No GMO) — for biopesticides.",
+                "ar": "شهادة تحليل بخلو المنتج من المعاملات الوراثية (No GMO) في حالة المبيدات الحيوية"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "additionalRequiredAnalysis",
+              "label": {
+                "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture or the Central Lab for Organic Agriculture, depending on the composition of the input.",
+                "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية على حسب تركية مدخل الثانية."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "laboratoryAccreditationCertificate",
+              "label": {
+                "en": "Accreditation certificate for the laboratory (ISO 17025, ISO 180, or GLP).",
+                "ar": "إرفاق شهادة إعتماد مكتبر 17025 180 أو من GLP."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "msds",
+              "label": {
+                "en": "MSDS (Material Safety Data Sheet).",
+                "ar": "MSDS (نشرة معلومات السلامة والتداول)."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "tdeSheet",
+              "label": {
+                "en": "TDE (Second information sheet).",
+                "ar": "TDE (نشرة المعلومات الثانية)."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "hplcActiveIngredientAnalysisMethod",
+              "label": {
+                "en": "Analytical method for determining the active ingredient in the formulation using CIPA and HPLC.",
+                "ar": "طريقة تحليل لمادة العلة في المتحضر والمادة العملة طبقا - CIPA و HPLC"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "finalArtWorkLabel",
+              "label": {
+                "en": "Final proposed label in Egypt in Art Work format (Form 3).",
+                "ar": "الملصق المقترح في مصر بشكله النهائي بنظام Art work (نموذج 3)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "productQualityGuaranteeCertificate",
+              "label": {
+                "en": "Quality guarantee certificate for the product.",
+                "ar": "شهادة ضمان جودة بالمستحضر."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "conformityCertificate",
+              "label": {
+                "en": "Conformity certificate from conformity bodies accredited by the Central Lab for Organic Agriculture, or from a new body applying for accreditation.",
+                "ar": "شهادة مطابقة من جهات المطابقة علي أن تكون معتمدة بالمعمل المركزي للزراعة العضوية أو لو جهة جديدة"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "conformityBodyRegistrationDocument",
+              "label": {
+                "en": "Document confirming that the conformity body is registered inside Egypt at the General Administration of Organic Agriculture – Central Lab for Organic Agriculture.",
+                "ar": "يتم تسجيل جهه المطابقة داخل مصر بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "productionProcessDiagram",
+              "label": {
+                "en": "Production process flowchart.",
+                "ar": "مخطط بطريقة الانتاج."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "trainingCourseCertificate",
+              "label": {
+                "en": "Training course completion certificate from the General Administration of Organic Agriculture – Central Lab for Organic Agriculture.",
+                "ar": "شهادة اجتياز دورة تدريبية بالادارة العامة للزراعة العضوية - المعمل المركزى للزراعة العضوية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "previousRegistrationCertificate",
+              "label": {
+                "en": "Copy of the previous registration certificate (for re-registration cases).",
+                "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة التسجيل."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "organicInputLogoRequestForm5",
+              "label": {
+                "en": "Request form to obtain the Organic Input Logo for protection input (Form 5).",
+                "ar": "طلب الحصول على شعار مدخل عضوى لمدخل الوقاية (نموذج 5)"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "paymentProofForRegistrationAndTechnicalInspection",
+              "label": {
+                "en": "Proof of payment for registration and technical inspection fees.",
+                "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني."
+              },
+              "type": "image",
+              "required": true
+            }
+          ]
         },
         {
-          "name": "powerOfAttorney",
+          "key": "Pdfs",
           "label": {
-            "en": "Original power of attorney or authorization to deal with the General Department of Organic Agriculture, along with social insurance printout, or authorization to a certified consultancy office",
-            "ar": "أصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لبرينت من التأمينات أو تفويض لمكتب استشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية"
+            "en": "PDF File Uploads",
+            "ar": "تحميل الملفات"
           },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "pesticideRegistrationForm",
-          "label": {
-            "en": "Pesticide registration application form (Form 1)",
-            "ar": "نموذج طلب تسجيل مبيد (نموذج 1)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "finalProductCertificate",
-          "label": {
-            "en": "Valid registration certificate of the final product in the country of origin, certified by the Egyptian embassy (in English)",
-            "ar": "شهادة تسجيل المنتج النهائي في بلد المنشأ سارية موثقة من سفارة مصر بالدولة المنتجة باللغة الانجليزية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "activeSubstanceCertificate",
-          "label": {
-            "en": "Valid registration certificate of the active substance in the country of origin, certified by the Egyptian embassy (in English)",
-            "ar": "شهادة تسجيل المادة الفعالة فى بلد المنشأ سارية موثقة من سفارة مصر بالدولة المنتجة باللغة الإنجليزية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "technicalDataFile",
-          "label": {
-            "en": "Technical data file of the pesticide (Form 2)",
-            "ar": "ملف البيانات الفنية الخاصة بالمبيد (نموذج 2)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "compositionCertificate",
-          "label": {
-            "en": "Composition certificate (ingredients list)",
-            "ar": "شهادة التركيب (المكونات)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "productAnalysisCertificate",
-          "label": {
-            "en": "Product analysis certificate from the manufacturer and an accredited independent laboratory",
-            "ar": "شهادة تحليل المنتج من المصنع ومن معمل محايد معتمد."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "activeSubstanceAnalysisCertificate",
-          "label": {
-            "en": "Active substance analysis certificate from the manufacturer and an accredited independent laboratory",
-            "ar": "شهادة تحليل المادة الفعالة من المصنع ومن معمل محايد معتمد."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "pesticideResidueCertificate",
-          "label": {
-            "en": "Certificate of pesticide residue analysis from an accredited laboratory",
-            "ar": "شهادة تحليل متبقيات المبيدات من معمل محايد معتمد"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "radiationFreeCertificate",
-          "label": {
-            "en": "Certificate proving the product is free from radiation",
-            "ar": "شهادة تحليل خلو المنتج من الاشعاع."
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "pathogenFreeCertificate",
-          "label": {
-            "en": "Certificate proving the product is free from pathogens or contamination (for biopesticides)",
-            "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بقصد الخلق في حالة المبيد الحيوي (موثقة)."
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "gmoFreeCertificate",
-          "label": {
-            "en": "Certificate of non-GMO for biopesticides",
-            "ar": "في حالة المبيدات الحيوية (No GMO) شهادة تحليل بخلو المنتج من المعاملات الوراثية"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "additionalAnalysisRequirements",
-          "label": {
-            "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture",
-            "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية علي حسب تركيبة مدخل التغذية"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "labAccreditationCertificate",
-          "label": {
-            "en": "Accredited laboratory certificate (GLP or ISO 17025)",
-            "ar": "(GLP) أو من (ISO 17025) إرفاق شهادة إعتماد مختبر"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "msds",
-          "label": {
-            "en": "Material Safety Data Sheet (MSDS)",
-            "ar": "(MSDS) نشرة معلومات السلامة والتداول"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "tds",
-          "label": {
-            "en": "Technical Data Sheet (TDS)",
-            "ar": "(TDS) نشرة المعلومات الفنية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "analysisMethodCertificate",
-          "label": {
-            "en": "Method of analysis of the active substance according to CIPAC or HPLC",
-            "ar": "(CIPAC و HPLC) طريقة تحليل المادة الفعالة في المستحضر والمادة الفعالة طبقا لـ"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "originalLabel",
-          "label": {
-            "en": "Original product label from the country of origin (stamped and signed by the producer)",
-            "ar": "الملصق في بلد المنشأ (مختوم وموقع من الشركة المنتجة"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "proposedEgyptLabel",
-          "label": {
-            "en": "Proposed Egyptian product label (Form 3 / Artwork), stamped and signed by the importer",
-            "ar": "(نموذج 3) (Artwork) الملصق المقترح فى مصر بشكله النهائى موقع ومختوم من الشركة المستوردة بنظام"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "qualityAssuranceCertificate",
-          "label": {
-            "en": "Quality assurance certificate for the product and raw materials from the producer (certified)",
-            "ar": "شهادة ضمان جودة بالمستحضر والخام من الشركة المنتجة (موثقة)"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "conformityCertificate",
-          "label": {
-            "en": "Certificate of conformity from an approved body recognized by the Central Laboratory of Organic Agriculture",
-            "ar": "شهادة مطابقة من جهات المطابقة على أن تكون معتمدة بالمعمل المركزي للزراعة العضوية او لو جهة جديدة - يتم تسجيل جهه المطابقة داخل مصر بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "productionFlowchart",
-          "label": {
-            "en": "Production process flowchart",
-            "ar": "مخطط بطريقة الانتاج"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "trainingCertificate",
-          "label": {
-            "en": "Training completion certificate from the General Department of Organic Agriculture / Central Organic Lab",
-            "ar": "شهادة إجتياز دورة تدريبية بالادارة العامة للزراعة العضوية-المعمل المركزى للزراعة العضوية"
-          },
-          "type": "image",
-          "required": true
-        },
-        {
-          "name": "previousRegistrationCertificate",
-          "label": {
-            "en": "Copy of previous registration certificate (if re-registration)",
-            "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة إعادة التسجيل"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "organicInputLogoForm",
-          "label": {
-            "en": "Application for Organic Input Logo for pesticide input (Form 5)",
-            "ar": "(5 طلب الحصول على شعار مدخل عضوى لمدخل الوقاية (نموذج"
-          },
-          "type": "image",
-          "required": false
-        },
-        {
-          "name": "feesPaymentProof",
-          "label": {
-            "en": "Proof of registration and technical examination fees payment",
-            "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني"
-          },
-          "type": "image",
-          "required": true
+          "fields": [{
+              "name": "storageStudy",
+              "label": {
+                "en": "Storage and Stability Study (GLP / ISO 172025)",
+                "ar": "دراسة تخزين وثبات بالإضافة إلى شهادة تخزين من (GLP) أو من (ISO 172025)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "toxicityStudy",
+              "label": {
+                "en": "Toxicity Studies (6 Packages)",
+                "ar": "دراسات سمية (6 Packages)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "efficacyStudy",
+              "label": {
+                "en": "Efficacy Study / Published Research",
+                "ar": "تجارب فاعلية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية (GLP)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "internationalEvaluation",
+              "label": {
+                "en": "International Evaluation (EU, EPA, Japan)",
+                "ar": "التقييم من قبل السلطات المرجعية الدولية للمستحضرات (نموذج 4) (EU , EPA , Japan)"
+              },
+              "type": "pdf",
+              "required": true
+            }
+          ]
         }
-      ],
-      "Pdfs": [
-        {
-          "name": "storageStudy",
+      ]
+    },
+    "Imported": {
+      "tabs": [{
+          "key": "Images",
           "label": {
-            "en": "Storage and Stability Study (GLP / ISO 172025)",
-            "ar": "دراسة تخزين وثبات بالإضافة إلى شهادة تخزين من (GLP) أو من (ISO 172025)"
+            "en": "Image File Uploads",
+            "ar": "تحميل ملفات الصور"
           },
-          "type": "pdf",
-          "required": true
+          "fields": [
+
+            {
+              "name": "authorizationLetter",
+              "label": {
+                "en": "Authorization letter from the exporting company to the importing company for pesticide registration and trade in Egypt (certified by the embassy)",
+                "ar": "(خطاب تفويض من الشركة المصدرة للشركة المستوردة لتسجيل المبيد والإتجار به فى مصر (موثق من السفارة"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "powerOfAttorney",
+              "label": {
+                "en": "Original power of attorney or authorization to deal with the General Department of Organic Agriculture, along with social insurance printout, or authorization to a certified consultancy office",
+                "ar": "أصل تفويض أو توكيل للتعامل مع الإدارة العامة للزراعة العضوية بالإضافة لبرينت من التأمينات أو تفويض لمكتب استشاري للتسجيلات بشرط أن يكون هذا المكتب معتمد بالإدارة العامة للزراعة العضوية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "pesticideRegistrationForm",
+              "label": {
+                "en": "Pesticide registration application form (Form 1)",
+                "ar": "نموذج طلب تسجيل مبيد (نموذج 1)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "finalProductCertificate",
+              "label": {
+                "en": "Valid registration certificate of the final product in the country of origin, certified by the Egyptian embassy (in English)",
+                "ar": "شهادة تسجيل المنتج النهائي في بلد المنشأ سارية موثقة من سفارة مصر بالدولة المنتجة باللغة الانجليزية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "activeSubstanceCertificate",
+              "label": {
+                "en": "Valid registration certificate of the active substance in the country of origin, certified by the Egyptian embassy (in English)",
+                "ar": "شهادة تسجيل المادة الفعالة فى بلد المنشأ سارية موثقة من سفارة مصر بالدولة المنتجة باللغة الإنجليزية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "technicalDataFile",
+              "label": {
+                "en": "Technical data file of the pesticide (Form 2)",
+                "ar": "ملف البيانات الفنية الخاصة بالمبيد (نموذج 2)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "compositionCertificate",
+              "label": {
+                "en": "Composition certificate (ingredients list)",
+                "ar": "شهادة التركيب (المكونات)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "productAnalysisCertificate",
+              "label": {
+                "en": "Product analysis certificate from the manufacturer and an accredited independent laboratory",
+                "ar": "شهادة تحليل المنتج من المصنع ومن معمل محايد معتمد."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "activeSubstanceAnalysisCertificate",
+              "label": {
+                "en": "Active substance analysis certificate from the manufacturer and an accredited independent laboratory",
+                "ar": "شهادة تحليل المادة الفعالة من المصنع ومن معمل محايد معتمد."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "pesticideResidueCertificate",
+              "label": {
+                "en": "Certificate of pesticide residue analysis from an accredited laboratory",
+                "ar": "شهادة تحليل متبقيات المبيدات من معمل محايد معتمد"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "radiationFreeCertificate",
+              "label": {
+                "en": "Certificate proving the product is free from radiation",
+                "ar": "شهادة تحليل خلو المنتج من الاشعاع."
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "pathogenFreeCertificate",
+              "label": {
+                "en": "Certificate proving the product is free from pathogens or contamination (for biopesticides)",
+                "ar": "شهادة تحليل خلو المنتج من المسببات المرضية أو بقصد الخلق في حالة المبيد الحيوي (موثقة)."
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "gmoFreeCertificate",
+              "label": {
+                "en": "Certificate of non-GMO for biopesticides",
+                "ar": "في حالة المبيدات الحيوية (No GMO) شهادة تحليل بخلو المنتج من المعاملات الوراثية"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "additionalAnalysisRequirements",
+              "label": {
+                "en": "Any additional analyses requested by the technical committee of the General Department of Organic Agriculture",
+                "ar": "وما يستجد من تحليلات من قبل اللجنة الفنية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية علي حسب تركيبة مدخل التغذية"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "labAccreditationCertificate",
+              "label": {
+                "en": "Accredited laboratory certificate (GLP or ISO 17025)",
+                "ar": "(GLP) أو من (ISO 17025) إرفاق شهادة إعتماد مختبر"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "msds",
+              "label": {
+                "en": "Material Safety Data Sheet (MSDS)",
+                "ar": "(MSDS) نشرة معلومات السلامة والتداول"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "tds",
+              "label": {
+                "en": "Technical Data Sheet (TDS)",
+                "ar": "(TDS) نشرة المعلومات الفنية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "analysisMethodCertificate",
+              "label": {
+                "en": "Method of analysis of the active substance according to CIPAC or HPLC",
+                "ar": "(CIPAC و HPLC) طريقة تحليل المادة الفعالة في المستحضر والمادة الفعالة طبقا لـ"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "originalLabel",
+              "label": {
+                "en": "Original product label from the country of origin (stamped and signed by the producer)",
+                "ar": "الملصق في بلد المنشأ (مختوم وموقع من الشركة المنتجة"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "proposedEgyptLabel",
+              "label": {
+                "en": "Proposed Egyptian product label (Form 3 / Artwork), stamped and signed by the importer",
+                "ar": "(نموذج 3) (Artwork) الملصق المقترح فى مصر بشكله النهائى موقع ومختوم من الشركة المستوردة بنظام"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "qualityAssuranceCertificate",
+              "label": {
+                "en": "Quality assurance certificate for the product and raw materials from the producer (certified)",
+                "ar": "شهادة ضمان جودة بالمستحضر والخام من الشركة المنتجة (موثقة)"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "conformityCertificate",
+              "label": {
+                "en": "Certificate of conformity from an approved body recognized by the Central Laboratory of Organic Agriculture",
+                "ar": "شهادة مطابقة من جهات المطابقة على أن تكون معتمدة بالمعمل المركزي للزراعة العضوية او لو جهة جديدة - يتم تسجيل جهه المطابقة داخل مصر بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "productionFlowchart",
+              "label": {
+                "en": "Production process flowchart",
+                "ar": "مخطط بطريقة الانتاج"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "trainingCertificate",
+              "label": {
+                "en": "Training completion certificate from the General Department of Organic Agriculture / Central Organic Lab",
+                "ar": "شهادة إجتياز دورة تدريبية بالادارة العامة للزراعة العضوية-المعمل المركزى للزراعة العضوية"
+              },
+              "type": "image",
+              "required": true
+            },
+            {
+              "name": "previousRegistrationCertificate",
+              "label": {
+                "en": "Copy of previous registration certificate (if re-registration)",
+                "ar": "إضافة صورة من شهادة التسجيل السابقة في حالة إعادة إعادة التسجيل"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "organicInputLogoForm",
+              "label": {
+                "en": "Application for Organic Input Logo for pesticide input (Form 5)",
+                "ar": "(5 طلب الحصول على شعار مدخل عضوى لمدخل الوقاية (نموذج"
+              },
+              "type": "image",
+              "required": false
+            },
+            {
+              "name": "feesPaymentProof",
+              "label": {
+                "en": "Proof of registration and technical examination fees payment",
+                "ar": "ما يفيد بسداد رسوم التسجيل والفحص الفني"
+              },
+              "type": "image",
+              "required": true
+            }
+          ]
         },
         {
-          "name": "toxicityStudy",
+          "key": "Pdfs",
           "label": {
-            "en": "Toxicity Studies (6 Packages)",
-            "ar": "دراسات سمية (6 Packages)"
+            "en": "PDF File Uploads",
+            "ar": "تحميل الملفات"
           },
-          "type": "pdf",
-          "required": true
-        },
-        {
-          "name": "efficacyStudy",
-          "label": {
-            "en": "Efficacy Study / Published Research",
-            "ar": "تجارب فاعلية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية (GLP)"
-          },
-          "type": "pdf",
-          "required": true
-        },
-        {
-          "name": "internationalEvaluation",
-          "label": {
-            "en": "International Evaluation (EU, EPA, Japan)",
-            "ar": "التقييم من قبل السلطات المرجعية الدولية للمستحضرات (نموذج 4) (EU , EPA , Japan)"
-          },
-          "type": "pdf",
-          "required": true
+          "fields": [{
+              "name": "storageStudy",
+              "label": {
+                "en": "Storage and Stability Study (GLP / ISO 172025)",
+                "ar": "دراسة تخزين وثبات بالإضافة إلى شهادة تخزين من (GLP) أو من (ISO 172025)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "toxicityStudy",
+              "label": {
+                "en": "Toxicity Studies (6 Packages)",
+                "ar": "دراسات سمية (6 Packages)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "efficacyStudy",
+              "label": {
+                "en": "Efficacy Study / Published Research",
+                "ar": "تجارب فاعلية بالإدارة العامة للزراعة العضوية - المعمل المركزي للزراعة العضوية (GLP)"
+              },
+              "type": "pdf",
+              "required": true
+            },
+            {
+              "name": "internationalEvaluation",
+              "label": {
+                "en": "International Evaluation (EU, EPA, Japan)",
+                "ar": "التقييم من قبل السلطات المرجعية الدولية للمستحضرات (نموذج 4) (EU , EPA , Japan)"
+              },
+              "type": "pdf",
+              "required": true
+            }
+          ]
         }
       ]
     }
