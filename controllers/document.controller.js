@@ -23,12 +23,13 @@ const finalcertificatereviewsubmissionEmailTemplate = require('../utils/emailTem
 const { uploadToCloudinary , deleteCloudinaryFolder } = require('../utils/cloudinary');
 const { uploadToSupabase , deleteSupabaseFolder } = require('../utils/supabase');
 // import { loadTemplate } from '../utils/loadTemplate.js';
-const {loadTemplate} = require ('../utils/loadTemplate');
+const {loadTemplate , listTemplates} = require ('../templates');
 const { rollbackUploads } = require('../utils/rollbackUploads');
 const { resolveAllowedFields } = require('../utils/templateResolver');
 const { resolveResubmissionFields } = require('../utils/resolveResubmissionFields');
 
 const Brevo = require("@getbrevo/brevo");
+// const { loadTemplate, listTemplates } = require("../templates");
 
 exports.createDocument = async (req, res) => {
   const theUploadedFiles = []; // ✅ use this for rollback tracking
@@ -1312,6 +1313,38 @@ brevoClient.setApiKey(
     res.status(500).json({ message: 'Error reviewing certificate', error: err.message });
   }
 };
+
+exports.getTemplates = (req, res) => {
+  res.json(listTemplates());
+};
+
+// exports.getTemplateByKey = (req, res) => {
+//   try {
+//     const template = loadTemplate(req.params.key);
+//     res.json(template);
+//   } catch (err) {
+//     res.status(404).json({ message: err.message });
+//   }
+// };
+
+exports.getTemplateByKey = (req, res) => {
+  const { key } = req.params;
+  const { state } = req.query;
+
+  if (!state) {
+    return res.status(400).json({
+      message: "State is required (e.g. ?state=Imported)"
+    });
+  }
+
+  try {
+    const template = loadTemplate(key, state);
+    res.json(template);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 
 // // PATCH /admin/documents/:id/certificate/review
 // exports.reviewCertificate = async (req, res) => {

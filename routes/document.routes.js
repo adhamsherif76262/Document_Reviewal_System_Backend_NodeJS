@@ -13,7 +13,9 @@ const {
   createDocument,
   reviewDocument,
   resubmitDocument,
-  adminListDocuments
+  adminListDocuments,
+  getTemplates,
+  getTemplateByKey
 } = require('../controllers/document.controller');
 
 const {
@@ -57,5 +59,8 @@ router.patch('/:id/resubmit', protect,validateResubmission,
 // router.put('/:id/resubmit', protect,validateResubmission, resubmitDocument);
 // router.put('/:id/resubmit', protect, upload.single('file'),validateResubmission, resubmitDocument);
 router.get('/', protect,isAdmin, adminListDocuments); // Admin route
+
+router.get("/templates", protect , getTemplates);
+router.get("/:key/templates", protect , getTemplateByKey);
 
 module.exports = router;

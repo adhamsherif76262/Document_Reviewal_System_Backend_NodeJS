@@ -1,5 +1,5 @@
 {
-  "templateKey": "factory-or-production-unit",
+  "templateKey": "factory_or_production_unit",
   "appliesTo": [
     "Factory Or Production Unit"
   ],
