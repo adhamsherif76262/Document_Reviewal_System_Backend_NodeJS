@@ -247,7 +247,7 @@ brevoClient.setApiKey(
       message: `User ${req.user.name} with email ${req.user.email} submitted a document.`,
     });
 
-    res.json({ message: 'Document created successfully', fields: finalFields });
+    res.json({ message: 'Your Submission Was Successfull', fields: finalFields });
 
   } catch (err) {
       console.error('Upload failed:', err.message);
