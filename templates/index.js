@@ -102,6 +102,7 @@ function listTemplates() {
 
       return {
         templateKey: tpl.templateKey,
+        templateKeyAr: tpl.templateKeyAr,
         appliesTo: tpl.appliesTo,
         states: Object.keys(tpl.states),
       };

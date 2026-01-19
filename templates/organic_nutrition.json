@@ -1,5 +1,6 @@
 {
   "templateKey": "organic_nutrition",
+  "templateKeyAr": "مدخل تغذية عضوي",
   "appliesTo": [
     "Domestic Organic Nutrition",
     "Imported Organic Nutrition"
@@ -7,8 +8,8 @@
   "globals": {
     "helpText": {
       "image": {
-        "en": "Upload a clear image (max 5 MB). It will be optimized automatically.",
-        "ar": "ارفع صورة واضحة (حد أقصى ٥ ميجابايت). سيتم تحسينها تلقائيًا."
+        "en": "Upload a clear image (max 10 MB). It will be optimized automatically.",
+        "ar": "ارفع صورة واضحة (حد أقصى ١٠ ميجابايت). سيتم تحسينها تلقائيًا."
       },
       "pdf": {
         "en": "Upload a PDF File (max 45 MB).",
@@ -19,7 +20,7 @@
     "constraints": {
       "image": {
         "maxFiles": 1,
-        "maxSizeMB": 5,
+        "maxSizeMB": 10,
         "allowedMimeTypes": ["image/jpeg","image/jpg", "image/png", "image/webp"]
       },
       "pdf": {
