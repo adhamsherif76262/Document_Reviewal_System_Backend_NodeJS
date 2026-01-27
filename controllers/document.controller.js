@@ -302,56 +302,75 @@ exports.reviewDocument = async (req, res) => {
 // Pick the right state:
 // const template = fullTemplate[document.state]; // e.g., fullTemplate["Imported"]
   
-const fullTemplate = loadTemplate(document.docType);
 
-if (!fullTemplate?.states?.[document.state]) {
-  return res.status(400).json({
-    message: `Template state '${document.state}' not found for ${document.docType}`
-  });
-}
+// const fullTemplate = loadTemplate(document.docType);
 
-const template = fullTemplate.states[document.state];
+// if (!fullTemplate?.states?.[document.state]) {
+//   return res.status(400).json({
+//     message: `Template state '${document.state}' not found for ${document.docType}`
+//   });
+// }
+
+// const template = fullTemplate.states[document.state];
 
 // function getTemplateFieldNames(template) {
 //   const fieldNames = [];
-//   if (!template || !template.tabs) return fieldNames;
-    
-//   for (const tabFields of Object.values(template.tabs)) {
-//     for (const field of tabFields) {
-//       if (field.name) fieldNames.push(field.name);
+//   if (!template?.tabs || !Array.isArray(template.tabs)) return fieldNames;
+
+//   for (const tab of template.tabs) {
+//     if (!Array.isArray(tab.fields)) continue;
+
+//     for (const field of tab.fields) {
+//       if (field?.name) fieldNames.push(field.name);
 //     }
 //   }
 
 //   return fieldNames;
 // }
 
-function getTemplateFieldNames(template) {
-  const fieldNames = [];
-  if (!template?.tabs || !Array.isArray(template.tabs)) return fieldNames;
+//     const templateFieldNames = getTemplateFieldNames(template);
 
-  for (const tab of template.tabs) {
-    if (!Array.isArray(tab.fields)) continue;
 
-    for (const field of tab.fields) {
-      if (field?.name) fieldNames.push(field.name);
-    }
-  }
 
-  return fieldNames;
-}
 
-    const templateFieldNames = getTemplateFieldNames(template);
+// 4️⃣ Validate fieldsReview keys
+    // if (fieldsReview) {
+    //   for (const key of Object.keys(fieldsReview)) {
+    //     if (!templateFieldNames.includes(key)) {
+    //       return res.status(400).json({
+    //         message: `Invalid field '${key}' — not defined in template for ${document.docType} (${document.state}).`
+    //       });
+    //     }
+    //   }
+    // }
+    
+    const { allowedFields } = resolveAllowedFields(
+      document.docType,
+      document.state
+    );
 
-    // 4️⃣ Validate fieldsReview keys
+    const VALID_REVIEW_STATUSES = ["approved", "rejected", "pending"];
+
     if (fieldsReview) {
-      for (const key of Object.keys(fieldsReview)) {
-        if (!templateFieldNames.includes(key)) {
+      for (const [fieldName, data] of Object.entries(fieldsReview)) {
+        if (!VALID_REVIEW_STATUSES.includes(data.status)) {
           return res.status(400).json({
-            message: `Invalid field '${key}' — not defined in template for ${document.docType} (${document.state}).`
+            message: `Invalid review status '${data.status}' for field '${fieldName}'`
           });
         }
       }
     }
+
+
+    if (fieldsReview && typeof fieldsReview === "object") {
+      for (const fieldName of Object.keys(fieldsReview)) {
+        if (!allowedFields.has(fieldName)) {
+          return res.status(400).json({
+            message: `Invalid field '${fieldName}' — not defined for ${document.docType} (${document.state})`
+          });
+        }
+    }
+}
 
     // 5️⃣ Save original states for rollback (MODE A)
     originalFieldStates = {};
@@ -732,35 +751,41 @@ exports.resubmitDocument = async (req, res) => {
     // if (!template[state]) return res.status(400).json({ error: `State '${state}' not defined in template.` });
     // const stateTemplate = template[state];
 
-    const fullTemplate = loadTemplate(docType);
+//     const fullTemplate = loadTemplate(docType);
 
-    // ✅ Check that states exist
-    if (!fullTemplate?.states?.[state]) {
-      return res.status(400).json({ error: `State '${state}' not defined in template for ${docType}.` });
-    }
+//     // ✅ Check that states exist
+//     if (!fullTemplate?.states?.[state]) {
+//       return res.status(400).json({ error: `State '${state}' not defined in template for ${docType}.` });
+//     }
 
-    // ✅ Pick the right state
-    const stateTemplate = fullTemplate.states[state];
+//     // ✅ Pick the right state
+//     const stateTemplate = fullTemplate.states[state];
 
-    // Build allowedFields map
-    const allowedFields = new Map();
-    // for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
-    //   for (const f of fields) {
-    //     allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
-    //   }
-    // }
+//     // Build allowedFields map
+//     const allowedFields = new Map();
+//     // for (const [tabName, fields] of Object.entries(stateTemplate.tabs)) {
+//     //   for (const f of fields) {
+//     //     allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
+//     //   }
+//     // }
 
-    for (const tab of stateTemplate.tabs) {
-  const tabName = tab.key || tab.label?.en || 'Tab';
-  if (!Array.isArray(tab.fields)) continue;
-  for (const f of tab.fields) {
-    allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
-  }
-}
+//     for (const tab of stateTemplate.tabs) {
+//   const tabName = tab.key || tab.label?.en || 'Tab';
+//   if (!Array.isArray(tab.fields)) continue;
+//   for (const f of tab.fields) {
+//     allowedFields.set(f.name, { type: f.type, required: f.required || false, tab: tabName });
+//   }
+// }
+
+const { allowedFields } = resolveAllowedFields(docType, state);
 
 
     const parsedTexts = {};
     const parsedFiles = {};
+
+    const clearedCloudinaryFields = new Set();
+    const clearedSupabaseFields = new Set();
+
 
     // 🔹 Parse text fields (only rejected ones)
     if (req.body.text && typeof req.body.text === 'object') {
@@ -811,17 +836,66 @@ exports.resubmitDocument = async (req, res) => {
         const ext = file.originalname.split('.').pop();
         const readableName = `${fieldKey}_${index}.${ext}`;
 
-        if (isImage) {
-          await deleteCloudinaryFolder(`${baseFolder_Cloudinary}/${fieldKey}`); // clear old
-          url = await uploadToCloudinary(file, `${baseFolder_Cloudinary}/${fieldKey}`, readableName);
-          theUploadedFiles.push({ provider: 'cloudinary', folderPath: `${baseFolder_Cloudinary}` });
-        } else if (isPDF) {
-          await deleteSupabaseFolder(`${baseFolder_Supabase}/${fieldKey}`); // clear old
-          url = await uploadToSupabase(file, `${baseFolder_Supabase}/${fieldKey}`, readableName);
-          theUploadedFiles.push({ provider: 'supabase', folderPath: `${baseFolder_Supabase}` });
-        }
+        // if (isImage) {
+        //   await deleteCloudinaryFolder(`${baseFolder_Cloudinary}/${fieldKey}`); // clear old
+        //   url = await uploadToCloudinary(file, `${baseFolder_Cloudinary}/${fieldKey}`, readableName);
+        //   theUploadedFiles.push({ provider: 'cloudinary', folderPath: `${baseFolder_Cloudinary}` });
+        // } else if (isPDF) {
+        //   await deleteSupabaseFolder(`${baseFolder_Supabase}/${fieldKey}`); // clear old
+        //   url = await uploadToSupabase(file, `${baseFolder_Supabase}/${fieldKey}`, readableName);
+        //   theUploadedFiles.push({ provider: 'supabase', folderPath: `${baseFolder_Supabase}` });
+        // }
 
+        // parsedFiles[fieldKey].value.push(url);
+
+
+        if (isImage) {
+          // 🔥 delete old files ONCE per field
+          if (!clearedCloudinaryFields.has(fieldKey)) {
+            await deleteCloudinaryFolder(`${baseFolder_Cloudinary}/${fieldKey}`);
+            clearedCloudinaryFields.add(fieldKey);
+          }
+        
+          url = await uploadToCloudinary(
+            file,
+            `${baseFolder_Cloudinary}/${fieldKey}`,
+            readableName
+          );
+        
+          if (!url) {
+            throw new Error(`Cloudinary upload failed for field '${fieldKey}'`);
+          }
+        
+          theUploadedFiles.push({
+            provider: 'cloudinary',
+            folderPath: `${baseFolder_Cloudinary}/${fieldKey}`,
+          });
+        }
+        
+        else if (isPDF) {
+          if (!clearedSupabaseFields.has(fieldKey)) {
+            await deleteSupabaseFolder(`${baseFolder_Supabase}/${fieldKey}`);
+            clearedSupabaseFields.add(fieldKey);
+          }
+        
+          url = await uploadToSupabase(
+            file,
+            `${baseFolder_Supabase}/${fieldKey}`,
+            readableName
+          );
+        
+          if (!url) {
+            throw new Error(`Supabase upload failed for field '${fieldKey}'`);
+          }
+        
+          theUploadedFiles.push({
+            provider: 'supabase',
+            folderPath: `${baseFolder_Supabase}/${fieldKey}`,
+          });
+        }
+        
         parsedFiles[fieldKey].value.push(url);
+
       }
     }
 
