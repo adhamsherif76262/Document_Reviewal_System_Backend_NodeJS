@@ -181,7 +181,7 @@ const documentSchema = new mongoose.Schema({
 documentSchema.pre('save', function (next) {
   const fields = this.fields || {};
   const hasPending = Array.from(fields.values()).some(
-    (f) => f.review.status === 'pending'
+    (f) => f.review.status !== 'approved'
   );
   this.hasPendingResubmission = hasPending;
   next();

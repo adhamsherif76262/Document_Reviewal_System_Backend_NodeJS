@@ -422,7 +422,9 @@ exports.reviewDocument = async (req, res) => {
 
     document.custody.currentHolder = adminData;
     document.hasPendingResubmission = document.status !== "approved";
-
+    // document.hasPendingResubmission = true;
+    // console.log("Has Pending Resubmission  " + document.hasPendingResubmission)
+    // console.log("Status Is  " + document.status)
     // 🔟 Create lifecycle log entry
     document.activityLog.push({
       action: document.status,
@@ -430,6 +432,13 @@ exports.reviewDocument = async (req, res) => {
       role: req.user.role,
       timestamp: new Date()
     });
+
+//     console.log(
+//   "Modified paths:",
+//   document.modifiedPaths()
+// );
+// document.hasPendingResubmission = document.status !== "approved";
+// document.markModified("hasPendingResubmission");
 
     await document.save(); // 💾 Save doc before generating PDF
 
@@ -451,7 +460,7 @@ const fieldsReviewed = Object.entries(fieldsObj)
 
 
     const review = await Review.create({
-      document: document,
+      document: document._id,
       // reviewedBy: req.user.name,
       reviewedBy: (({ _id, email, name, phone, adminLevel }) => ({ _id, email, name, phone, adminLevel }))(req.user),
       status: document.status,
@@ -516,9 +525,14 @@ brevoClient.setApiKey(
       action: document.status,
       user: {_id : document.user._id, name : document.user.name, email: document.user.email},
       admin: {_id : req.user._id, name : req.user.name, email: req.user.email},
-      document: document,
+      document: document._id,
       message: `Document ${document.docType} was ${document.status} by ${req.user.name} with email ${req.user.email}.`
     });
+
+//     console.log(
+//   "FINAL DB VALUE:",
+//   await Document.findById(document._id).select("hasPendingResubmission status")
+// );
 
     return res.status(200).json({
       message: `Document ${document.status} successfully and user notified`,
