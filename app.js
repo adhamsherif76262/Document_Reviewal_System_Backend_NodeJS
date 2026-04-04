@@ -177,12 +177,12 @@ app.use(cors({
 
 // app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//   })
+// );
 
 // CORS options configuration
 const corsOptions = {
