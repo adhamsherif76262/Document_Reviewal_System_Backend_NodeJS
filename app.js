@@ -201,7 +201,7 @@ const corsOptions = {
 };
 
 // Apply the CORS middleware globally or to specific routes
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // Handle preflight requests (OPTIONS method), which are automatically sent by browsers for certain types of requests (like POST)
 // app.options('*', cors(corsOptions)); // This handles OPTIONS requests for all routes
