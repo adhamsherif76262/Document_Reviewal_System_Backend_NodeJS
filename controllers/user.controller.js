@@ -412,15 +412,134 @@ exports.resendVerificationOTP = async (req, res) => {
 // ✅ @route   POST /api/users/login
 // ✅ @access  Public
 
+// exports.loginUser = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+    
+//     console.log('📩 Login attempt with:', email);
+    
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       console.log('❌ User not found in DB');
+//       logger.error("User not found in DB");
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
+
+//     console.log('✅ User found:', user.email);
+    
+//     if (!user.isVerified && user.role === "user") {
+//       return res.status(403).json({ message: 'Please verify your email before logging in.' });
+//     }
+    
+//     console.log('✅ User Is Verified:', user.email);
+
+//     const isMatch = await user.matchPassword(password);
+//     console.log('🔐 Password match:', isMatch);
+
+//     if (!isMatch) {
+//       console.log('❌ Password mismatch');
+//       logger.error("Password mismatch");
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
+
+//     console.log('🎉 Login successful');
+
+//      // Generate token
+//     const token = generateToken(user._id);
+    
+//     // ✅ Log the login
+//     // if(user.role === "admin"){
+//     //   await Log.create({
+//     //     action: 'login',
+//     //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
+//     //     user: user,
+//     //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+//     //   });
+//     // }else{
+//     //   await Log.create({
+//     //     action: 'login',
+//     //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
+//     //     user: user,
+//     //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+//     //   });
+      
+//     // }
+//         if (user.role === 'admin') {
+//           await Log.create({
+//             action: 'login',
+//             admin:  {_id : user._id, name : user.name, email: user.email},
+//             // user: user,
+//             message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+//           });
+      
+//     } else {
+      
+//     await Log.create({
+//       action: 'login',
+//       user:  {_id : user._id, name : user.name, email: user.email},
+//       // user: user,
+//       message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+//     });
+//   }
+//     // await Log.create({
+//     //   action: 'login',
+//     //   [user.role === 'admin' ? 'admin' : 'user']:  {_id : req.user._id, name : req.user.name, email: req.user.email},
+//     //   // user: user,
+//     //   message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+//     // });
+
+//         // Set cookie
+//     res.cookie('auth_token', token, {
+//       httpOnly: true,
+//       // secure: process.env.NODE_ENV === 'production', // only HTTPS in prod
+//       secure: true, // only HTTPS in prod
+//       sameSite: 'none',
+//       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+//     });
+
+//     res.json({
+//       _id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       role: user.role,
+//       adminLevel: user.adminLevel,
+//       phone: user.phone,
+//       expiryStatus: user.expiryStatus,
+//       expirable: user.expirable,
+//       expiryDate: user.expiryDate,
+//       // token: generateToken(user._id),
+//       // verificationStatus: user.verificationStatus,
+//       preferredVerificationMethod: user.preferredVerificationMethod,
+//       isVerified: true,
+//       // message: 'Login successful',
+//     });
+//   } catch (error) {
+//     console.error('Login Error:', error.message);
+//     logger.error(error.message);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
 exports.loginUser = async (req, res) => {
   try {
+    console.log("🚀 LOGIN START");
 
-    
     const { email, password } = req.body;
-    
     console.log('📩 Login attempt with:', email);
-    
-    const user = await User.findOne({ email });
+
+    // -------------------------
+    // 1. Find User
+    // -------------------------
+    let user;
+    try {
+      console.log("🔍 Finding user...");
+      user = await User.findOne({ email });
+    } catch (err) {
+      console.error("❌ DB ERROR (findOne):", err);
+      return res.status(500).json({ message: "DB error أثناء البحث عن المستخدم" });
+    }
 
     if (!user) {
       console.log('❌ User not found in DB');
@@ -429,14 +548,29 @@ exports.loginUser = async (req, res) => {
     }
 
     console.log('✅ User found:', user.email);
-    
+
+    // -------------------------
+    // 2. Verification Check
+    // -------------------------
     if (!user.isVerified && user.role === "user") {
+      console.log("⚠️ User not verified");
       return res.status(403).json({ message: 'Please verify your email before logging in.' });
     }
-    
+
     console.log('✅ User Is Verified:', user.email);
 
-    const isMatch = await user.matchPassword(password);
+    // -------------------------
+    // 3. Password Check
+    // -------------------------
+    let isMatch = false;
+    try {
+      console.log("🔐 Comparing password...");
+      isMatch = await user.matchPassword(password);
+    } catch (err) {
+      console.error("❌ bcrypt ERROR:", err);
+      return res.status(500).json({ message: "Password comparison failed" });
+    }
+
     console.log('🔐 Password match:', isMatch);
 
     if (!isMatch) {
@@ -447,58 +581,67 @@ exports.loginUser = async (req, res) => {
 
     console.log('🎉 Login successful');
 
-     // Generate token
-    const token = generateToken(user._id);
-    
-    // ✅ Log the login
-    // if(user.role === "admin"){
-    //   await Log.create({
-    //     action: 'login',
-    //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
-    //     user: user,
-    //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
-    //   });
-    // }else{
-    //   await Log.create({
-    //     action: 'login',
-    //     // [user.role === 'admin' ? 'admin' : 'user']: (({ _id, email, name }) => ({ _id, email, name }))(user),
-    //     user: user,
-    //     message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
-    //   });
-      
-    // }
-        if (user.role === 'admin') {
-          await Log.create({
-            action: 'login',
-            admin:  {_id : user._id, name : user.name, email: user.email},
-            // user: user,
-            message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
-          });
-      
-    } else {
-      
-    await Log.create({
-      action: 'login',
-      user:  {_id : user._id, name : user.name, email: user.email},
-      // user: user,
-      message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
-    });
-  }
-    // await Log.create({
-    //   action: 'login',
-    //   [user.role === 'admin' ? 'admin' : 'user']:  {_id : req.user._id, name : req.user.name, email: req.user.email},
-    //   // user: user,
-    //   message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
-    // });
+    // -------------------------
+    // 4. Generate Token
+    // -------------------------
+    let token;
+    try {
+      console.log("🪪 Generating token...");
+      token = generateToken(user._id);
+    } catch (err) {
+      console.error("❌ TOKEN ERROR:", err);
+      return res.status(500).json({ message: "Token generation failed" });
+    }
 
-        // Set cookie
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production', // only HTTPS in prod
-      secure: true, // only HTTPS in prod
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    });
+    // -------------------------
+    // 5. Logging (VERY IMPORTANT AREA)
+    // -------------------------
+    try {
+      console.log("📝 Creating log entry...");
+
+      if (user.role === 'admin') {
+        await Log.create({
+          action: 'login',
+          admin: { _id: user._id, name: user.name, email: user.email },
+          message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+        });
+      } else {
+        await Log.create({
+          action: 'login',
+          user: { _id: user._id, name: user.name, email: user.email },
+          message: `${user.role} ${user.name} With Email ${user.email} Logged In`,
+        });
+      }
+
+      console.log("✅ Log created successfully");
+
+    } catch (err) {
+      console.error("❌ LOGGING ERROR (THIS IS VERY LIKELY YOUR ISSUE):", err);
+      // ⚠️ IMPORTANT: don't crash login بسبب اللوج
+    }
+
+    // -------------------------
+    // 6. Set Cookie
+    // -------------------------
+    try {
+      console.log("🍪 Setting cookie...");
+
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+    } catch (err) {
+      console.error("❌ COOKIE ERROR:", err);
+      return res.status(500).json({ message: "Cookie error" });
+    }
+
+    // -------------------------
+    // 7. Response
+    // -------------------------
+    console.log("📤 Sending response...");
 
     res.json({
       _id: user._id,
@@ -510,19 +653,16 @@ exports.loginUser = async (req, res) => {
       expiryStatus: user.expiryStatus,
       expirable: user.expirable,
       expiryDate: user.expiryDate,
-      // token: generateToken(user._id),
-      // verificationStatus: user.verificationStatus,
       preferredVerificationMethod: user.preferredVerificationMethod,
       isVerified: true,
-      // message: 'Login successful',
     });
+
   } catch (error) {
-    console.error('Login Error:', error.message);
+    console.error('🔥 FATAL LOGIN ERROR:', error);
     logger.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 // ✅ @desc    Logout user (log the event)
 // ✅ @route   POST /api/users/logout
