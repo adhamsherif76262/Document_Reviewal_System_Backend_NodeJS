@@ -130,10 +130,8 @@ app.set('trust proxy', 1); // Required for Render proxy + cookies
 // ---------------------------------------------
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://localhost:3000/",
   // "https://document-reviewal-system-backend-nodejs.onrender.com/",
   "https://cloa-document-review-system.netlify.app",
-  "https://cloa-document-review-system.netlify.app/",
 ];
 
 /*************************** */
@@ -172,10 +170,10 @@ const allowedOrigins = [
 
 /*************************** */
 
-// app.use(cors({
-//   origin: true,
-//   credentials: true
-// }));
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 // app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
@@ -232,7 +230,7 @@ if (process.env.NODE_ENV === 'production') {
 // ---------------------------------------------
 // 4) Rate Limiter (AFTER CORS!)
 // ---------------------------------------------
-// app.use(defaultLimiter);
+app.use(defaultLimiter);
 
 // ---------------------------------------------
 // 5) Request timeout
