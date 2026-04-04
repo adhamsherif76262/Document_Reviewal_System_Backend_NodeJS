@@ -148,7 +148,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // 🔥 VERY IMPORTANT
+// app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
 // app.use(
 //   cors({
