@@ -136,18 +136,20 @@ const allowedOrigins = [
   "https://cloa-document-review-system.netlify.app/",
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
+/*************************** */
+
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true,
+// };
 
 // const corsOptions = {
 //   origin: function (origin, callback) {
@@ -166,7 +168,9 @@ const corsOptions = {
 //   credentials: true,
 // };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+/*************************** */
 
 // app.use(cors({
 //   origin: true,
@@ -183,23 +187,23 @@ app.use(
 );
 
 // CORS options configuration
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   // Include other necessary headers and methods, especially for POST requests
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
-//   credentials: true // if you're using cookies or session data
-// };
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  // Include other necessary headers and methods, especially for POST requests
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
+  credentials: true // if you're using cookies or session data
+};
 
 // Apply the CORS middleware globally or to specific routes
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Handle preflight requests (OPTIONS method), which are automatically sent by browsers for certain types of requests (like POST)
 // app.options('*', cors(corsOptions)); // This handles OPTIONS requests for all routes
