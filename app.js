@@ -149,24 +149,24 @@ const allowedOrigins = [
 //   credentials: true,
 // };
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     console.log("Incoming origin:", origin); // 🔥 DEBUG
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log("Incoming origin:", origin); // 🔥 DEBUG
 
-//     if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true);
 
-//     const allowed = allowedOrigins.some(o => origin.startsWith(o));
+    const allowed = allowedOrigins.some(o => origin.startsWith(o));
 
-//     if (allowed) {
-//       callback(null, true);
-//     } else {
-//       callback(null, false); // ❗ DON'T throw error
-//     }
-//   },
-//   credentials: true,
-// };
+    if (allowed) {
+      callback(null, true);
+    } else {
+      callback(null, false); // ❗ DON'T throw error
+    }
+  },
+  credentials: true,
+};
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 /*************************** */
 
@@ -177,31 +177,31 @@ const allowedOrigins = [
 
 // app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//   })
+// );
 
 // CORS options configuration
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  // Include other necessary headers and methods, especially for POST requests
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
-  credentials: true // if you're using cookies or session data
-};
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   // Include other necessary headers and methods, especially for POST requests
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
+//   credentials: true // if you're using cookies or session data
+// };
 
 // Apply the CORS middleware globally or to specific routes
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // Handle preflight requests (OPTIONS method), which are automatically sent by browsers for certain types of requests (like POST)
 // app.options('*', cors(corsOptions)); // This handles OPTIONS requests for all routes
