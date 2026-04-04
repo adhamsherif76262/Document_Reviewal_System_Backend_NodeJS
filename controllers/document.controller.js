@@ -145,7 +145,8 @@ exports.createDocument = async (req, res) => {
     // 🧱 Step 3: Upload files only now
     const { docNumber } = shellDoc;
     const userName = req.user?.name?.replace(/\s+/g, '') || 'UnknownUser';
-    const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${docNumber}_${userName}`;
+    // const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${docNumber}_${userName}`;
+    const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System_New/${docType}_${docNumber}_${userName}`;
     const baseFolder_Supabase = `${docType}_${docNumber}_${userName}`;
 
     const uploadedFiles = {};
@@ -842,7 +843,8 @@ const { allowedFields } = resolveAllowedFields(docType, state);
         }
 
         const userName = req.user?.name?.replace(/\s+/g, '') || 'UnknownUser';
-        const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${document.docNumber}_${userName}`;
+        // const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System/${docType}_${document.docNumber}_${userName}`;
+        const baseFolder_Cloudinary = `CLOA_Document_Reviewal_System_New/${docType}_${document.docNumber}_${userName}`;
         const baseFolder_Supabase = `${docType}_${document.docNumber}_${userName}`;
 
         let url;
@@ -1148,7 +1150,8 @@ exports.submitCertificate = async (req, res) => {
       const file = files[i];
       const url = await uploadToCloudinary(
         file,
-        `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
+        // `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
+        `CLOA_Document_Reviewal_System_New/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
         `final_certificate_${i + 1}`
       );
       uploadedUrls.push(url);
@@ -1216,7 +1219,8 @@ exports.resubmitCertificate = async (req, res) => {
     // 🟡 Delete previous rejected certificate folder from Cloudinary
 try {
   const userName = doc.user?.name?.replace(/\s+/g, '') || 'UnknownUser';
-  const certFolder = `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`;
+  // const certFolder = `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`;
+  const certFolder = `CLOA_Document_Reviewal_System_New/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`;
 
   await deleteCloudinaryFolder(certFolder); // ✅ reuse the tested helper
   console.log('✅ Previous Final_Certificate folder deleted successfully');
@@ -1231,7 +1235,8 @@ try {
       const file = files[i];
       const url = await uploadToCloudinary(
         file,
-        `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
+        // `CLOA_Document_Reviewal_System/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
+        `CLOA_Document_Reviewal_System_New/${doc.docType}_${doc.docNumber}_${userName}/Final_Certificate`,
         `final_certificate_${i + 1}`
       );
       uploadedUrls.push(url);
