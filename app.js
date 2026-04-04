@@ -130,35 +130,51 @@ app.set('trust proxy', 1); // Required for Render proxy + cookies
 // ---------------------------------------------
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://document-reviewal-system-backend-nodejs.onrender.com/",
+  // "https://document-reviewal-system-backend-nodejs.onrender.com/",
   "https://cloa-document-review-system.netlify.app"
 ];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
-
-// CORS options configuration
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
+  origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  // Include other necessary headers and methods, especially for POST requests
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
-  credentials: true // if you're using cookies or session data
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
 
-// Apply the CORS middleware globally or to specific routes
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // 🔥 VERY IMPORTANT
+
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//   })
+// );
+
+// CORS options configuration
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   // Include other necessary headers and methods, especially for POST requests
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Add other custom headers if you use them
+//   credentials: true // if you're using cookies or session data
+// };
+
+// Apply the CORS middleware globally or to specific routes
+// app.use(cors(corsOptions));
 
 // Handle preflight requests (OPTIONS method), which are automatically sent by browsers for certain types of requests (like POST)
 // app.options('*', cors(corsOptions)); // This handles OPTIONS requests for all routes
