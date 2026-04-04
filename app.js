@@ -170,19 +170,19 @@ const allowedOrigins = [
 
 /*************************** */
 
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+// app.use(cors({
+//   origin: true,
+//   credentials: true
+// }));
 
 // app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // CORS options configuration
 const corsOptions = {
@@ -201,7 +201,7 @@ const corsOptions = {
 };
 
 // Apply the CORS middleware globally or to specific routes
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Handle preflight requests (OPTIONS method), which are automatically sent by browsers for certain types of requests (like POST)
 // app.options('*', cors(corsOptions)); // This handles OPTIONS requests for all routes
