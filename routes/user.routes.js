@@ -45,9 +45,9 @@ router.get("/me", protect, (req, res) => {
   //   role: req.user.role,
   //   isVerified: req.user.isVerified,
   // });
-    res.json({ ok: true });
+    // res.json({ ok: true });
 
-  // res.json(req.user);
+  res.json(req.user);
 });
 
 router.get("/:email/getUserByEmail", protect, isAdmin, async (req, res) => {

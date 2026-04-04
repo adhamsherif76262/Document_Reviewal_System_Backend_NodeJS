@@ -130,55 +130,57 @@ app.set('trust proxy', 1); // Required for Render proxy + cookies
 // ---------------------------------------------
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:3000/",
   // "https://document-reviewal-system-backend-nodejs.onrender.com/",
-  "https://cloa-document-review-system.netlify.app"
+  "https://cloa-document-review-system.netlify.app",
+  "https://cloa-document-review-system.netlify.app/",
 ];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-//   credentials: true,
-// };
 
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log("Incoming origin:", origin); // 🔥 DEBUG
-
-    if (!origin) return callback(null, true);
-
-    const allowed = allowedOrigins.some(o => origin.startsWith(o));
-
-    if (allowed) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(null, false); // ❗ DON'T throw error
+      callback(new Error("Not allowed by CORS"));
     }
   },
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
-// app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log("Incoming origin:", origin); // 🔥 DEBUG
 
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+//     if (!origin) return callback(null, true);
+
+//     const allowed = allowedOrigins.some(o => origin.startsWith(o));
+
+//     if (allowed) {
+//       callback(null, true);
+//     } else {
+//       callback(null, false); // ❗ DON'T throw error
+//     }
+//   },
+//   credentials: true,
+// };
+
+app.use(cors(corsOptions));
+
+// app.use(cors({
+//   origin: true,
+//   credentials: true
+// }));
 
 // app.options("/*", cors(corsOptions)); // 🔥 VERY IMPORTANT
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // CORS options configuration
 // const corsOptions = {
