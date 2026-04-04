@@ -226,7 +226,7 @@ if (process.env.NODE_ENV === 'production') {
 // ---------------------------------------------
 // 4) Rate Limiter (AFTER CORS!)
 // ---------------------------------------------
-app.use(defaultLimiter);
+// app.use(defaultLimiter);
 
 // ---------------------------------------------
 // 5) Request timeout
