@@ -45,21 +45,21 @@ app.listen(PORT, () => {
 // })
 
 // in server.js (after DB connection)
-// (async () => {
-//   try {
-//     await refreshDocTypeAssignments();
-//     console.log('✅ DocType assignments refreshed at startup');
-//   } catch (err) {
-//     console.error('⚠️ Failed to refresh DocType assignments:', err.message);
-//   }
-// })();
+(async () => {
+  try {
+    await refreshDocTypeAssignments();
+    console.log('✅ DocType assignments refreshed at startup');
+  } catch (err) {
+    console.error('⚠️ Failed to refresh DocType assignments:', err.message);
+  }
+})();
 
-// (async () => {
-//   const assignments = await DocTypeAssignment.find();
-//   for (const a of assignments) {
-//     await syncDocAssignments(a.docType);
-//   }
-// })();
+(async () => {
+  const assignments = await DocTypeAssignment.find();
+  for (const a of assignments) {
+    await syncDocAssignments(a.docType);
+  }
+})();
 
 
 // Optional: catch unhandled errors

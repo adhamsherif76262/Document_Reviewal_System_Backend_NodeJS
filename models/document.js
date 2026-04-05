@@ -191,7 +191,7 @@ documentSchema.pre('save', function (next) {
 // Useful indexes
 documentSchema.index({ 'user._id': 1 }); // get all docs for a user fast
 documentSchema.index({ 'custody.currentHolder._id': 1 }); // find docs currently held by admin
-documentSchema.index({ docNumber: 1 }, { unique: true }); // ensure uniqueness (redeclared for emphasis)
+// documentSchema.index({ docNumber: 1 }, { unique: true }); // ensure uniqueness (redeclared for emphasis)
 
 module.exports = mongoose.model('Document', documentSchema);
 

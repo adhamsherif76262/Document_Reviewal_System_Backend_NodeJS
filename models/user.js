@@ -121,7 +121,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 // 2. Add indexes
 
 // 📌 Ensure fast user lookup by email and prevent duplicates
-userSchema.index({ email: 1 }, { unique: true });
+// userSchema.index({ email: 1 }, { unique: true });
 
 // 📌 If you allow SMS verification, ensure phone number is unique (if provided)
 userSchema.index({ phone: 1 }, { unique: true, sparse: true });
