@@ -11,8 +11,8 @@ const upload = multer();
 const router = express.Router();
 
 // Regular admin uploads
-router.post('/:id/submitfinalcertificate', protect, isAdmin, upload.array('certificateImages', 5), submitCertificate);
-router.post('/:id/resubmitfinalcertificate', protect, isAdmin,upload.array('certificateImages', 5), resubmitCertificate);
+router.post('/:id/submitfinalcertificate', protect, isAdmin, upload.array('certificateImages', 10), submitCertificate);
+router.post('/:id/resubmitfinalcertificate', protect, isAdmin,upload.array('certificateImages', 10), resubmitCertificate);
 
 // Super admin review
 router.patch('/:id/reviewfinalcertificate',protect, isSuperAdmin, reviewCertificate);
