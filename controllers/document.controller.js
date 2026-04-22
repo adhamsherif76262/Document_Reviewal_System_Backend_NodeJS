@@ -1189,8 +1189,12 @@ exports.submitCertificate = async (req, res) => {
     });
 
     res.status(200).json({ message: 'Certificate submitted successfully and pending super admin review' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error submitting certificate', error: err.message });
+  } catch (error) {
+    //     return res.status(500).json({
+    //   message: "Review Error — all changes rolled back",
+    //   error: error.message
+    // });
+   return res.status(500).json({ message: 'Error submitting certificate', error: error.message });
   }
 };
 
@@ -1272,8 +1276,8 @@ try {
     });
 
     res.status(200).json({ message: 'Certificate resubmitted successfully and pending super admin review' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error resubmitting certificate', error: err.message });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error resubmitting certificate', error: error.message });
   }
 };
 
@@ -1401,9 +1405,9 @@ brevoClient.setApiKey(
       return res.json({ message: 'Certificate rejected successfully' });
     }
 
-    res.status(400).json({ message: 'Invalid action' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error reviewing certificate', error: err.message });
+    return res.status(400).json({ message: 'Invalid action' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error reviewing certificate', error: error.message });
   }
 };
 
