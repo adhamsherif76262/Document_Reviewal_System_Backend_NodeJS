@@ -1290,8 +1290,8 @@ exports.reviewCertificate = async (req, res) => {
 
     const doc = await Document.findById(id);
     if (!doc) return res.status(404).json({ message: 'Document not found' });
-    if (doc.certificate.status !== 'pending')
-      return res.status(400).json({ message: 'No pending certificate for this document' });
+    // if (doc.certificate.status !== 'pending')
+    //   return res.status(400).json({ message: 'No pending certificate for this document' });
 
     if (action === 'approve') {
       doc.certificate.status = 'approved';
