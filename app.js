@@ -131,7 +131,8 @@ app.set('trust proxy', 1); // Required for Render proxy + cookies
 const allowedOrigins = [
   "http://localhost:3000",
   // "https://document-reviewal-system-backend-nodejs.onrender.com/",
-  "https://cloa-document-review-system.netlify.app",
+  // "https://cloa-document-review-system.netlify.app",
+  "https://cloa-document-reviewal-system-front.vercel.app",
 ];
 
 /*************************** */
