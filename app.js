@@ -132,7 +132,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   // "https://document-reviewal-system-backend-nodejs.onrender.com/",
   // "https://cloa-document-review-system.netlify.app",
-  "https://cloa-document-reviewal-system-front.vercel.app",
+  "https://cloa-document-reviewal-system-frontend-next-ecdpc3m5c.vercel.app",
 ];
 
 /*************************** */
